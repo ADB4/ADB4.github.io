@@ -1,7 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="http://static.rogerlib.com.s3.amazonaws.com/static/css/normalize.css">
+    <link rel="stylesheet" href="http://static.rogerlib.com.s3.amazonaws.com/static/css/styles.css">
+</head>
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+    <div class="ADB4">
+        <div class="web-header">ANDY BUI / Roger Motorsports Library</div>
+        <div class="lib-header">
+            <a href="/">Model Library</a>
+        </div>
+        <hr class="solid">
+
+        <div id="reactGallery">
+            Loading ...
+        </div>
+    </div>
+
+    </div>
+    <script
+        type="text/javascript"
+        {% if config['ENV'] == 'production' %}
+        src="{{ url_for('static', filename='js/bundle.min.js') }}"
+        {% else %}
+        src="{{ url_for('static', filename='js/bundle.dev.js') }}"
+        {% endif %}
+    ></script>
 </body>
 </html>
+
+
+
