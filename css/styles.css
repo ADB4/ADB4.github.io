@@ -36,6 +36,8 @@ body {
 
 .ADB4 {
   height: 100%;
+  display: grid;
+  grid-template-columns: 28rem auto;
 }
 
 /*
@@ -48,20 +50,6 @@ total height of web + lib header is 4.3rem
   padding-left: 1rem;
   padding-top: 0.5rem;
   height: 2rem;
-}
-.lib-header {
-  font-size: 2rem;
-  letter-spacing: -0.075rem;
-  padding-left: 2rem;
-  height: 2.3rem;
-}
-
-.lib-nav {
-  grid-column-start: 1;
-  grid-column-end: 2;
-  grid-row-start:1;
-  grid-row-end:-1;
-  width: 12rem;
 }
 
 .nav-menu-primary {
@@ -110,76 +98,8 @@ total height of web + lib header is 4.3rem
   color: #17213B;
 }
 
-#model-image img {
-  height: inherit;
-  max-height: 100%;
-  max-width: 100%;
-  outline: 1px dashed blue;
-}
-
 body:not(.loaded) #model-image img {
   display: none;
-}
-
-.model-info p {
-  font-family: Swiss721Reg;
-  font-size: 1.0rem;
-  padding-left: 1vw;
-  padding-right: 2vw;
-}
-
-.model-header h2 {
-  width: fit-content;
-  margin-top: 0.5rem;
-  font-family: Swiss721Med;
-  font-weight: 100;
-  outline: 1px dashed green
-}
-
-.model-header p {
-  margin-top: 0.75rem;
-  font-family: Swiss721Reg;
-  font-size: 1.25rem;
-}
-
-#description-header h2 {
-  font-family: Swiss721Med;
-  font-weight: 100;
-  font-size: 1.25rem;
-  line-height: 1.15rem;
-  margin-bottom: 0;
-}
-
-#description-header h3 {
-  font-family: Swiss721Reg;
-  font-weight: 100;
-  font-size: 0.8rem;
-  margin-top: 0.3rem;
-}
-
-.exit-button {
-  grid-column-start: 2;
-  grid-column-end: -1;
-  grid-row-start: 1;
-  grid-row-end:2;
-  margin-left: auto;
-  margin-top: -0.5rem;
-  margin-right: 2rem;
-  border-radius: 1.5rem;
-  font-size: 1rem;
-  cursor: pointer;
-  width: 2rem;
-  height: 2rem;
-  z-index: 3;
-}
-
-.view-parameters li {
-  list-style-type: none;
-  font-family: Swiss721Reg;
-}
-
-#lod-selector h3 {
-  font-size: 0.7rem;
 }
 
 .marquee {
@@ -222,7 +142,3 @@ body:not(.loaded) #model-image img {
   height: calc(100vh - 8rem);
 }
 
-.item img {
-  max-width: 100%;
-  max-height: 100%;
-}
