@@ -6,25 +6,24 @@
 </head>
 <body>
     <div class="ADB4">
-        <div class="nav-primary-container">
-            <div class="web-header">ANDY BUI / Roger Motorsports Library</div>
+        <div class="nav-container-outer">
+            <div class="nav-container-inner">
+                <div class="web-header">ANDY BUI /</div>
+                <br>
+                <div class="nav-item-primary">
+                    <a href="director/templates/projects">Projects</a>
+                </div>
+                <div class="nav-item-primary">
+                    <a href="director/templates/projects">Writing</a>
+                </div>
+                <div class="nav-item-primary">
+                    <a href="director/templates/projects">About</a>
+                </div>
+            </div>
+        </div>
+        <div id="splash-container">
 
         </div>
-        
-        
     </div>
-
-    </div>
-    <script
-        type="text/javascript"
-        {% if config['ENV'] == 'production' %}
-        src="{{ url_for('static', filename='js/bundle.min.js') }}"
-        {% else %}
-        src="{{ url_for('static', filename='js/bundle.dev.js') }}"
-        {% endif %}
-    ></script>
 </body>
 </html>
-
-
-

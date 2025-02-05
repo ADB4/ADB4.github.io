@@ -1,0 +1,88 @@
+Techniques for Efficient Woody Plants in 3D Environments
+
+By Andy Bui
+
+Contents
+1.1 Prologue
+1.2 Software Landscape
+
+2.0 Purpose-built Software for Creating Trees
+2.1 Using a Single Plane to Represent a Tree (Tree Cards)
+2.2 Using Multiple Planes to Represent a Tree
+2.3 Advanced: Using Planes to Represent Sections of a Tree
+
+1.1 Getting Started
+
+Woody plants are a staple in the context of game development, being one of the most frequently used elements in a 3D envirionment. Most every game uses specific optimizations to render trees in real time, with every successive generation of games being afforded more compute power to employ more sophisticated methods than the last. 
+
+1.2 Software Landscape
+
+The tools I use for this article are Blender 3.3.16, Adobe Substance 3D Painter 2024, Adobe Photoshop 2024, and GIMP. I strongly recommend each of these programs, but my goal with this article is to summarize my findings in a way that is software-agnostic and can be understood by those who work in 3D.
+
+Particularly, I've found that Substance 3D Painter is the program I've gotten the most value out of despite its price. The Steam edition is $150 for a perpetual license---I've purchased the 2020, 2021, and 2024 editions, and have spent almost 2000 hours split across each one. I found it worth upgrading to the 2024 edition because of two features: painting along path and text tool.
+
+2.0 Purpose-Built Software for Creating Woody Plants
+
+2.1 Using a Single Plane to Represent a Tree (Tree Cards)
+
+Known as a tree card, we can represent any woody plant using a orthographic side view transposed onto a flat plane, allowing us to go from around three hundred thousand triangles to just two. Essentially a cardboard cutout (or more appropriately, a card), this technique makes use of a few key things. First is an opacity map that allows us to define the tree as opaque, and the area around it as transparent. Second is a normal map that bakes all of the details of a high-polygon tree onto our plane to give an illusion of depth. Combine these with a roughness and base color(diffuse) map, and we can get a lot of mileage out of just two triangles. 
+
+For this demonstration I'll create the diffuse and roughness maps in Blender, and finish off in Substance 3D Painter.
+
+    [ Illustrations: Pine Tree Scene in Blender, Cycles Preview ]
+
+We'll start with a model of a coniferous tree in Blender, which you can generate using the free Sapling Tree Generator Addon. Set up the materials for the bark and leaves---I use maps from either Quixel Megascans or TCOM. For lighting, I recommend a setup that will cast nice, deep shadows, as flat lighting tends to create a less believable result.
+
+Head to output settings, and set the output resolution to anything of a square aspect ratio, for example 2048x2048. Add a camera to the scene, and under object data properties, configure it to use an orthographic lens. Position the camera to show the front of the tree, adjusting to fit the entire tree in frame.
+
+    [ Illustration: Camera View ]
+
+Before rendering the image, let's verify our render settings for Cycles. Most importantly, we want to enable transparency because it will allow us to generate an alpha channel which can be used to create the opacity map. we'll also want to render to PNG, at atleast 512 samples, with 16 bounces for transparency under light paths->max bounces.
+
+    [ Illustration: Rendered Result ]
+
+Once we've rendered our image and are satisfied with the result, we now have what we need for the diffuse and opacity maps. For a game-ready end product, I recommend using Gimp or Photoshop to separate the RGB and A channels into their own separate JPEG images, as it's much cheaper than a single PNG image.
+
+2.2 Using Multiple Planes to Represent a Tree
+
+Tree cards are a very effective way to render many trees from a distance, but the drawbacks become more apparent the closer they are. Our normal map does a lot of heavy lifting to simulate how light cascades down every layer of leaves and branches, but there's only so much it can do to compensate for a fundamental lack of geometry.
+
+To address this, we can augment our original plane with multiple support planes, arranged in a fan-out pattern as illustrated.
+
+    [ Illustration: Multiple planes arranged in fan-out pattern ]
+
+This process is better faciliated by some tweaks to the instructions in the previous section. 
+
+For every tree, we need to make two different types of cards. First is the tree with all of its features including the trunk, branches, and leaves. Second is only the leaves---no trunk or branches. The latter will be used for the support planes, the reason for this being that excluding the trunk and branches allows more light to pass through every subsequent plane.
+
+Additionally, I recommend starting with four variants of each tree, so that as we layer each support plane, there's less repetition between layers.
+
+    [ Illustrations: Card for "Full" tree, card for "Half" tree ]
+
+2.3 Using Multiple Planes to Represent Sections of a Tree
+
+This last method is the most technical, as it requires programming in-engine, for example in Unreal Engine with blueprints or c++.
+
+The inspiration for this technique came to me when I noticed that in Gran Turismo 7, trees in the environment have this effect of rotating so that they're always facing the player. It's pretty creepy, but these trees are quite sophisticated, with a fixed component using geometry to represent the trunk and branches, and a rotating card component that represents sections of leaves.
+
+    [ Illustration: Fixed component, rotating component]
+    [ Illustration: GT7 Screenshot ]
+
+This is effective for a few reasons within the context of Gran Turismo. The player is always driving a car, and almost always driving fast. There's no stopping to smell the flowers so to speak, so it makes sense to prioritize a solution that can quickly load in and out. If we want our trees to use distinct geometry for every leaf, This becomes very expensive very quickly.
+
+Additionally, as the player is more focused on the track ahead of them, they're almost never looking directly at any individual tree. The rotating effect, when occuring in the periphery, works as a suitable substitute that maintains a tree's round shape as one zips by.
+
+We'll need a few things: First, the geometry for our trunk and branches. Next are the cards that were made in the previous chapter to represent only the leaves of the tree. Last but not least, we need to program the rotating component for our tree in-engine, for which I'll use Unreal Engine with blueprints.
+
+    [ Illustration: fixed component + multiple rotating components = schizotree ]
+
+
+
+
+
+
+
+
+
+
+

@@ -38,64 +38,49 @@ body {
   height: 100%;
   display: grid;
   grid-template-columns: 28rem auto;
+  grid-template-rows: 3rem auto 3rem;
 }
 
-/*
-total height of web + lib header is 4.3rem
-*/
 .web-header {
   font-family: Swiss721Reg;
   font-kerning: auto;
   font-size: 1.5rem;
   padding-left: 1rem;
-  padding-top: 0.5rem;
-  height: 2rem;
 }
 
-.nav-menu-primary {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
+#splash-container {
+  grid-column-start: 1;
+  grid-column-end: -1;
+  grid-row-start: 2;
+  grid-row-end: 3;
+  outline: 1px solid blue;
+  z-index: 1;
+}
+.nav-item-primary {
   font-family: Swiss721Reg;
-  font-size: 1.25rem;
-  padding-left: 2rem;
-  padding-top: 1rem;
+  font-kerning: auto;
+  font-size: 1.5rem;
+  padding-left: 1rem;
+  line-height: 1.75rem;
 }
 
-.nav-menu-secondary {
+.nav-item-primary a {
+
+}
+
+.nav-container-outer {
+  grid-column-start: 1;
+  grid-column-end: 2;
+  grid-row-start: 1;
+  grid-row-end: -1;
   display: flex;
   flex-direction: column;
-  flex-wrap: wrap;
-  padding-left: 4vw;
-  padding-bottom: 1vw;
+  outline: 1px dashed red;
 }
 
-.nav-menu-secondary a {
-  font-size: 0.85rem;
-}
-
-.menu-item-primary {
-  cursor: pointer;
-  height: 1.1rem;
-  padding-left: 0;
-  text-align: left;
-  font-size: 1rem;
-  border: none;
-  background: none;
-}
-
-.menu-item-collapsible {
-  padding: 0.1rem 2rem;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.15s ease-out;
-}
-
-.menu-item-secondary {
-  height: .9rem;
-  font-size: 0.85rem;
-  color: #17213B;
+.nav-container-inner {
+  margin-top: 0.5rem;
+  z-index: 2;
 }
 
 body:not(.loaded) #model-image img {
