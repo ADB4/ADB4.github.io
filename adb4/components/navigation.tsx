@@ -1,0 +1,101 @@
+import Link from 'next/link';
+
+import ThemeToggle from './themetoggle';
+import { useTheme } from 'next-themes'
+const Navigation: React.FC = () => {
+    const navMatStyle: React.CSSProperties = {
+        backgroundColor: 'var(--backlight)',
+    };
+
+
+    const trapezoidStyle: React.CSSProperties = {
+        backgroundColor: 'var(--nav-primary)',
+    };
+
+    const navItemStyle: React.CSSProperties = {
+        backgroundColor: 'var(--nav-item-primary)',
+        color: 'var(--nav-item-text)'
+    };
+
+    const gradientLight: React.CSSProperties = {
+        boxShadow: 'inset -1px 10px 5px -11px var(--nav-highlight)'
+    };
+    return (
+        <>
+        <div className="navigation">
+            <nav className="nav-container liquid-glass">
+                <div className="nav-gradient-light"
+                    style={gradientLight}/>
+                <div className="nav-gradient-shadow"/>
+                <div className="nav-container-inner">
+                    <div className="nav-container-interface">
+                        <div className="nav-item-mat" style={navMatStyle}>
+                            <Link className="nav-item-single liquid-glass" 
+                                href="/"
+                                style={navItemStyle}>
+                                <div className="nav-item-dimple-left"/>
+                                <p>/</p>
+                                <div className="nav-item-dimple-right"/>
+                            </Link>
+                        </div>
+                        <div className="nav-item-mat" style={navMatStyle}>
+                            <Link className="nav-item-left liquid-glass" 
+                                href="/projects"
+                                style={navItemStyle}>
+                                    <div className="nav-item-shell">
+                                        <div className="shell-line-x line-right"/>
+                                       <div className="shell-line-x line-left"/>
+                                        <div className="shell-circle shell-right"/>
+                                        <div className="shell-circle shell-left"/>
+                                    </div>
+                                    <p>PROJECTS</p>
+                            </Link>
+                            <Link className="nav-item-center liquid-glass" 
+                                href="/weblog"
+                                style={navItemStyle}>
+                                    <div className="nav-item-shell">
+                                        <div className="shell-line-x line-right"/>
+                                       <div className="shell-line-x line-left"/>
+                                        <div className="shell-circle shell-right"/>
+                                        <div className="shell-circle shell-left"/>
+                                    </div>
+                                    <p>WRITING</p>
+                            </Link>
+                            <Link className="nav-item-right liquid-glass" 
+                                href="/cntct"
+                                style={navItemStyle}>
+                                    <div className="nav-item-shell">
+                                        <div className="shell-line-x line-right"/>
+                                       <div className="shell-line-x line-left"/>
+                                        <div className="shell-circle shell-right"/>
+                                        <div className="shell-circle shell-left"/>
+                                    </div>
+                                    <p>CONTACT</p>
+                            </Link>
+                        </div>
+                        <div className="nav-theme-indicator">
+                            <div className="nav-indicator-row">
+                                <div className="nav-indicator-light"/>
+                                <p>LIGHT</p>
+                            </div>
+                            <div className="nav-indicator-row">
+                                <div className="nav-indicator-dark"/>
+                                <p>DARK</p>
+                            </div>
+                        </div>
+                        <div className="nav-item-mat"
+                            style={{margin: "auto", marginRight: "0.25rem", backgroundColor: "var(--backlight)"}}>
+                            <ThemeToggle />
+                        </div>
+                    </div>
+
+                </div>
+            </nav>
+            <div className="trapezoid-left" style={trapezoidStyle}/>
+            <div className="trapezoid-right" style={trapezoidStyle}/>
+        </div>  
+        </>
+    );
+}
+
+export default Navigation;
