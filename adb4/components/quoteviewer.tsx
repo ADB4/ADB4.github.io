@@ -8,38 +8,62 @@ export interface QuoteData {
   author: string;
   content: string;
 }
+interface ActiveQuoteInterface extends QuoteData{
+    i: number;
+}
 const QuoteViewer: React.FC = () => {
     const [quotes, setQuotes] = useState<QuoteData[]>(quotedata);
-    const [activeQuote, setActiveQuote] = useState<number>(0);
+    const [index, setIndex] = useState<number>(0);
+    const [activeQuote, setActiveQuote] = useState<ActiveQuoteInterface>({
+        i: -1,
+        author: '',
+        content: ''
+    })
+    const [order, setOrder] = useState<number[]>([...Array(quotes).keys()]);
 
     useEffect(() => {
-        const shuffled = [...quotes];
+        const shuffled = [...quotes.keys()];
         for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
         }
-        setQuotes(shuffled);
+        setOrder(shuffled);
+        const firstQuote: ActiveQuoteInterface = {
+            i: shuffled[0],
+            author: quotes[shuffled[0]].author,
+            content: quotes[shuffled[0]].content,
+        };
+        setActiveQuote(firstQuote);
     },[]);
 
-    const handleRefreshQuote = () => {
-        if (activeQuote == quotes.length - 1) {
-            setActiveQuote(0);
-        } else {
-            setActiveQuote(activeQuote + 1);
-        }
-    };
+    function handleInquiry() {
+       let k = index + 1;
+       if (k >= order.length) {
+           k = 0;
+       }
+       let pick = order[k];
+       let nextquote = quotes[pick];
+       let setquote: ActiveQuoteInterface = {
+           i: pick,
+           'content': nextquote.content,
+           'author': nextquote.author,
+       };
+       console.log(setquote);
+       setIndex(pick)
+       setActiveQuote(setquote);
+    }
 
     return (
         <div className="weblog-quotes">
-            <button className="quote-refresh" onClick={() => {handleRefreshQuote()}}>
+            <button className="quote-refresh" onClick={() => {handleInquiry()}}>
                 REFRESH
             </button>
             <div className="quote-container">
                 <div className="quote-content">
-                    <h3>{quotes[activeQuote].content}</h3>
+                    <h3>"{activeQuote.content.toUpperCase()}"</h3>
                 </div>
                 <div className="quote-author">
-                    <h4>{quotes[activeQuote].author}</h4>
+                    <h4>{activeQuote.author}</h4>
                 </div>
             </div>
         </div>
