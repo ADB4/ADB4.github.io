@@ -1348,6 +1348,7 @@ box-shadow: inset -1px 10px 9px -7px #000000;
 .nav-item-left,
 .nav-item-right,
 .nav-item-center {
+  cursor:not-allowed;
   width: 8.0rem;
   height: 2.0rem;
   display: flex;

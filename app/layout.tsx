@@ -6,7 +6,7 @@ import './reset.css';
 import { ThemeProvider } from 'next-themes'
 import ClientLayout from '../components/clientlayout'
 export const metadata = {
-  title: 'ha',
+  title: 'andy bui',
   description: 'fun',
 };
 
