@@ -41,9 +41,9 @@ const QuoteViewer: React.FC = () => {
        if (k >= order.length) {
            k = 0;
        }
-       let pick = order[k];
-       let nextquote = quotes[pick];
-       let setquote: ActiveQuoteInterface = {
+       const pick = order[k];
+       const nextquote = quotes[pick];
+       const setquote: ActiveQuoteInterface = {
            i: pick,
            'content': nextquote.content,
            'author': nextquote.author,
@@ -60,7 +60,7 @@ const QuoteViewer: React.FC = () => {
             </button>
             <div className="quote-container">
                 <div className="quote-content">
-                    <h3>"{activeQuote.content.toUpperCase()}"</h3>
+                    <h3>&quot;{activeQuote.content.toUpperCase()}&quot;</h3>
                 </div>
                 <div className="quote-author">
                     <h4>{activeQuote.author}</h4>
