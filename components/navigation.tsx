@@ -40,7 +40,6 @@ const Navigation: React.FC = () => {
                                 <div className="nav-item-dimple-right"/>
                             </Link>
                         </div>
-                        {!compactView && (
                         <div className="nav-item-mat" style={navMatStyle}>
                             <Link className="nav-item-left liquid-glass" 
                                 href="/"
@@ -76,8 +75,6 @@ const Navigation: React.FC = () => {
                                     <p>KONTAKT</p>
                             </Link>
                         </div>
-                        )}
-
                         <div className="nav-theme-indicator">
                             <div className="nav-indicator-row">
                                 <div className="nav-indicator-light"/>
