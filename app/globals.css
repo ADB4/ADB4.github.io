@@ -69,6 +69,8 @@
 }
 
 :root {
+  min-width: 12.0rem;
+  --min-body-width: 12.0rem;
   --body-color: rgb(0, 0, 0);
   --min-container-width: 36.0rem;
   --bg-primary: rgb(242, 240, 234);
@@ -91,9 +93,11 @@
   --indicator-dark: black;
   --lightstrip-outline: gray;
   --lightstrip-diffuse: rgba(255,255,255,0.25);
+  overflow: hidden;
 }
 
 [data-theme='dark'] {
+  --min-body-width: 12.0rem;
   --body-color: black;
   --min-container-width: 36.0rem;
   --bg-primary: rgb(0, 0, 0);
@@ -681,7 +685,7 @@ a {
   }
 }
 .base-container {
-  min-width: var(--min-container-width);
+  min-width: var(--min-body-width);
   width: calc(100% - 1.0rem);
   height: calc(100% - 1.0rem);
   display: grid;
@@ -719,7 +723,7 @@ a {
 }
 
 .home-container {
-  min-width: var(--min-container-width);
+  min-width: var(--min-body-width);
   grid-row-start: 2;
   grid-row-end: -2;
   grid-column-start: 1;
@@ -738,7 +742,7 @@ a {
 }
 
 .home-content {
-  min-width: var(--min-container-width);
+  min-width: var(--min-body-width);
   grid-row-start: 1;
   grid-row-end: -1;
   grid-column-start: 1;
@@ -825,6 +829,7 @@ a {
 
 }
 .markdown-sans-body {
+  min-width: 24.0rem;
   max-width: 64.0rem;
   margin: auto;
   cursor: default;
@@ -896,6 +901,7 @@ a {
   width: fit-content;
 }
 .row-content {
+  min-width: var(--min-body-width);
   min-height: 4.0rem;
   max-height: 32.0rem;
   height: auto;
@@ -1203,7 +1209,9 @@ a {
   display: grid;
   grid-template-rows: auto;
   grid-template-columns: auto;
-  width: 40rem;
+  min-width: var(--min-body-width);
+  max-width: calc(100vw - 1.0rem);
+  width: 40.0rem;
   height: 3.0rem;
   border-radius: 1.0rem;
   z-index: 8;

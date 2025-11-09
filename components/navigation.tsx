@@ -2,7 +2,9 @@ import Link from 'next/link';
 
 import ThemeToggle from './themetoggle';
 import { useTheme } from 'next-themes'
+import { useDeviceContext } from '../context/devicecontext';
 const Navigation: React.FC = () => {
+    const compactView = useDeviceContext();
     const navMatStyle: React.CSSProperties = {
         backgroundColor: 'var(--backlight)',
     };
@@ -38,6 +40,7 @@ const Navigation: React.FC = () => {
                                 <div className="nav-item-dimple-right"/>
                             </Link>
                         </div>
+                        {!compactView && (
                         <div className="nav-item-mat" style={navMatStyle}>
                             <Link className="nav-item-left liquid-glass" 
                                 href="/"
@@ -73,6 +76,8 @@ const Navigation: React.FC = () => {
                                     <p>KONTAKT</p>
                             </Link>
                         </div>
+                        )}
+
                         <div className="nav-theme-indicator">
                             <div className="nav-indicator-row">
                                 <div className="nav-indicator-light"/>

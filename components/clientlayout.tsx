@@ -139,6 +139,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             <div className="main-container" ref={containerRef}>
               <div className="background-container" >
               </div>
+              {!compactView && (
               <div className="cursor-canvas">
                 <div
                   style={{
@@ -151,6 +152,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                   <div style={styles.orbPulse} />
                 </div>
               </div>
+              )}
               <div className="base-container">
                 <div className="base-header">
                   <div className={`base-header ${isContactPage ? 'base-header-large' : ''}`}>
