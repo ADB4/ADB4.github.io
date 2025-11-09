@@ -1,5 +1,6 @@
 import Navigation from '../components/navigation';
 import './globals.css';
+import './reset.css';
 
 
 import { ThemeProvider } from 'next-themes'

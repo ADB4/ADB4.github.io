@@ -1,11 +1,17 @@
 'use client';
 import * as React from "react"
+import { usePathname } from 'next/navigation'
 
 import Navigation from './navigation';
+import GridComponent from './circles';
 import ThemeToggle from './themetoggle';
 import { ColorModeContext } from '../context/themecontext';
+import { DeviceContext } from '../context/devicecontext';
 import TypewriterComponent from './typewriter';
+import { useDevice } from '../hooks/useDevice';
 const copy: string = "A programmer and 3D artist based in Austin, Texas with a penchant for designing functional, responsive interfaces, for which he cut his teeth in the olden days of MyBB forums. He is a Michigan native and an alumnus of the University of Michigan.  ";
+
+
 
 const bgcopy: string = 'ROGER MOTORSPORTS LIBRARY is a repository of 3D assets made by Andy Bui. It is a web application created with ReactJS and Flask that features a model gallery, interactive model viewer, and downloads served from Amazon S3. Roger Motorsports Library is a passion project that is solely maintained by Andy Bui. As much as it is an exercise in web development and interface design, it is also an exploration into the craft of 3D modeling, texturing, and environment art. With the help of HTML, CSS, & JAVASCRIPT ALL-IN-ONE FOR DUMMIES by PAUL MCFREDIES, the application was designed by Andy Bui using the Swiss721, Garamond font families.';
 import { useTheme } from 'next-themes'
@@ -23,21 +29,32 @@ const styles = {
   orbInner: {
     width: '64px',
     height: '64px',
-    background: 'linear-gradient(135deg,rgb(0, 255, 13) 0%,rgb(60, 255, 0) 100%)',
+    background: 'linear-gradient(135deg,rgb(0, 85, 255) 0%,rgb(7, 0, 133) 100%)',
     borderRadius: '50%',
     willChange: 'transform',
-    filter: 'blur(12px)',
+    filter: 'blur(0px)',
     opacity: 0.8,
   },
   orbPulse: {
     position: 'absolute' as const,
-    inset: 0,
-    width: '64px',
-    height: '64px',
-    background: 'linear-gradient(135deg,rgb(0, 4, 255) 0%,rgb(7, 0, 133) 100%)',
+    inset: 8,
+    width: '44px',
+    height: '44px',
+    background: 'linear-gradient(135deg,rgb(0, 255, 13) 0%,rgb(60, 255, 0) 100%)',
     borderRadius: '50%',
     animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-    filter: 'blur(8px)',
+    filter: 'blur(6px)',
+  },
+  orbHighlight: {
+    position: 'absolute' as const,
+    inset: 16,
+    width: '16px',
+    height: '16px',
+    background: 'linear-gradient(135deg,rgb(245, 245, 245) 0%,rgb(243, 255, 239) 100%)',
+    borderRadius: '50%',
+    animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+    filter: 'blur(4px)',
+    zIndex: '50'
   },
   content: {
     display: 'flex',
@@ -52,9 +69,23 @@ const styles = {
 };
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const targetPositionRef = useRef({ x: 0, y: 0 });
   const rafRef = useRef<number | undefined>(undefined);
+  const pathname = usePathname()
+  const [isContactPage, setIsContactPage] = useState(false)
+  const compactView = useDevice();
+  useEffect(() => {
+    // Small delay to ensure smooth transition after route change
+    const timer = setTimeout(() => {
+      setIsContactPage(pathname === '/cntct')
+    }, 50)
+    
+    return () => clearTimeout(timer)
+  }, [pathname])
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     targetPositionRef.current = { x: e.clientX, y: e.clientY };
@@ -69,6 +100,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   }, [handleMouseMove]);
 
   useEffect(() => {
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      setDimensions({ width: rect.width, height: rect.height });
+
+    }
     const animate = () => {
       setPosition((prev) => {
         const target = targetPositionRef.current;
@@ -88,20 +124,20 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     };
 
     rafRef.current = requestAnimationFrame(animate);
-
     return () => {
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
       }
     };
   }, []);
+
   return (
     <>
+        <DeviceContext.Provider value={compactView}>
         <Navigation/>
         <main>
-            <div className="main-container liquid-glass-main">
-              <div className="background-container">
-                  <TypewriterComponent text={bgcopy}/>
+            <div className="main-container" ref={containerRef}>
+              <div className="background-container" >
               </div>
               <div className="cursor-canvas">
                 <div
@@ -110,13 +146,16 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                     transform: `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%)`,
                   }}
                 >
+                  <div style={styles.orbHighlight} />
                   <div style={styles.orbInner} />
                   <div style={styles.orbPulse} />
                 </div>
               </div>
               <div className="base-container">
                 <div className="base-header">
-                  <h2>ANDY BUI</h2>
+                  <div className={`base-header ${isContactPage ? 'base-header-large' : ''}`}>
+                    <h2>ANDY BUI</h2>
+                  </div>
                 </div>
                 <div className="circle-row top">
                     <div className="grid-circle-left"/>
@@ -129,6 +168,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
               </div>
             </div>
         </main>
+        </DeviceContext.Provider>
     </>
   );
 }

@@ -23,7 +23,7 @@ const Navigation: React.FC = () => {
     return (
         <>
         <div className="navigation">
-            <nav className="nav-container liquid-glass">
+            <nav className="nav-container liquid-glass-main">
                 <div className="nav-gradient-light"
                     style={gradientLight}/>
                 <div className="nav-gradient-shadow"/>
@@ -40,7 +40,7 @@ const Navigation: React.FC = () => {
                         </div>
                         <div className="nav-item-mat" style={navMatStyle}>
                             <Link className="nav-item-left liquid-glass" 
-                                href="/projects"
+                                href="/"
                                 style={navItemStyle}>
                                     <div className="nav-item-shell">
                                         <div className="shell-line-x line-right"/>
@@ -48,10 +48,10 @@ const Navigation: React.FC = () => {
                                         <div className="shell-circle shell-right"/>
                                         <div className="shell-circle shell-left"/>
                                     </div>
-                                    <p>PROJECTS</p>
+                                    <p>ARBEIT</p>
                             </Link>
                             <Link className="nav-item-center liquid-glass" 
-                                href="/weblog"
+                                href="/"
                                 style={navItemStyle}>
                                     <div className="nav-item-shell">
                                         <div className="shell-line-x line-right"/>
@@ -59,10 +59,10 @@ const Navigation: React.FC = () => {
                                         <div className="shell-circle shell-right"/>
                                         <div className="shell-circle shell-left"/>
                                     </div>
-                                    <p>WRITING</p>
+                                    <p>SCHREIBEN</p>
                             </Link>
                             <Link className="nav-item-right liquid-glass" 
-                                href="/cntct"
+                                href="/"
                                 style={navItemStyle}>
                                     <div className="nav-item-shell">
                                         <div className="shell-line-x line-right"/>
@@ -70,7 +70,7 @@ const Navigation: React.FC = () => {
                                         <div className="shell-circle shell-right"/>
                                         <div className="shell-circle shell-left"/>
                                     </div>
-                                    <p>CONTACT</p>
+                                    <p>KONTAKT</p>
                             </Link>
                         </div>
                         <div className="nav-theme-indicator">
@@ -91,8 +91,9 @@ const Navigation: React.FC = () => {
 
                 </div>
             </nav>
-            <div className="trapezoid-left" style={trapezoidStyle}/>
-            <div className="trapezoid-right" style={trapezoidStyle}/>
+            <div className="trapezoid liquid-glass" style={trapezoidStyle}>
+                <div className="trapezoid-shadow"/>
+            </div>
         </div>  
         </>
     );
