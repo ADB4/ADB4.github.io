@@ -3,7 +3,7 @@ import Markdown from 'react-markdown';
 
 import { useTheme } from 'next-themes'
 
-const comingsoonmessage: string = "Friend, I've moved to Austin, Texas for work, and am putting together several updates for this domain. Stay tuned.";
+const comingsoonmessage: string = "Friend, I've moved to Austin, Texas, and am putting together several updates for this domain. Stay tuned.";
 
 const copy: string = "A programmer and 3D artist based in Austin, Texas with a penchant for designing functional, responsive interfaces, for which he cut his teeth in the olden days of MyBB forums. He is a Michigan native and an alumnus of the University of Michigan.  ";
 
@@ -16,7 +16,7 @@ export default function HomeComponent() {
         <>
             <div className="home-container">
                 <div className="home-content">
-                    <div className="row-flex-container hero">
+                    <div className="row-flex-container">
                         <div className="row-content">
                             <Markdown className="markdown-sans-body">
                                 {comingsoonmessage}
@@ -28,23 +28,3 @@ export default function HomeComponent() {
         </>
     );
 }
-
-/*
-                    <div className="featured-writing-container">
-                        <div className="row-header"><h3>selected writing</h3></div>
-                        <div className="row-content-flex">
-                            <div className="selected-writing-card">
-                                <p>UNA ÉPICA NUEVA</p>
-                            </div>
-                            <div className="selected-writing-card">
-                                <p>SOME QUOTES</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="featured-project-container">
-                        <div className="row-header"><h3>featuring</h3></div>
-                        <div className="row-content">
-                            <p>ROGER MOTORSPORTS LIBRARY</p>
-                        </div>
-                    </div>
-*/

@@ -69,7 +69,7 @@
 }
 
 :root {
-  --min-body-width: 12.0rem;
+  --min-body-width: 8.0rem;
   --body-color: rgb(0, 0, 0);
   --min-container-width: 36.0rem;
   --bg-primary: rgb(242, 240, 234);
@@ -96,7 +96,7 @@
 }
 
 [data-theme='dark'] {
-  --min-body-width: 12.0rem;
+  --min-body-width: 8.0rem;
   --body-color: black;
   --min-container-width: 36.0rem;
   --bg-primary: rgb(0, 0, 0);
@@ -737,9 +737,12 @@ a {
   grid-column-end: -1;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
   row-gap: 2.0rem;
   width: 100%;
-  min-width: 36.0rem;
+  min-width: 8.0rem;
   height: calc(100% - 2.0rem);
   margin: auto;
   color: var(--text-primary);
@@ -817,16 +820,18 @@ a {
 
 }
 .markdown-sans-body {
-  min-width: 24.0rem;
   max-width: 64.0rem;
+  width: 100%;
+  height: fit-content;
   margin: auto;
+  margin-top: 0rem;
   cursor: default;
-  font-family: GaramondCondensed;
+  font-family:'Times New Roman', Times, serif;
   font-kerning: normal;
-  letter-spacing: -0.035rem;
+  letter-spacing: -0.0725rem;
   font-weight: 300;
-  font-size: 3.4rem;
-  line-height: 3.5rem;
+  font-size: 2.5rem;
+  line-height: 2.5rem;
   color: var(--text-primary);
 }
 .markdown-sans-body strong {
@@ -850,13 +855,17 @@ a {
   align-content: flex-start;
 }
 .row-flex-container {
-  width: 100%;
+  min-width: 8.0rem;
+  max-width: 54.0rem;
+  width: calc(100% - 3.0rem);
+  height: fit-content;
+  padding-top: 1.0rem;
+  padding-left: 1.0rem;
+  padding-bottom: 8.0rem;
+  padding-right: 4.0rem;
+  margin: auto;
+  background-color: rgb(206, 206, 206);
   display: flex;
-  min-width: var(--min-container-width);
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-content: center;
 }
 .row-header {
   min-height: 2.0rem;
@@ -889,16 +898,16 @@ a {
   width: fit-content;
 }
 .row-content {
-  min-width: var(--min-body-width);
+  width: 100%;
   min-height: 4.0rem;
   max-height: 32.0rem;
-  height: auto;
+  height: fit-content;
   margin: auto;
   display: flex;
-  flex-wrap: wrap;
-  flex-shrink: 1;
-  flex-grow: 1;
-  flex-basis: 70%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
 }
 
 .hero {
@@ -1454,7 +1463,8 @@ a {
 .nav-center-display {
   height: 100%;
   width: 100%;
-  margin-left: 0.5rem;
+  border-radius: 0.25rem;
+  margin-left: 0.75rem;
   padding: 0.25rem;
   background-color: rgb(28, 44, 28);
   display: flex;
