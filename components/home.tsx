@@ -2,8 +2,6 @@
 import Markdown from 'react-markdown';
 
 import { useTheme } from 'next-themes'
-        
-import TypewriterComponent from './typewriter';
 
 const comingsoonmessage: string = "Friend, I've moved to Austin, Texas for work, and am putting together several updates for this domain. Stay tuned.";
 

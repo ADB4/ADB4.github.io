@@ -13,14 +13,18 @@ const ThemeToggle: React.FC = () => {
     setTheme(theme === 'light' ? 'dark':'light')
   }
   return (
-    <button
-      className="nav-theme-toggle liquid-glass"
-      onClick={() => toggleTheme()}
-      aria-label="Toggle theme"
-      style={themeToggleStyle}
-    >
-        <p>α</p>
-    </button>
+    <div className="nav-item-mat"
+        style={{backgroundColor: "var(--backlight)"}}>
+      <button
+        className="nav-theme-toggle liquid-glass"
+        onClick={() => toggleTheme()}
+        aria-label="Toggle theme"
+        style={themeToggleStyle}
+      >
+          <p>THEME</p>
+      </button>
+        </div>
+
   );
 }
 export default ThemeToggle;

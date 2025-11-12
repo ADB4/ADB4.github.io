@@ -77,7 +77,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const rafRef = useRef<number | undefined>(undefined);
   const pathname = usePathname()
   const [isContactPage, setIsContactPage] = useState(false)
-  const compactView = useDevice();
+  const compactView = true;
   useEffect(() => {
     // Small delay to ensure smooth transition after route change
     const timer = setTimeout(() => {
@@ -137,8 +137,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         <Navigation/>
         <main>
             <div className="main-container" ref={containerRef}>
-              <div className="background-container" >
-              </div>
               {!compactView && (
               <div className="cursor-canvas">
                 <div
