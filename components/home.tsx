@@ -16,7 +16,7 @@ export default function HomeComponent() {
         <>
             <div className="home-container">
                 <div className="home-content">
-                    <div className="row-flex-container">
+                    <div className="row-flex-container liquid-glass">
                         <div className="row-content">
                             <Markdown className="markdown-sans-body">
                                 {comingsoonmessage}

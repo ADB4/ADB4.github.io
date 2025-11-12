@@ -5,8 +5,8 @@ import { useTheme } from 'next-themes'
 import { useDeviceContext } from '../context/devicecontext';
 import { usePathname } from 'next/navigation'
 const Navigation: React.FC = () => {
-    const compactView = true;
-    const pathname = usePathname()
+    const compactView = useDeviceContext();
+    const pathname = usePathname();
     // const compactView = useDeviceContext();
     const navMatStyle: React.CSSProperties = {
         backgroundColor: 'var(--backlight)',
@@ -37,7 +37,7 @@ const Navigation: React.FC = () => {
                     <div className="nav-interface compact">
                         <div className="nav-center-interface">
                             <div className="nav-center-display">
-                                <Link className={pathname === '/' ? 'nav-item-option selected' : 'nav-item-option'}
+                                <Link className={pathname === '/' ? 'nav-item-option selected' : 'nav-item-option inactive'}
                                         href="/"
                                 >
                                     <p>HOME</p>
