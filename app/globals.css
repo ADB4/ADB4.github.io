@@ -1544,7 +1544,7 @@ a {
 .nav-item-option.inactive {
   cursor:not-allowed;
   background-color: rgb(20, 34, 20);
-  color: rgb(147, 255, 32);
+  color: rgb(92, 119, 62);
 }
 .nav-item-option p {
   font-family: MDIO;

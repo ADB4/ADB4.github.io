@@ -45,17 +45,17 @@ const Navigation: React.FC = () => {
                                 <Link className={pathname === '/projects' ? 'nav-item-option selected' : 'nav-item-option inactive'}
                                         href="/"
                                 >
-                                    <p>PROJECTS [COMING SOON]</p>
+                                    <p>PROJECTS</p>
                                 </Link>
                                 <Link className={pathname === '/weblog' ? 'nav-item-option selected' : 'nav-item-option inactive'}
                                         href="/"
                                 >
-                                    <p>WRITING [COMING SOON]</p>
+                                    <p>WRITING</p>
                                 </Link>
                                 <Link className={pathname === '/contact' ? 'nav-item-option selected' : 'nav-item-option inactive'}
                                         href="/"
                                 >
-                                    <p>CONTACT [COMING SOON]</p>
+                                    <p>CONTACT</p>
                                 </Link>
                             </div>
                             <div className="nav-center-input">
