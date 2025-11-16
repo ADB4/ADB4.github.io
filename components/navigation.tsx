@@ -1,7 +1,6 @@
 import Link from 'next/link';
 
 import ThemeToggle from './themetoggle';
-import { useTheme } from 'next-themes'
 import { useDeviceContext } from '../context/devicecontext';
 import { usePathname } from 'next/navigation'
 const Navigation: React.FC = () => {

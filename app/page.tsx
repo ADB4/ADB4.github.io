@@ -1,8 +1,3 @@
-
-import {Suspense} from "react";
-
-import Markdown from 'react-markdown';
-import Link from 'next/link';
 import { getAllPosts } from '../lib/posts';
 
 import HomeComponent from '../components/home';

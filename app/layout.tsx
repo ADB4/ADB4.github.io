@@ -1,4 +1,3 @@
-import Navigation from '../components/navigation';
 import './globals.css';
 import './reset.css';
 
