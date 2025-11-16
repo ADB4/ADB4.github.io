@@ -388,8 +388,10 @@ a {
   grid-row-end: -2;
   grid-column-start: 1;
   grid-column-end: -1;
-  width: calc(100% - 1.0rem);
-  height: calc(100% - 0.0rem);
+  max-height: calc(100vh - 2.0rem);
+  width: calc(100% - 0.0rem);
+  height: 100%;
+  background-color: rgba(255, 255, 0, 0.175);
   overflow: hidden;
   margin: auto;
   display: grid;
@@ -414,6 +416,7 @@ a {
   grid-row-end: -1;
   grid-column-start: 1;
   grid-column-end: -1;
+  max-height: calc(100vh - 4.0rem);
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -427,8 +430,8 @@ a {
   grid-column-start: 1;
   grid-column-end: 2;
   width: 20.0rem;
-  height: calc(100% - 1.0rem);
-  margin-top: 1.0rem;
+  height: 100%;
+  background-color: rgba(255, 0, 0, 0.271);
   color: var(--text-primary);
 }
 .weblog-selection h1 {
@@ -687,19 +690,19 @@ a {
 }
 .base-header {
   grid-row-start: 1;
-  grid-row-end: 3;
+  grid-row-end: 2;
   grid-column-start: 1;
   grid-column-end: 2;
   width: 100%;
   height: 100%;
+  background-color: rgba(0, 128, 0, 0.353);
 }
 .base-header h2 {
-  margin-top: 1.0rem;
-  margin-left: 1.0rem;
+  margin-left: 0.5rem;
   font-family: Swiss721;
   font-weight: 300;
-  font-size: 2.2rem;
-  line-height: 2.2rem;
+  font-size: 2.0rem;
+  line-height: 2.0rem;
   color: var(--text-primary);
   transform-origin: top left;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1188,7 +1191,7 @@ a {
   line-height: 1.1rem;
 }
 .markdown-article {
-  max-width: 32.0rem;
+  width: 50%;
   height: calc(100% - 1.0rem);
   border-radius: 0 0.5rem 0.5rem 0;
   overflow-y: scroll;

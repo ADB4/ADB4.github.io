@@ -5,14 +5,15 @@ import QuoteViewer from '../../components/quoteviewer';
 export default function Weblog() {
   const entries = getAllPosts();
   return (
+    <>
     <div className="weblog-container">
       <div className="weblog-content">
         <div className="weblog-selection">
           <h1>
-            Weblog: {entries.length} {entries.length === 1 ? 'Entry' : 'Entries'}
+            WEBLOG: {entries.length} {entries.length === 1 ? 'ENTRY' : 'ENTRIES'}
           </h1>
           <div className="entry-list" style={{ 
-              paddingTop: '1.0rem',
+              paddingTop: '0.5rem',
               display: 'flex', 
               flexDirection: 'column', 
             }}>
@@ -25,7 +26,7 @@ export default function Weblog() {
                 <svg viewBox="0 0 320 100" xmlns="http://www.w3.org/2000/svg">
                   <defs>
                     <mask id={`mask-${index}`}>
-                      <rect width="320" className="entry-mask" height="100" fill="white"/>
+                      <rect width="320" height="100" fill="white"/>
                       <text x="10" y="35" className="entry-header1">{entry.title}</text>
                       <text x="310" y="35" className="entry-header2" textAnchor="end">{entry.date.replaceAll('-', ' ')}</text>
                       <text x="310" y="55" className="entry-paragraph" textAnchor="end">{entry.category.toUpperCase()}</text>
@@ -49,13 +50,14 @@ export default function Weblog() {
               padding: '3rem 0',
               color: '#666'
             }}>
-              <p>No blog posts yet. Check back soon!</p>
+              <p>No blog posts yet. Check back soon.</p>
             </div>
           )}
         </div>
-        <QuoteViewer />
+          <QuoteViewer />
       </div>
     </div>
+    </>
   );
 }
 
