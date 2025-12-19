@@ -515,15 +515,85 @@ a {
   overflow-x: hidden;
 }
 .entry-card {
+    position: relative;
     width: 100%;
-    height: 12.0rem;
-    outline: 1px solid red;
-    display: grid;
-    grid-template-rows: auto;
-    grid-template-columns: auto;
+    height: 8.0rem;
+    display: block;
     font-family: Swiss721;
     z-index: 4;
     margin-bottom: 0.5rem;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.entry-card svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Text overlay */
+.entry-text-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.5rem;
+    pointer-events: none;
+    color: var(--text-primary);
+    transition: opacity 0.2s ease;
+}
+
+.entry-card:hover .entry-text-overlay {
+    opacity: 0;
+}
+
+.entry-text-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.entry-text-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+}
+
+.entry-title {
+    font-size: 1.3rem;
+    font-weight: 300;
+}
+
+.entry-date {
+    font-size: 1.3rem;
+    font-weight: 200;
+    line-height: 1.7rem;
+}
+
+.entry-category {
+    font-size: 0.9rem;
+    font-weight: 200;
+}
+
+/* Keep SVG text styles for the mask */
+.entry-header1 {
+    font-size: 1.0rem;
+    font-weight: 300;
+}
+
+.entry-header2 {
+    font-size: 1.3rem;
+    font-weight: 200;
+}
+
+.entry-paragraph {
+    font-size: 0.9rem;
+    font-weight: 200;
 }
 
 .entry-card svg rect {
@@ -554,39 +624,6 @@ a {
   }
 }
 
-.entry-header1 {
-  font-size: 1.0rem;
-  line-height: 1.7rem;
-  font-weight: 300;
-  max-width: 10.0rem;
-}
-.entry-header2 {
-  font-size: 1.3rem;
-  line-height: 1.7rem;
-  font-weight: 200;
-}
-.entry-paragraph {
-  font-size: 0.9rem;
-  font-weight: 200;
-}
-.entry-card h2 {
-  font-size: 1.5rem;
-  line-height: 1.7rem;
-  font-weight: 300;
-  max-width: 10.0rem;
-
-}
-.entry-card h3 {
-  font-size: 1.5rem;
-  line-height: 1.7rem;
-  font-weight: 200;
-  margin: 0rem 0rem 0rem auto;
-}
-.entry-card p {
-  font-size: 0.9rem;
-  font-weight: 200;
-  margin: 0rem 0rem 0rem auto;
-}
 .entry-card-header {
   grid-row-start: 1;
   grid-row-end: -1;

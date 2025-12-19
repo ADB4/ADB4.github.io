@@ -17,32 +17,51 @@ export default function Weblog() {
               display: 'flex',
               flexDirection: 'column',
             }}>
-            {entries.map((entry, index) => (
-              <Link
-                href={`/weblog/${entry.slug}`}
-                key={entry.title}
-              >
-              <div className="entry-card">
-                <svg viewBox="0 0 300 60" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <mask id={`mask-${index}`}>
-                      <rect width="270" height="40" fill="white"/>
-                      <text x="2.5" y="15" className="entry-header1">{entry.title}</text>
-                      <text x="400" y="35" className="entry-header2" textAnchor="end">{entry.date.replaceAll('-', ' ')}</text>
-                      <text x="396.5" y="55" className="entry-paragraph" textAnchor="end">{entry.category.toUpperCase()}</text>
-                    </mask>
-                  </defs>
-                  <rect width="320" height="100" fill="var(--text-primary)" className="entry-card-rect" mask={`url(#mask-${index})`} rx="12"/>
-                <g className="text-layer">
-                    <text x="2.5" y="15" className="entry-header1">{entry.title}</text>
-                    <text x="400" y="35" className="entry-header2" textAnchor="end">{entry.date.replaceAll('-', ' ')}</text>
-                    <text x="396.5" y="55" className="entry-paragraph" textAnchor="end">{entry.category.toUpperCase()}</text>
-                </g>
-                </svg>
-              </div>
-              </Link>
+              {entries.map((entry, index) => (
+                  <Link
+                      href={`/weblog/${entry.slug}`}
+                      key={entry.title}
+                  >
+                      <div className="entry-card">
+                          <svg
+                              viewBox="0 0 1000 100"
+                              xmlns="http://www.w3.org/2000/svg"
+                              preserveAspectRatio="none"
+                          >
+                              <defs>
+                                  <mask id={`mask-${index}`}>
+                                      <rect width="1000" height="100" fill="white"/>
+                                      <text x="20" y="50" className="entry-header1">{entry.title}</text>
+                                      <text x="980" y="40" className="entry-header2" textAnchor="end">
+                                          {entry.date.replaceAll('-', ' ')}
+                                      </text>
+                                      <text x="980" y="65" className="entry-paragraph" textAnchor="end">
+                                          {entry.category.toUpperCase()}
+                                      </text>
+                                  </mask>
+                              </defs>
+                              <rect
+                                  width="1000"
+                                  height="100"
+                                  fill="var(--text-primary)"
+                                  mask={`url(#mask-${index})`}
+                                  rx="12"
+                              />
+                          </svg>
 
-            ))}
+                          {/* HTML text overlay - only visible when not hovering */}
+                          <div className="entry-text-overlay">
+                              <div className="entry-text-left">
+                                  <span className="entry-title">{entry.title}</span>
+                              </div>
+                              <div className="entry-text-right">
+                                  <span className="entry-date">{entry.date.replaceAll('-', ' ')}</span>
+                                  <span className="entry-category">{entry.category.toUpperCase()}</span>
+                              </div>
+                          </div>
+                      </div>
+                  </Link>
+              ))}
           </div>
           {entries.length === 0 && (
             <div style={{
