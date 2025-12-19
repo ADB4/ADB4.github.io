@@ -12,10 +12,10 @@ export default function Weblog() {
           <h1>
             WEBLOG: {entries.length} {entries.length === 1 ? 'ENTRY' : 'ENTRIES'}
           </h1>
-          <div className="entry-list" style={{ 
+          <div className="entry-list" style={{
               paddingTop: '0.5rem',
-              display: 'flex', 
-              flexDirection: 'column', 
+              display: 'flex',
+              flexDirection: 'column',
             }}>
             {entries.map((entry, index) => (
               <Link
@@ -23,20 +23,20 @@ export default function Weblog() {
                 key={entry.title}
               >
               <div className="entry-card">
-                <svg viewBox="0 0 320 100" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 300 60" xmlns="http://www.w3.org/2000/svg">
                   <defs>
                     <mask id={`mask-${index}`}>
-                      <rect width="320" height="100" fill="white"/>
-                      <text x="10" y="35" className="entry-header1">{entry.title}</text>
-                      <text x="310" y="35" className="entry-header2" textAnchor="end">{entry.date.replaceAll('-', ' ')}</text>
-                      <text x="310" y="55" className="entry-paragraph" textAnchor="end">{entry.category.toUpperCase()}</text>
+                      <rect width="270" height="40" fill="white"/>
+                      <text x="2.5" y="15" className="entry-header1">{entry.title}</text>
+                      <text x="400" y="35" className="entry-header2" textAnchor="end">{entry.date.replaceAll('-', ' ')}</text>
+                      <text x="396.5" y="55" className="entry-paragraph" textAnchor="end">{entry.category.toUpperCase()}</text>
                     </mask>
                   </defs>
                   <rect width="320" height="100" fill="var(--text-primary)" className="entry-card-rect" mask={`url(#mask-${index})`} rx="12"/>
                 <g className="text-layer">
-                    <text x="10" y="35" className="entry-header1">{entry.title}</text>
-                    <text x="310" y="35" className="entry-header2" textAnchor="end">{entry.date.replaceAll('-', ' ')}</text>
-                    <text x="310" y="55" className="entry-paragraph" textAnchor="end">{entry.category.toUpperCase()}</text>
+                    <text x="2.5" y="15" className="entry-header1">{entry.title}</text>
+                    <text x="400" y="35" className="entry-header2" textAnchor="end">{entry.date.replaceAll('-', ' ')}</text>
+                    <text x="396.5" y="55" className="entry-paragraph" textAnchor="end">{entry.category.toUpperCase()}</text>
                 </g>
                 </svg>
               </div>
@@ -45,8 +45,8 @@ export default function Weblog() {
             ))}
           </div>
           {entries.length === 0 && (
-            <div style={{ 
-              textAlign: 'center', 
+            <div style={{
+              textAlign: 'center',
               padding: '3rem 0',
               color: '#666'
             }}>
@@ -54,7 +54,6 @@ export default function Weblog() {
             </div>
           )}
         </div>
-          <QuoteViewer />
       </div>
     </div>
     </>
