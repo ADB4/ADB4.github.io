@@ -6,6 +6,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import Navigation from './navigation';
 import { DeviceContext } from '../context/devicecontext';
 import { useDevice } from '../hooks/useDevice';
+import Link from "next/link";
 
 const styles = {
   orb: {
@@ -151,7 +152,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           <div className="base-container">
             <div className="base-header">
               <div className={`base-header ${isContactPage ? 'base-header-large' : ''}`}>
-                <h2>ANDY BUI</h2>
+                  <Link className={"app-header"}
+                        href="/"
+                  >
+                      <h2>ANDY BUI</h2>
+                  </Link>
               </div>
             </div>
             <div className="circle-row top">

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import ThemeToggle from './themetoggle';
 import { useDeviceContext } from '../context/devicecontext';
 import { usePathname } from 'next/navigation'
+import DisplayComponent from "./display";
 const Navigation: React.FC = () => {
     const compactView = useDeviceContext();
     const pathname = usePathname();
@@ -36,26 +37,38 @@ const Navigation: React.FC = () => {
                     <div className="nav-interface compact">
                         <div className="nav-center-interface">
                             <div className="nav-center-display">
-                                <Link className={pathname === '/' ? 'nav-item-option selected' : 'nav-item-option inactive'}
-                                        href="/"
-                                >
-                                    <p>HOME</p>
-                                </Link>
-                                <Link className={pathname === '/projects' ? 'nav-item-option selected' : 'nav-item-option inactive'}
-                                        href="/"
-                                >
-                                    <p>PROJECTS</p>
-                                </Link>
-                                <Link className={pathname === '/weblog' ? 'nav-item-option selected' : 'nav-item-option inactive'}
-                                        href="/"
-                                >
-                                    <p>WRITING</p>
-                                </Link>
-                                <Link className={pathname === '/contact' ? 'nav-item-option selected' : 'nav-item-option inactive'}
-                                        href="/"
-                                >
-                                    <p>CONTACT</p>
-                                </Link>
+                                <div className={"nav-menu"}>
+                                    <Link className={pathname === '/' ? 'nav-item-option selected' : 'nav-item-option inactive'}
+                                          href="/"
+                                    >
+                                        <p>HOME</p>
+                                    </Link>
+                                    <Link className={pathname === '/projects' ? 'nav-item-option selected' : 'nav-item-option inactive'}
+                                          href="/"
+                                    >
+                                        <p>PROJECTS</p>
+                                    </Link>
+                                    <Link className={pathname === '/weblog' ? 'nav-item-option selected' : 'nav-item-option inactive'}
+                                          href="/"
+                                    >
+                                        <p>WRITING</p>
+                                    </Link>
+                                    <Link className={pathname === '/contact' ? 'nav-item-option selected' : 'nav-item-option inactive'}
+                                          href="/"
+                                    >
+                                        <p>CONTACT</p>
+                                    </Link>
+                                </div>
+                                <div style={{
+                                    width: '4rem',
+                                    height: '4rem',
+                                    backgroundColor: 'rgb(20, 34, 20)',
+                                    margin: 'auto',
+                                    marginRight: '0rem',
+                                    marginTop: '0rem',
+                                }}>
+                                    <DisplayComponent widthRem={3} heightRem={3} pixelSize={1} onColor={"rgb(147, 255, 32)"} offColor={"rgb(20, 34, 20)"}/>
+                                </div>
                             </div>
                             <div className="nav-center-input">
                                 <div className="nav-item-mat-col">

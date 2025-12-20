@@ -1,5 +1,5 @@
 ---
-title: "Petrolicious: One Month with the 2018 Jaguar F-TYPE R"
+title: "Petrolicious: One Month with the *2018 Jaguar F-TYPE R*"
 date: "2025-11-19"
 category: "automotive"
 excerpt: "This is a test article"
