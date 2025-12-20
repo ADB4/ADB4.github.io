@@ -27,9 +27,7 @@ const DisplayComponent: React.FC<DisplayProps> = ({
                                                        offColor = '#001100'
                                                    }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const animationRef = useRef<number>();
-    const rotationRef = useRef({ x: 0, y: 0, z: 0 });
-
+    const animationRef = useRef<number | undefined>(undefined);    const rotationRef = useRef({ x: 0, y: 0, z: 0 });
     const remToPx = (rem: number): number => {
         if (typeof window !== 'undefined') {
             return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
