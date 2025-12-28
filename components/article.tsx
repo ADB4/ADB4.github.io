@@ -23,11 +23,9 @@ const ArticleComponent: React.FC<{
         <>
             <div className="weblog-container">
             <div className={"weblog-content"}>
-                <div className={"selected-article-container"}>
                     <ReactMarkdown className={"markdown-article"}>
                         {article.content}
                     </ReactMarkdown>
-                </div>
             </div>
             </div>
         </>

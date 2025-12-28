@@ -159,13 +159,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                   </Link>
               </div>
             </div>
-            <div className="circle-row top">
-              <div className="grid-circle-left"/>
-            </div>
-            <div className="circle-row bottom">
-              <div className="grid-circle-left"/>
-              <div className="grid-circle-left"/>
-            </div>
             {children}
           </div>
         </div>
