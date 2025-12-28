@@ -49,7 +49,7 @@ const Navigation: React.FC = () => {
                                         <p>PROJECTS</p>
                                     </Link>
                                     <Link className={pathname === '/weblog' ? 'nav-item-option selected' : 'nav-item-option inactive'}
-                                          href="/"
+                                          href="/weblog"
                                     >
                                         <p>WRITING</p>
                                     </Link>
