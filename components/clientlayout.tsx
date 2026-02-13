@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState, useCallback, useRef } from 'react';
 
 import Navigation from './navigation';
+import { ThemeToggle } from './themetoggle';
 import { DeviceContext } from '../context/devicecontext';
 import { useDevice } from '../hooks/useDevice';
 import Link from "next/link";
@@ -140,9 +141,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
               <Link className={"navigation-item liquid-glass"} href={"/"}>
                   <h2>PROJECTS</h2>
               </Link>
-              <Link className={"navigation-item-right liquid-glass"} href={"/"}>
+              <Link className={"navigation-item liquid-glass"} href={"/"}>
                   <h2>WRITING</h2>
               </Link>
+              <ThemeToggle />
           </div>
           <div className="base-container">
               <div className={`base-header ${isContactPage ? 'base-header-large' : ''}`}>

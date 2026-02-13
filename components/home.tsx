@@ -15,18 +15,6 @@ export default function HomeComponent() {
         <>
             <div className="home-container">
                 <div className="home-content ">
-                    <div draggable
-                         className="home-sheet sheet liquid-glass"
-                         style={{
-                             position: 'absolute',
-                             transform: `translate(${position.x}px, ${position.y}px) rotate(${-2}deg)`,
-                             mixBlendMode: 'multiply',
-                             cursor: 'move',
-                             transition: 'transform 0.1s ease-out'
-                         }}
-                    >
-                        <p>{copy}</p>
-                    </div>
                 </div>
             </div>
         </>
