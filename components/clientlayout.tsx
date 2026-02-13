@@ -131,26 +131,20 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   return (
     <DeviceContext.Provider value={compactView}>
-      <Navigation/>
       <main>
         <div className="main-container">
-          {!compactView && (
-            <div className="cursor-canvas">
-              <div
-                style={{
-                  ...styles.orb,
-                  transform: `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%)`,
-                  opacity: isVisible ? 1 : 0,
-                }}
-              >
-                <div style={styles.orbHighlight} />
-                <div style={styles.orbInner} />
-                <div style={styles.orbPulse} />
-              </div>
-            </div>
-          )}
+          <div className={"navigation-container"}>
+              <Link className={"navigation-item-left liquid-glass"} href={"/"}>
+                  <h2>ABOUT</h2>
+              </Link>
+              <Link className={"navigation-item liquid-glass"} href={"/"}>
+                  <h2>PROJECTS</h2>
+              </Link>
+              <Link className={"navigation-item-right liquid-glass"} href={"/"}>
+                  <h2>WRITING</h2>
+              </Link>
+          </div>
           <div className="base-container">
-            <div className="base-header">
               <div className={`base-header ${isContactPage ? 'base-header-large' : ''}`}>
                   <Link className={"app-header"}
                         href="/"
@@ -158,7 +152,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                       <h2>ANDY BUI</h2>
                   </Link>
               </div>
-            </div>
             {children}
           </div>
         </div>
