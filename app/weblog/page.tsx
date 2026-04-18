@@ -35,13 +35,19 @@ export default function Weblog() {
                       key={entry.title}
                   >
                     <div className={"entry-card"}>
-                        <div className={"entry-header"}>
-                            <h3>{parseTitle(entry.title)}</h3>
-                        </div>
                         <div className={"entry-info"}>
                             <h4>{entry.category.toUpperCase()}</h4>
-                            <h4>{entry.date.replaceAll('-', ' ')}</h4>
+
+                            {/*<h4>{entry.date.replaceAll('-', ' ')}</h4>*/}
                         </div>
+                        <div className={"entry-id"}>
+                            <h4>NO.</h4>
+                            <h4>0{index}</h4>
+                        </div>
+                        <div className={"entry-header"}>
+                            <h3>"{parseTitle(entry.title.toUpperCase())}"</h3>
+                        </div>
+
                     </div>
                   </Link>
               ))}

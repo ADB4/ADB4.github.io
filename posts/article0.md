@@ -1,7 +1,7 @@
 ---
 title: "Woody Plants"
 date: "2025-09-15"
-category: "gamedev"
+category: "Technical journal"
 excerpt: "This is a test article"
 ---
 &nbsp;  

@@ -1,7 +1,7 @@
 ---
 title: "Some Quotes"
 date: "2025-01-15"
-category: "technical"
+category: "technical journal"
 excerpt: "This is a test article"
 ---
 &nbsp;  

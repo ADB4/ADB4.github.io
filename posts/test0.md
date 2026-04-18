@@ -1,7 +1,7 @@
 ---
 title: "Una Epica Nueva"
 date: "2025-10-04"
-category: "announcement"
+category: "weblog"
 excerpt: "This is a test article"
 ---
 &nbsp;  

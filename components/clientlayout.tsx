@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState, useCallback, useRef } from 'react';
 
 import Navigation from './navigation';
+import { ThemeToggle } from './themetoggle';
 import { DeviceContext } from '../context/devicecontext';
 import { useDevice } from '../hooks/useDevice';
 import Link from "next/link";
@@ -131,26 +132,46 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   return (
     <DeviceContext.Provider value={compactView}>
-      <Navigation/>
       <main>
         <div className="main-container">
-          {!compactView && (
-            <div className="cursor-canvas">
-              <div
-                style={{
-                  ...styles.orb,
-                  transform: `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%)`,
-                  opacity: isVisible ? 1 : 0,
-                }}
-              >
-                <div style={styles.orbHighlight} />
-                <div style={styles.orbInner} />
-                <div style={styles.orbPulse} />
-              </div>
-            </div>
-          )}
+          <div className={"navigation-container liquid-glass"}>
+              <Link className={"navigation-item-left liquid-glass"} href={"/"}>
+                  <h2>ABOUT</h2>
+              </Link>
+              <Link className={"navigation-item liquid-glass"} href={"/"}>
+                  <h2>PROJECTS</h2>
+              </Link>
+              <Link className={"navigation-item liquid-glass"} href={"/"}>
+                  <h2>WRITING</h2>
+              </Link>
+              <ThemeToggle />
+          </div>
           <div className="base-container">
-            <div className="base-header">
+              <div className={"puck-container"}>
+                  <div style={{
+                      display: 'grid',
+                      gridTemplateRows: 'auto',
+                      gridTemplateColumns: 'auto',
+                      width: '100%',
+                      height: '100%',
+                      background: 'black',
+                      clipPath: "path('M 12 0 L 180 0 Q 192 0 192 12 L 192 84 Q 192 96 180 96 L 46.49 96 Q 39.55 96 34.91 91.35 L 4.65 66.49 Q 0 61.45 0 54.51 L 0 12 Q 0 0 12 0 Z')",
+                  }}>
+                      <div style={{
+                          gridArea: '1 / 1 / -1 / -1',
+                          width: '1rem',
+                          height: '1rem',
+                          borderRadius: '0.25rem',
+                          backgroundColor: 'white',
+                          alignSelf: 'start',
+                          justifySelf: 'end',
+                          margin: '0.5rem',
+                          zIndex: 10,
+                      }}/>
+                      <p className={'puck-paragraph'}>AUSTIN, TX</p>
+                  </div>
+              </div>
+
               <div className={`base-header ${isContactPage ? 'base-header-large' : ''}`}>
                   <Link className={"app-header"}
                         href="/"
@@ -158,14 +179,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                       <h2>ANDY BUI</h2>
                   </Link>
               </div>
-            </div>
-            <div className="circle-row top">
-              <div className="grid-circle-left"/>
-            </div>
-            <div className="circle-row bottom">
-              <div className="grid-circle-left"/>
-              <div className="grid-circle-left"/>
-            </div>
             {children}
           </div>
         </div>

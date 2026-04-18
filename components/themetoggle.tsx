@@ -2,7 +2,7 @@
 'use client';
 import { useTheme } from 'next-themes';
 
-const ThemeToggle: React.FC = () => {
+export const ThemeToggle= () => {
   const { theme, setTheme } = useTheme();
   const themeToggleStyle: React.CSSProperties = {
     backgroundColor: 'var(--nav-item-secondary)',
@@ -13,8 +13,6 @@ const ThemeToggle: React.FC = () => {
     setTheme(theme === 'light' ? 'dark':'light')
   }
   return (
-    <div className="nav-item-mat"
-        style={{backgroundColor: "var(--backlight)"}}>
       <button
         className="nav-theme-toggle liquid-glass"
         onClick={() => toggleTheme()}
@@ -23,8 +21,5 @@ const ThemeToggle: React.FC = () => {
       >
           <p>THEME</p>
       </button>
-        </div>
-
   );
 }
-export default ThemeToggle;
