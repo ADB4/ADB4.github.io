@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import ThemeToggle from './themetoggle';
+import { ThemeToggle } from './themetoggle';
 import { useDeviceContext } from '../context/devicecontext';
 import { usePathname } from 'next/navigation'
 import DisplayComponent from "./display";
