@@ -134,7 +134,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     <DeviceContext.Provider value={compactView}>
       <main>
         <div className="main-container">
-          <div className={"navigation-container"}>
+          <div className={"navigation-container liquid-glass"}>
               <Link className={"navigation-item-left liquid-glass"} href={"/"}>
                   <h2>ABOUT</h2>
               </Link>
@@ -147,6 +147,31 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
               <ThemeToggle />
           </div>
           <div className="base-container">
+              <div className={"puck-container"}>
+                  <div style={{
+                      display: 'grid',
+                      gridTemplateRows: 'auto',
+                      gridTemplateColumns: 'auto',
+                      width: '100%',
+                      height: '100%',
+                      background: 'black',
+                      clipPath: "path('M 12 0 L 180 0 Q 192 0 192 12 L 192 84 Q 192 96 180 96 L 46.49 96 Q 39.55 96 34.91 91.35 L 4.65 66.49 Q 0 61.45 0 54.51 L 0 12 Q 0 0 12 0 Z')",
+                  }}>
+                      <div style={{
+                          gridArea: '1 / 1 / -1 / -1',
+                          width: '1rem',
+                          height: '1rem',
+                          borderRadius: '0.25rem',
+                          backgroundColor: 'white',
+                          alignSelf: 'start',
+                          justifySelf: 'end',
+                          margin: '0.5rem',
+                          zIndex: 10,
+                      }}/>
+                      <p className={'puck-paragraph'}>AUSTIN, TX</p>
+                  </div>
+              </div>
+
               <div className={`base-header ${isContactPage ? 'base-header-large' : ''}`}>
                   <Link className={"app-header"}
                         href="/"
