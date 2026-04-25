@@ -216,7 +216,7 @@ const DisplayComponent: React.FC<DisplayProps> = ({
                 cancelAnimationFrame(animationRef.current);
             }
         };
-    }, [width, height, pixelSize, onColor, offColor]);
+    }, [width, height, pixelSize, onColor, offColor, drawLine, project, sphere]);
 
     return (
         <div style={{

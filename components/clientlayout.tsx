@@ -2,7 +2,7 @@
 import * as React from "react"
 import { usePathname } from 'next/navigation'
 import { useEffect, useState, useCallback, useRef } from 'react';
-
+import { useTheme } from 'next-themes';
 import Navigation from './navigation';
 import { ThemeToggle } from './themetoggle';
 import { DeviceContext } from '../context/devicecontext';
@@ -55,16 +55,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const targetPositionRef = useRef({ x: 0, y: 0 });
   const rafRef = useRef<number | undefined>(undefined);
   const pathname = usePathname();
-  const [isContactPage, setIsContactPage] = useState(false);
   const compactView = useDevice();
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsContactPage(pathname === '/cntct');
-    }, 50);
-    
-    return () => clearTimeout(timer);
-  }, [pathname]);
+  const { theme, setTheme } = useTheme();
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isVisible) {
@@ -133,20 +125,35 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   return (
     <DeviceContext.Provider value={compactView}>
       <main>
+          <div className="cursor-canvas">
+              <div
+                  style={{
+                      ...styles.orb,
+                      transform: `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%)`,
+                  }}
+              >
+                  <div style={styles.orbHighlight} />
+                  <div style={styles.orbInner} />
+                  <div style={styles.orbPulse} />
+              </div>
+          </div>
         <div className="main-container">
           <div className={"navigation-container liquid-glass"}>
-              <Link className={"navigation-item-left liquid-glass"} href={"/"}>
-                  <h2>ABOUT</h2>
-              </Link>
-              <Link className={"navigation-item liquid-glass"} href={"/"}>
-                  <h2>PROJECTS</h2>
-              </Link>
-              <Link className={"navigation-item liquid-glass"} href={"/"}>
-                  <h2>WRITING</h2>
-              </Link>
-              <ThemeToggle />
+              <div className={"navigation-container-inner"}>
+                  <Link className={"navigation-item-left liquid-glass"} href={"/about"}>
+                      <h2>ABOUT</h2>
+                  </Link>
+                  <Link className={"navigation-item liquid-glass"} href={"/"}>
+                      <h2>PROJECTS</h2>
+                  </Link>
+                  <Link className={"navigation-item liquid-glass"} href={"/"}>
+                      <h2>WRITING</h2>
+                  </Link>
+                  <ThemeToggle />
+              </div>
           </div>
-          <div className="base-container">
+
+          <div className="base-container liquid-glass-main">
               <div className={"puck-container"}>
                   <div style={{
                       display: 'grid',
@@ -154,7 +161,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                       gridTemplateColumns: 'auto',
                       width: '100%',
                       height: '100%',
-                      background: 'black',
+                      background: 'var(--text-dark)',
                       clipPath: "path('M 12 0 L 180 0 Q 192 0 192 12 L 192 84 Q 192 96 180 96 L 46.49 96 Q 39.55 96 34.91 91.35 L 4.65 66.49 Q 0 61.45 0 54.51 L 0 12 Q 0 0 12 0 Z')",
                   }}>
                       <div style={{
@@ -162,7 +169,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                           width: '1rem',
                           height: '1rem',
                           borderRadius: '0.25rem',
-                          backgroundColor: 'white',
+                          backgroundColor: 'var(--text-light)',
                           alignSelf: 'start',
                           justifySelf: 'end',
                           margin: '0.5rem',
@@ -172,7 +179,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                   </div>
               </div>
 
-              <div className={`base-header ${isContactPage ? 'base-header-large' : ''}`}>
+              <div className={`base-header`}>
                   <Link className={"app-header"}
                         href="/"
                   >
