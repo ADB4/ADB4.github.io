@@ -412,8 +412,9 @@ a {
 /* Layout */
 .main-container {
     margin: 0 auto auto;
-    width: calc(100% - 2.0rem);
-    height: calc(100% - 1.0rem);
+    width: calc(100dvw - 2.0rem);
+    height: calc(100dvh - 1.0rem);
+    background-color: red;
     display: grid;
     grid-template: auto 3.0rem / auto;
     z-index: 2;
