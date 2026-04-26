@@ -117,7 +117,7 @@ export default function ModelViewerComponent({
             className="model-view-module-compact"
             style={{ position: "relative", width: "100%", height: "100%" }}
         >
-            <Canvas camera={{ position: [2, 1.5, 2], fov: 35 }}>
+            <Canvas camera={{ position: [1.2, 0.9, 1.2], fov: 53 }}>
                 <Suspense fallback={null}>
                     <GLTFComponent modelURLs={modelURLs} textures={textures} />
                     <Environment files={HDRI_URL} />

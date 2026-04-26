@@ -16,16 +16,19 @@ export default function Maintenance() {
             style={{
                 width: '100%',
                 height: '100%',
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
+                maxWidth: '48rem',
+                maxHeight: '36rem',
+                margin: 'auto',
+                display: 'grid',
+                gridTemplateColumns: 'auto',
+                gridTemplateRows: 'auto',
                 gap: '1rem',
                 color: 'var(--text-primary)',
                 fontFamily: 'Swiss721, sans-serif',
             }}
         >
             <div className="maintenance-notice" style={{
+                gridArea: '2 / 1 / -1 / -1',
                 backgroundColor: 'var(--debug-2)',
                 width: 'calc(100% - 1.0rem)',
                 maxWidth: '24.0rem',
@@ -34,11 +37,12 @@ export default function Maintenance() {
                 flexDirection: 'column',
                 justifyContent: 'flex-start',
                 alignItems: 'flex-start',
+                zIndex: '10',
             }}>
-                <h1 style={{ fontSize: '2.4rem', fontWeight: 300, lineHeight: '2.8rem' }}>
+                <h1 style={{ fontSize: '2.7rem', fontWeight: 300, lineHeight: '2.8rem' }}>
                     ANDY BUI
                 </h1>
-                <p style={{ fontSize: '1.4rem', lineHeight: '1.8rem', fontWeight: 200 }}>
+                <p style={{ fontSize: '1.4rem', marginTop: '0rem', lineHeight: '1.4rem', fontWeight: 200 }}>
                     UNDER CONSTRUCTION
                 </p>
                 <p style={{
@@ -56,6 +60,7 @@ export default function Maintenance() {
             </div>
 
             <div style={{
+                gridArea: '2 / 1 / -1 / -1',
                 width: "100%",
                 maxWidth: "48rem",
                 maxHeight: "36rem",
