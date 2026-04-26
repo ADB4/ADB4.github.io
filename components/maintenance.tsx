@@ -1,6 +1,15 @@
 import * as React from 'react';
+import ModelViewerComponent from "./modelViewer";
 
 export default function Maintenance() {
+    const modelURL: string = "gltf/chairProgramme.glb";
+    const textureURL: string[] = [
+            "tex/2048p/chairProgramme_BaseColor_sRGB.jpg",
+        "tex/2048p/chairProgramme_Normal_Raw.jpg",
+        "tex/2048p/chairProgramme_Roughness_Raw.jpg",
+        "tex/2048p/chairProgramme_Metallic_Raw.jpg",
+];
+    const baseURL: string = "https://s3.us-east-2.amazonaws.com/static.rogerlib.com/static/models/chair0/";
     return (
         <div className="home-container">
         <div
@@ -8,7 +17,7 @@ export default function Maintenance() {
                 width: '100%',
                 height: '100%',
                 display: 'flex',
-                flexDirection: 'column',
+                flexDirection: 'row',
                 justifyContent: 'center',
                 alignItems: 'center',
                 gap: '1rem',
@@ -46,6 +55,15 @@ export default function Maintenance() {
                 </p>
             </div>
 
+            <div style={{
+                width: "100%",
+                maxWidth: "48rem",
+                maxHeight: "36rem",
+                height: "100%",
+                outline: "1px solid red",
+            }}>
+                <ModelViewerComponent baseURL={baseURL} modelURL={[modelURL]} textureURL={textureURL}/>
+            </div>
         </div>
         </div>
     );
