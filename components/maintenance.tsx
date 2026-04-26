@@ -18,7 +18,8 @@ export default function Maintenance() {
         >
             <div className="maintenance-notice" style={{
                 backgroundColor: 'var(--debug-2)',
-                width: '24.0rem',
+                width: 'calc(100% - 1.0rem)',
+                maxWidth: '24.0rem',
                 height: '8.0rem',
                 display: 'flex',
                 flexDirection: 'column',

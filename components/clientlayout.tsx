@@ -202,11 +202,13 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                         </div>
 
                         <div className={`base-header`}>
-                            <Link className={"app-header"}
-                                  href="/"
-                            >
-                                <h2>ANDY BUI</h2>
-                            </Link>
+                            {!MAINTENANCE_MODE && (
+                                <Link className={"app-header"}
+                                      href="/"
+                                >
+                                    <h2>ANDY BUI</h2>
+                                </Link>
+                            )}
                         </div>
                         {MAINTENANCE_MODE ? (
                             <Maintenance />
