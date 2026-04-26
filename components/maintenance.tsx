@@ -60,7 +60,7 @@ export default function Maintenance() {
                 maxWidth: "48rem",
                 maxHeight: "36rem",
                 height: "100%",
-                outline: "1px solid red",
+                backgroundColor: 'var(--debug-3)'
             }}>
                 <ModelViewerComponent baseURL={baseURL} modelURL={[modelURL]} textureURL={textureURL}/>
             </div>
