@@ -8,6 +8,8 @@ import { ThemeToggle } from './themetoggle';
 import { DeviceContext } from '../context/devicecontext';
 import { useDevice } from '../hooks/useDevice';
 import Link from "next/link";
+import { MAINTENANCE_MODE } from '../lib/siteconfig';
+import Maintenance from "./maintenance";
 
 const styles = {
     orb: {
@@ -204,7 +206,14 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                                 <h2>ANDY BUI</h2>
                             </Link>
                         </div>
-                        {children}
+                        {MAINTENANCE_MODE ? (
+                            <Maintenance />
+                        ) : (
+                            <>
+                                {children}
+                            </>
+
+                        )}
                     </div>
                 </div>
             </main>

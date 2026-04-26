@@ -3,6 +3,16 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: ["main"]
+  workflow_dispatch:
+    inputs:
+      maintenance:
+        description: 'Deploy in maintenance mode'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 permissions:
   contents: read
@@ -24,6 +34,8 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run build
+        env:
+          NEXT_PUBLIC_MAINTENANCE_MODE: ${{ github.event.inputs.maintenance || 'false' }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./out

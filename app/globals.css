@@ -490,6 +490,7 @@ a {
 
 .navigation-item-left,
 .navigation-item {
+    cursor: pointer;
     display: flex;
     align-items: center;
     height: 1.5rem;
