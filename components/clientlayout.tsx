@@ -139,18 +139,20 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     return (
         <DeviceContext.Provider value={compactView}>
             <main>
-                <div className="cursor-canvas">
-                    <div
-                        style={{
-                            ...styles.orb,
-                            transform: `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%)`,
-                        }}
-                    >
-                        <div style={styles.orbHighlight} />
-                        <div style={styles.orbInner} />
-                        <div style={styles.orbPulse} />
+                {compactView && (
+                    <div className="cursor-canvas">
+                        <div
+                            style={{
+                                ...styles.orb,
+                                transform: `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%)`,
+                            }}
+                        >
+                            <div style={styles.orbHighlight} />
+                            <div style={styles.orbInner} />
+                            <div style={styles.orbPulse} />
+                        </div>
                     </div>
-                </div>
+                )}
                 <div className="main-container">
                     <div className={"navigation-container liquid-glass"}>
                         <div className={"navigation-container-inner"}>
