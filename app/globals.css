@@ -103,6 +103,30 @@
     --scrollbar-track: none;
     --scrollbar-thumb: black;
     overflow: hidden;
+
+    /*
+     * Layout debug palette.
+     *
+     * These variables are transparent by default. They become visible
+     * when the <html> element has the `debug-layout` class, which is
+     * controlled at runtime via the `?debug=1` URL query parameter.
+     * See clientlayout.tsx for the toggle logic.
+     *
+     * Use these on any element you want to inspect by assigning the
+     * appropriate variable to background-color. Pick a different
+     * number for adjacent / nested elements so they remain distinct.
+     */
+    --debug-1: transparent;
+    --debug-2: transparent;
+    --debug-3: transparent;
+    --debug-4: transparent;
+}
+
+.debug-layout {
+    --debug-1: rgba(255, 0, 0, 0.15);
+    --debug-2: rgba(68, 255, 0, 0.23);
+    --debug-3: rgba(255, 165, 0, 0.20);
+    --debug-4: rgba(0, 81, 255, 0.15);
 }
 
 [data-theme='dark'] {
@@ -549,7 +573,7 @@ a {
     scrollbar-width: none;
     margin: auto;
     display: flex;
-    background-color: rgba(255, 0, 0, 0.13);
+    background-color: var(--debug-1);
 }
 
 .home-content {
@@ -564,7 +588,7 @@ a {
     width: calc(100% - 2.0rem);
     min-width: 8.0rem;
     height: calc(100% - 2.0rem);
-    background-color: rgba(68, 255, 0, 0.23);
+    background-color: var(--debug-2);
     margin: auto;
     color: var(--text-primary);
     transform-origin: 50% 100%;
@@ -576,7 +600,7 @@ a {
 .rogerlib-logo {
     max-height: 11rem;
     max-width: 11rem;
-    background-color: rgba(255, 165, 0, 0.31);
+    background-color: var(--debug-3);
 }
 .rogerlib-info {
     height: calc(100% - 2.0rem);
@@ -585,7 +609,7 @@ a {
     flex-direction: column;
     justify-content: flex-start;
     gap: 0;
-    background-color: rgba(255, 157, 0, 0.14);
+    background-color: var(--debug-3);
 }
 .rogerlib-info p {
     font-family: Swiss721;
@@ -593,10 +617,10 @@ a {
     letter-spacing: -0.025rem;
     font-size: 1.6rem;
     line-height: 2.0rem;
-    background-color: rgba(0, 0, 255, 0.16);
+    background-color: var(--debug-4);
 }
 .rogerlib-link {
-    background-color: rgba(255, 0, 0, 0.18);
+    background-color: var(--debug-1);
     width: fit-content;
     margin-left: auto;
     margin-top: auto;
@@ -610,7 +634,7 @@ a {
     max-width: 48rem;
     display: flex;
     align-items: center;
-    background-color: rgba(0, 81, 255, 0.12);
+    background-color: var(--debug-4);
 }
 
 /* Contact */
