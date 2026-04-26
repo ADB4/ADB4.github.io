@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ModelViewerComponent from "./modelViewer";
+import { useEffect, useState } from "react";
 
 export default function Maintenance() {
     const modelURL: string = "gltf/chairProgramme.glb";
@@ -10,6 +11,13 @@ export default function Maintenance() {
         "tex/2048p/chairProgramme_Metallic_Raw.jpg",
 ];
     const baseURL: string = "https://s3.us-east-2.amazonaws.com/static.rogerlib.com/static/models/chair0/";
+    const [debug, setDebug] = useState<boolean>(false);
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const debug = params.get('debug') === '1';
+        setDebug(debug);
+    },[]);
     return (
         <div className="home-container">
         <div
@@ -67,7 +75,7 @@ export default function Maintenance() {
                 height: "100%",
                 backgroundColor: 'var(--debug-3)'
             }}>
-                <ModelViewerComponent baseURL={baseURL} modelURL={[modelURL]} textureURL={textureURL}/>
+                <ModelViewerComponent baseURL={baseURL} modelURL={[modelURL]} textureURL={textureURL} debug={debug}/>
             </div>
         </div>
         </div>

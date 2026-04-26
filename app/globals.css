@@ -540,7 +540,7 @@ a {
 }
 
 .navigation-item-left {
-    border-radius: 0.5rem 0 0 0.25rem;
+    border-radius: 0.25rem 0 0 0.5rem;
 }
 
 .base-header {
