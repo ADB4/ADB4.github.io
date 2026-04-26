@@ -54,12 +54,29 @@ const styles = {
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [isVisible, setIsVisible] = useState(false);
+    const [temperature, setTemperature] = useState<number | null>(null);
+
     const targetPositionRef = useRef({ x: 0, y: 0 });
     const rafRef = useRef<number | undefined>(undefined);
     const pathname = usePathname();
     const compactView = useDevice();
     const { theme, setTheme } = useTheme();
 
+    useEffect(() => {
+        fetch(
+            'https://api.open-meteo.com/v1/forecast?latitude=30.2672&longitude=-97.7431&current=temperature_2m&temperature_unit=fahrenheit&forecast_days=1'
+        )
+            .then(res => res.json())
+            .then(data => {
+                const temp = data?.current?.temperature_2m;
+                if (typeof temp === 'number') {
+                    setTemperature(Math.round(temp));
+                }
+            })
+            .catch(() => {
+                // fail silently — puck renders without temperature
+            });
+    }, []);
     // Layout debug flag.
     // Reads `?debug=1` from the URL and toggles the `debug-layout` class
     // on <html>. The class activates the --debug-N variables defined in
@@ -198,6 +215,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                             }}>
 
                                 <p className={'puck-paragraph'}>AUSTIN, TX</p>
+                                {temperature !== null && (
+                                    <p className={'puck-temperature'}>{temperature}°F</p>
+                                )}
                             </div>
                         </div>
 
