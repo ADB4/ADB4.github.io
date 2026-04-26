@@ -24,7 +24,7 @@ export default function Maintenance() {
             style={{
                 width: '100%',
                 height: '100%',
-                maxWidth: '48rem',
+                maxWidth: '72rem',
                 maxHeight: '36rem',
                 margin: 'auto',
                 display: 'grid',
@@ -70,9 +70,8 @@ export default function Maintenance() {
             <div style={{
                 gridArea: '2 / 1 / -1 / -1',
                 width: "100%",
-                maxWidth: "48rem",
-                maxHeight: "36rem",
                 height: "100%",
+                maxHeight: "36rem",
                 backgroundColor: 'var(--debug-3)'
             }}>
                 <ModelViewerComponent baseURL={baseURL} modelURL={[modelURL]} textureURL={textureURL} debug={debug}/>
