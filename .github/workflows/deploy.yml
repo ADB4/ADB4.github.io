@@ -35,7 +35,7 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          NEXT_PUBLIC_MAINTENANCE_MODE: ${{ github.event.inputs.maintenance || 'false' }}
+          NEXT_PUBLIC_MAINTENANCE_MODE: ${{ github.event.inputs.maintenance || 'true' }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./out
