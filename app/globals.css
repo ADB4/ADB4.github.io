@@ -72,6 +72,44 @@
     margin: 0;
 }
 
+@media (max-width: 800px) {
+    html, body {
+        overflow-x: hidden;
+    }
+}
+/* Landscape phones and down */
+@media (max-width: 480px) {
+    html {
+        font-size: 90%;
+    }
+}
+
+/* Landscape phone to portrait tablet */
+@media (min-width: 481px) and (max-width: 767px) {
+    html {
+        font-size: 95%;
+    }
+}
+
+/* Portrait tablet to landscape and desktop */
+@media (min-width: 768px) and (max-width: 979px) {
+    html {
+        font-size: 100%;
+    }
+
+}
+
+@media (min-width: 980px) and (max-width: 1999px) {
+    html {
+        font-size: 100%;
+    }
+}
+/* Large desktop */
+@media (min-width: 2000px) {
+    html {
+        font-size: 100%;
+    }
+}
 :root {
     --min-body-width: 8.0rem;
     --body-color: rgb(0, 0, 0);
@@ -440,7 +478,7 @@ a {
 /* Layout */
 .main-container {
     margin: 0 auto auto;
-    width: calc(100dvw - 2.0rem);
+    width: calc(100dvw - 1.0rem);
     height: calc(100dvh - 1.0rem);
     display: grid;
     grid-template: auto 3.0rem / auto;
@@ -563,6 +601,9 @@ a {
     font-family: MDIO;
     font-size: 2.0rem;
     color: var(--text-primary);
+}
+.maintenance-notice {
+
 }
 /* Home */
 .home-container {
