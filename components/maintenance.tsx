@@ -87,7 +87,6 @@ export default function Maintenance() {
                         baseURL={baseURL}
                         modelURL={[modelURL]}
                         textureURL={textureURL}
-                        debug
                     />
                 </div>
             </div>
