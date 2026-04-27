@@ -457,7 +457,7 @@ export default function ModelViewerComponent({
                           fit. `margin` adds a little breathing room
                           around the model.
                         */}
-                        <Bounds fit clip observe margin={1.1} delay={150}>
+                        <Bounds fit clip observe margin={1.1}>
                             <GLTFComponent modelURLs={modelURLs} textures={textures} />
                         </Bounds>
                         <Environment files={HDRI_URL} />
