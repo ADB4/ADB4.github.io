@@ -1,7 +1,8 @@
 import * as React from "react";
-import { Suspense, useMemo, useRef, useState } from "react";
+import { Suspense, useMemo, useRef, useState, useEffect, useCallback } from "react";
 import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
 import {
+    Bounds,
     Environment,
     OrbitControls,
     useGLTF,
@@ -26,6 +27,25 @@ Inputs:
   debug      — optional. When true, an overlay shows the live camera
                  position / target / fov and lets you save snapshots
                  for use as fixed views later. Defaults to false.
+
+Sizing:
+  The component fills its parent. The parent must have a determinate
+  width and height; on the consumer side, set position:relative with
+  an explicit size or a clamp()-based height.
+
+Framing:
+  drei's <Bounds observe> wraps the loaded model and reruns its fit
+  pass whenever the canvas resizes. The DEFAULT_CAMERA constant sets
+  the starting orientation; Bounds dollies along that orientation
+  to frame the model.
+
+Stability:
+  Every prop that flows into the <Canvas> subtree is referentially
+  stable across renders. This is critical because changes to those
+  references can remount scene-graph nodes mid-frame and cause the
+  Bounds fit to retrigger or shaders to recompile, which manifests
+  as visible jitter. The pattern is to depend on string keys (joined
+  URL lists) rather than the raw arrays from props.
 */
 
 interface ModelViewerProps {
@@ -38,6 +58,20 @@ interface ModelViewerProps {
 // Hardcoded environment used for image-based lighting
 const HDRI_URL =
     "https://d2fhlomc9go8mv.cloudfront.net/static/hdri/rural_asphalt_road_256p.exr";
+
+/*
+DEFAULT_CAMERA
+
+The starting view. Bounds will dolly along the (position - target)
+direction to frame the model, so what really matters here is the
+view angle; the magnitude is overwritten by the fit pass. fov is
+preserved across resizes.
+*/
+const DEFAULT_CAMERA = {
+    position: [4.640, 2.076, -3.068] as [number, number, number],
+    target: [0, 0, 0] as [number, number, number],
+    fov: 53,
+};
 
 /*
 LoaderOverlay
@@ -116,40 +150,76 @@ interface CameraSnapshot {
 }
 
 /*
+CameraReadoutBus
+
+Subscription primitive shared between the inside of the Canvas
+(producer) and the DOM overlay (consumer). The producer writes into
+a ref every frame and notifies subscribers on a throttled cadence;
+the consumer subscribes via a hook.
+
+This pattern is what keeps the Canvas tree from re-rendering when
+the debug overlay updates. Calling setState in the parent of <Canvas>
+would otherwise cascade through every memoized prop and risk
+remounting scene graph nodes, which produces frame-to-frame jitter.
+*/
+type Listener = (snap: CameraSnapshot) => void;
+
+interface CameraReadoutBus {
+    snapshotRef: React.MutableRefObject<CameraSnapshot>;
+    write: (snap: CameraSnapshot) => void;
+    subscribe: (listener: Listener) => () => void;
+}
+
+function createCameraReadoutBus(initial: CameraSnapshot): CameraReadoutBus {
+    const snapshotRef = { current: initial } as React.MutableRefObject<CameraSnapshot>;
+    const listeners = new Set<Listener>();
+    return {
+        snapshotRef,
+        write(snap) {
+            snapshotRef.current = snap;
+            listeners.forEach((l) => l(snap));
+        },
+        subscribe(listener) {
+            listeners.add(listener);
+            return () => {
+                listeners.delete(listener);
+            };
+        },
+    };
+}
+
+/*
 CameraReadout
 
 Lives inside the Canvas so it can read camera state every frame via
-useFrame. It writes into a ref (avoids per-frame React renders) and
-throttles state updates to ~10Hz so the overlay text stays legible
-while still feeling live during drags. The OrbitControls target is
-read from the default-set controls on the R3F state.
+useFrame. Throttles bus writes to ~10Hz so the overlay text stays
+legible while still feeling live during drags.
 */
 interface CameraReadoutProps {
-    snapshotRef: React.MutableRefObject<CameraSnapshot>;
-    onUpdate: (snap: CameraSnapshot) => void;
+    bus: CameraReadoutBus;
 }
 
-function CameraReadout({ snapshotRef, onUpdate }: CameraReadoutProps) {
+function CameraReadout({ bus }: CameraReadoutProps) {
     const { camera, controls } = useThree();
     const lastEmitRef = useRef<number>(0);
+    const tmpTargetRef = useRef<THREE.Vector3>(new THREE.Vector3());
 
     useFrame(() => {
         const persp = camera as THREE.PerspectiveCamera;
-        // OrbitControls is registered as the default; cast to access target.
         const orbit = controls as unknown as { target?: THREE.Vector3 } | null;
-        const target = orbit?.target ?? new THREE.Vector3(0, 0, 0);
+        const target = orbit?.target ?? tmpTargetRef.current;
 
-        const snap: CameraSnapshot = {
+        // Always update the ref so handleSave reflects the latest frame.
+        bus.snapshotRef.current = {
             position: [persp.position.x, persp.position.y, persp.position.z],
             target: [target.x, target.y, target.z],
             fov: persp.fov,
         };
-        snapshotRef.current = snap;
 
         const now = performance.now();
         if (now - lastEmitRef.current > 100) {
             lastEmitRef.current = now;
-            onUpdate(snap);
+            bus.write(bus.snapshotRef.current);
         }
     });
 
@@ -160,13 +230,13 @@ function CameraReadout({ snapshotRef, onUpdate }: CameraReadoutProps) {
 DebugOverlay
 
 DOM-side overlay that renders the live readout and the list of saved
-positions. Sibling of the Canvas so styling is easy and it never
-interferes with R3F's render loop.
+positions. Subscribes to the bus directly, so its state changes never
+touch the Canvas tree.
 */
 interface DebugOverlayProps {
-    live: CameraSnapshot;
-    saved: CameraSnapshot[];
+    bus: CameraReadoutBus;
     onSave: () => void;
+    saved: CameraSnapshot[];
     onClear: () => void;
     onRemove: (index: number) => void;
 }
@@ -181,7 +251,13 @@ function snapshotToCode(snap: CameraSnapshot): string {
     return `position: [${p}], target: [${t}], fov: ${fmt(snap.fov)}`;
 }
 
-function DebugOverlay({ live, saved, onSave, onClear, onRemove }: DebugOverlayProps) {
+function DebugOverlay({ bus, onSave, saved, onClear, onRemove }: DebugOverlayProps) {
+    const [live, setLive] = useState<CameraSnapshot>(bus.snapshotRef.current);
+
+    useEffect(() => {
+        return bus.subscribe(setLive);
+    }, [bus]);
+
     const copy = (text: string) => {
         if (typeof navigator !== "undefined" && navigator.clipboard) {
             navigator.clipboard.writeText(text).catch(() => {
@@ -296,31 +372,49 @@ export default function ModelViewerComponent({
                                                  textureURL,
                                                  debug = false,
                                              }: ModelViewerProps) {
+    /*
+      Stable scalar keys.
+
+      Joining the URL lists into strings gives us memo dependencies
+      that compare by value, not identity. The caller passes a fresh
+      array literal on every render; without these keys, every memo
+      below would invalidate on every parent render, cascading down
+      into the scene graph.
+    */
+    const modelKey = useMemo(() => modelURL.join("|"), [modelURL]);
+    const textureKey = useMemo(() => textureURL.join("|"), [textureURL]);
+
     const modelURLs = useMemo(
         () => modelURL.map((k) => joinURL(baseURL, k)),
-        [baseURL, modelURL]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [baseURL, modelKey]
     );
     const textures = useMemo(
         () => matchTextures(baseURL, textureURL),
-        [baseURL, textureURL]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [baseURL, textureKey]
     );
 
-    // Initial camera config kept in one place so the readout starts with
-    // the real values rather than zeros that flash for one frame.
-    const initialCamera = useMemo<CameraSnapshot>(
+    // Bus is created exactly once per mount. The CameraReadout writes
+    // into it every frame; the DebugOverlay subscribes to it.
+    const initialSnapshot = useMemo<CameraSnapshot>(
         () => ({
-            position: [2.773, 1.600, -2.966], target: [0.000, 0.000, 0.000], fov: 53.000
+            position: DEFAULT_CAMERA.position,
+            target: DEFAULT_CAMERA.target,
+            fov: DEFAULT_CAMERA.fov,
         }),
         []
     );
+    const busRef = useRef<CameraReadoutBus | null>(null);
+    if (busRef.current === null) {
+        busRef.current = createCameraReadoutBus(initialSnapshot);
+    }
+    const bus = busRef.current;
 
-    const snapshotRef = useRef<CameraSnapshot>(initialCamera);
-    const [live, setLive] = useState<CameraSnapshot>(initialCamera);
     const [saved, setSaved] = useState<CameraSnapshot[]>([]);
 
-    const handleSave = () => {
-        // Snapshot the ref (current frame) rather than `live` (throttled).
-        const s = snapshotRef.current;
+    const handleSave = useCallback(() => {
+        const s = bus.snapshotRef.current;
         setSaved((prev) => [
             ...prev,
             {
@@ -329,33 +423,65 @@ export default function ModelViewerComponent({
                 fov: s.fov,
             },
         ]);
-    };
+    }, [bus]);
 
-    const handleClear = () => setSaved([]);
-    const handleRemove = (index: number) =>
-        setSaved((prev) => prev.filter((_, i) => i !== index));
+    const handleClear = useCallback(() => setSaved([]), []);
+    const handleRemove = useCallback(
+        (index: number) =>
+            setSaved((prev) => prev.filter((_, i) => i !== index)),
+        []
+    );
 
     return (
         <div
             className="model-view-module-compact"
-            style={{ position: "relative", width: "100%", height: "100%" }}
+            style={{
+                position: "relative",
+                width: "100%",
+                height: "100%",
+                overflow: "hidden",
+            }}
         >
-            <Canvas camera={{ position: initialCamera.position, fov: initialCamera.fov }}>
-                <Suspense fallback={null}>
-                    <GLTFComponent modelURLs={modelURLs} textures={textures} />
-                    <Environment files={HDRI_URL} />
-                </Suspense>
-                <OrbitControls makeDefault enableDamping dampingFactor={0.1} />
-                {debug && (
-                    <CameraReadout snapshotRef={snapshotRef} onUpdate={setLive} />
-                )}
-            </Canvas>
+            <div style={{ position: "absolute", inset: 0 }}>
+                <Canvas
+                    camera={{
+                        position: DEFAULT_CAMERA.position,
+                        fov: DEFAULT_CAMERA.fov,
+                    }}
+                >
+                    <Suspense fallback={null}>
+                        {/*
+                          Bounds with `observe` re-fits whenever the
+                          canvas resizes. `delay` debounces the resize
+                          observer so rapid changes coalesce into one
+                          fit. `margin` adds a little breathing room
+                          around the model.
+                        */}
+                        <Bounds fit clip observe margin={1.1} delay={150}>
+                            <GLTFComponent modelURLs={modelURLs} textures={textures} />
+                        </Bounds>
+                        <Environment files={HDRI_URL} />
+                    </Suspense>
+                    {/*
+                      Damping disabled. enableDamping makes OrbitControls
+                      integrate the camera every frame toward an internal
+                      target; when Bounds writes the camera in response to
+                      a resize, OrbitControls treats those writes as drift
+                      and damps them away — the two systems oscillate.
+                    */}
+                    <OrbitControls
+                        makeDefault
+                        target={DEFAULT_CAMERA.target}
+                    />
+                    {debug && <CameraReadout bus={bus} />}
+                </Canvas>
+            </div>
             <LoaderOverlay />
             {debug && (
                 <DebugOverlay
-                    live={live}
-                    saved={saved}
+                    bus={bus}
                     onSave={handleSave}
+                    saved={saved}
                     onClear={handleClear}
                     onRemove={handleRemove}
                 />

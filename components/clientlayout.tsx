@@ -62,6 +62,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     const compactView = useDevice();
     const { theme, setTheme } = useTheme();
 
+    const navItemStyle: React.CSSProperties = {
+        backgroundColor: 'var(--nav-item-primary)',
+        color: 'var(--nav-item-text)',
+    }
     useEffect(() => {
         fetch(
             'https://api.open-meteo.com/v1/forecast?latitude=30.2672&longitude=-97.7431&current=temperature_2m&temperature_unit=fahrenheit&forecast_days=1'
@@ -173,14 +177,20 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 <div className="main-container">
                     <div className={"navigation-container liquid-glass"}>
                         <div className={"navigation-container-inner"}>
-                            <Link className={"navigation-item-left liquid-glass"} href={"/about"}>
-                                <h2>ABOUT</h2>
+                            <Link style={navItemStyle} className={"navigation-item-left liquid-glass"} href={"/about"}>
+                                <div className={"navigation-item-inner"}>
+                                    <h2>ABOUT</h2>
+                                </div>
                             </Link>
-                            <Link className={"navigation-item liquid-glass"} href={"/"}>
-                                <h2>PROJECTS</h2>
+                            <Link style={navItemStyle}  className={"navigation-item liquid-glass"} href={"/"}>
+                                <div className={"navigation-item-inner"}>
+                                    <h2>PROJECTS</h2>
+                                </div>
                             </Link>
-                            <Link className={"navigation-item liquid-glass"} href={"/"}>
-                                <h2>WRITING</h2>
+                            <Link style={navItemStyle}  className={"navigation-item liquid-glass"} href={"/"}>
+                                <div className={"navigation-item-inner"}>
+                                    <h2>WRITING</h2>
+                                </div>
                             </Link>
                             <ThemeToggle />
                         </div>

@@ -131,8 +131,8 @@
     --nav-secondary: rgba(52, 57, 60, 0.417);
     --nav-highlight: #FFFFFF;
     --nav-shadow: #a2a2a2fd;
-    --nav-item-primary: rgba(213, 213, 213, 0.214);
-    --nav-item-secondary: rgb(255, 29, 29);
+    --nav-item-primary: rgba(238, 238, 238, 0.4);
+    --nav-item-secondary: rgb(102, 169, 220);
     --nav-item-text: rgb(228, 228, 228);
     --indicator-light: #00ff1a;
     --indicator-dark: black;
@@ -189,7 +189,7 @@
     --nav-highlight: #ebebeb;
     --nav-shadow: #000000;
     --nav-item-primary: #2c2f33ba;
-    --nav-item-secondary: #380404;
+    --nav-item-secondary: rgb(22, 56, 82);
     --nav-item-text: #00ff1a;
     --indicator-light: black;
     --indicator-dark: #00ff1a;
@@ -533,10 +533,22 @@ a {
     align-items: center;
     height: 1.5rem;
     width: auto;
-    padding: 0 1.0rem;
+    padding: 0 0.5rem 0 0.5rem;
+}
+.navigation-item-inner {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    height: 1rem;
+    border-radius: 0.5rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    border: 1px solid rgba(20, 20, 20, 0.25);
+    background-color: rgba(135, 135, 135, 0.25);
     font-family: Swiss721;
     font-weight: 200;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    box-shadow: rgba(0, 0, 0, 0.48) 0px -20px 16px -18px inset;
 }
 
 .navigation-item-left {
@@ -1100,7 +1112,7 @@ a {
 
 .nav-theme-toggle p {
     font-family: Swiss721;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 200;
 }
 

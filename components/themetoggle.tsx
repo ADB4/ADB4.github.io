@@ -19,7 +19,10 @@ export const ThemeToggle= () => {
         aria-label="Toggle theme"
         style={themeToggleStyle}
       >
-          <p>THEME</p>
+          <div className={"navigation-item-inner"}>
+              <p>THEME</p>
+          </div>
+
       </button>
   );
 }
