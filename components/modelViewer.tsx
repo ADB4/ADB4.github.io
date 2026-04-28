@@ -5,6 +5,7 @@ import {
     Bounds,
     Environment,
     OrbitControls,
+    useBounds,
     useGLTF,
     useProgress,
 } from "@react-three/drei";
@@ -34,10 +35,21 @@ Sizing:
   an explicit size or a clamp()-based height.
 
 Framing:
-  drei's <Bounds observe> wraps the loaded model and reruns its fit
-  pass whenever the canvas resizes. The DEFAULT_CAMERA constant sets
-  the starting orientation; Bounds dollies along that orientation
-  to frame the model.
+  drei's <Bounds> wraps the loaded model. We invoke its fit pass
+  IMPERATIVELY exactly once per geometry change via <BoundsFitter>,
+  rather than declaratively via the <Bounds fit observe> props.
+
+  Rationale: <Bounds observe> re-runs fit() on every canvas resize.
+  On mobile, dvh recalculates as the URL bar shows/hides; on desktop,
+  scrollbar appearance, DPR rounding, or font-load reflow can all fire
+  ResizeObserver. Each of those events overwrites the camera and
+  cancels any zoom the user has performed. Worse, sub-pixel resize
+  ticks during a drag fight OrbitControls writes in the same frame
+  and produce visible jitter.
+
+  By fitting once on geometry-ready and leaving the camera alone
+  thereafter, user zoom/pan/orbit is preserved across resizes. We
+  still pass `clip` to <Bounds> so near/far planes stay sensible.
 
 Stability:
   Every prop that flows into the <Canvas> subtree is referentially
@@ -63,9 +75,9 @@ const HDRI_URL =
 DEFAULT_CAMERA
 
 The starting view. Bounds will dolly along the (position - target)
-direction to frame the model, so what really matters here is the
-view angle; the magnitude is overwritten by the fit pass. fov is
-preserved across resizes.
+direction to frame the model on the initial fit, so what really
+matters here is the view angle; the magnitude is overwritten by
+that one fit pass. fov is preserved.
 */
 const DEFAULT_CAMERA = {
     position: [4.640, 2.076, -3.068] as [number, number, number],
@@ -366,6 +378,52 @@ const debugButtonStyle: React.CSSProperties = {
     cursor: "pointer",
 };
 
+/*
+BoundsFitter
+
+Runs the Bounds fit pass exactly once per geometry change. Lives as a
+child of <Bounds>, so useBounds() resolves to the api created by the
+nearest Bounds parent.
+
+Why a child component instead of <Bounds fit observe>:
+  - `observe` re-fits on every canvas resize. dvh changes (mobile URL
+    bar), DPR rounding, scrollbar appearance, and font reflow all
+    trigger ResizeObserver and overwrite user-driven zoom.
+  - During a drag, sub-pixel resize ticks fire mid-frame and fight
+    OrbitControls writes, producing visible jitter.
+
+Trigger key:
+  - `fitKey` is a stable string identifying the loaded geometry set.
+    When it changes (different model loaded), we re-fit. Resizes do
+    not change the key, so they do not re-fit.
+
+Timing:
+  - We wait one rAF after the geometry mounts so the GLBs have
+    finished their Suspense resolution and the parent group has its
+    final transform. Calling refresh()/fit() before the scene graph
+    is settled produces an off-center frame.
+*/
+interface BoundsFitterProps {
+    fitKey: string;
+    margin?: number;
+}
+
+function BoundsFitter({ fitKey, margin = 1.1 }: BoundsFitterProps) {
+    const api = useBounds();
+
+    useEffect(() => {
+        const id = requestAnimationFrame(() => {
+            // refresh() recomputes the bounding box from the current scene
+            // graph, then fit() dollies the camera along its current view
+            // axis to frame the box with the requested margin.
+            api.refresh().clip().fit();
+        });
+        return () => cancelAnimationFrame(id);
+    }, [api, fitKey, margin]);
+
+    return null;
+}
+
 export default function ModelViewerComponent({
                                                  baseURL,
                                                  modelURL,
@@ -394,6 +452,10 @@ export default function ModelViewerComponent({
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [baseURL, textureKey]
     );
+
+    // Stable identifier for the loaded geometry set. Used by
+    // <BoundsFitter> to decide when to re-run the fit pass.
+    const fitKey = useMemo(() => `${baseURL}::${modelKey}`, [baseURL, modelKey]);
 
     // Bus is created exactly once per mount. The CameraReadout writes
     // into it every frame; the DebugOverlay subscribes to it.
@@ -451,13 +513,15 @@ export default function ModelViewerComponent({
                 >
                     <Suspense fallback={null}>
                         {/*
-                          Bounds with `observe` re-fits whenever the
-                          canvas resizes. `delay` debounces the resize
-                          observer so rapid changes coalesce into one
-                          fit. `margin` adds a little breathing room
-                          around the model.
+                          Bounds is used IMPERATIVELY here: no `fit`,
+                          no `observe`. <BoundsFitter> calls the fit
+                          pass once per fitKey change. This preserves
+                          user-driven zoom across canvas resizes and
+                          eliminates the resize/OrbitControls fight
+                          that produced jitter during drags.
                         */}
-                        <Bounds fit clip observe margin={1.1}>
+                        <Bounds margin={1.1}>
+                            <BoundsFitter fitKey={fitKey} margin={1.1} />
                             <GLTFComponent modelURLs={modelURLs} textures={textures} />
                         </Bounds>
                         <Environment files={HDRI_URL} />
@@ -465,9 +529,9 @@ export default function ModelViewerComponent({
                     {/*
                       Damping disabled. enableDamping makes OrbitControls
                       integrate the camera every frame toward an internal
-                      target; when Bounds writes the camera in response to
-                      a resize, OrbitControls treats those writes as drift
-                      and damps them away — the two systems oscillate.
+                      target; even without Bounds writing the camera, the
+                      damping integration adds latency to user input and
+                      can interact badly with rapid wheel events.
                     */}
                     <OrbitControls
                         makeDefault

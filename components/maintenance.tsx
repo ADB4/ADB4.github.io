@@ -39,7 +39,7 @@ export default function Maintenance() {
                     alignItems: 'flex-start',
                     zIndex: '10',
                 }}>
-                    <h1 style={{ fontSize: '2.7rem', fontWeight: 300, lineHeight: '2.8rem' }}>
+                    <h1 style={{ fontSize: '2.0rem', fontWeight: 300, lineHeight: '2.0rem', marginBottom: '0rem', }}>
                         ANDY BUI
                     </h1>
                     <p style={{ fontSize: '1.4rem', marginTop: '0rem', lineHeight: '1.4rem', fontWeight: 200 }}>
