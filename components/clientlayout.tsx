@@ -201,16 +201,17 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                             <svg width="0" height="0" style={{ position: 'absolute' }}>
                                 <defs>
                                     <clipPath id="puck-clip" clipPathUnits="userSpaceOnUse">
-                                        <clipPath id="puck-clip" clipPathUnits="userSpaceOnUse">
-                                            <path clipRule="evenodd" d="
-    M 12 0 L 176 0 Q 192 0 192 16 L 192 84 Q 192 96 180 96
-    L 46.49 96 Q 39.55 96 34.91 91.35 L 4.65 66.49
-    Q 0 61.45 0 54.51 L 0 12 Q 0 0 12 0 Z
-    M 168 8 L 176 8 Q 184 8 184 16 L 184 24
-    Q 184 32 176 32 L 168 32 Q 160 32 160 24
-    L 160 16 Q 160 8 168 8 Z
-"/>
-                                        </clipPath>
+                                        <path
+                                            clipRule="evenodd"
+                                            d="
+                    M 12 0 L 176 0 Q 192 0 192 16 L 192 84 Q 192 96 180 96
+                    L 46.49 96 Q 39.55 96 34.91 91.35 L 4.65 66.49
+                    Q 0 61.45 0 54.51 L 0 12 Q 0 0 12 0 Z
+                    M 168 8 L 176 8 Q 184 8 184 16 L 184 24
+                    Q 184 32 176 32 L 168 32 Q 160 32 160 24
+                    L 160 16 Q 160 8 168 8 Z
+                "
+                                        />
                                     </clipPath>
                                 </defs>
                             </svg>
