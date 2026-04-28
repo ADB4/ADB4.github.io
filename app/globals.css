@@ -80,21 +80,21 @@
 /* Landscape phones and down */
 @media (max-width: 480px) {
     html {
-        font-size: 90%;
+        font-size: 85%;
     }
 }
 
 /* Landscape phone to portrait tablet */
 @media (min-width: 481px) and (max-width: 767px) {
     html {
-        font-size: 95%;
+        font-size: 90%;
     }
 }
 
 /* Portrait tablet to landscape and desktop */
 @media (min-width: 768px) and (max-width: 979px) {
     html {
-        font-size: 100%;
+        font-size: 95%;
     }
 
 }
@@ -113,7 +113,7 @@
 :root {
     --min-body-width: 8.0rem;
     --body-color: rgb(0, 0, 0);
-    --min-container-width: 36.0rem;
+    --min-container-width: 18.0rem;
     --bg-primary: rgba(244, 241, 232, 0.86);
     --text-light: white;
     --text-dark: black;
@@ -170,7 +170,7 @@
 [data-theme='dark'] {
     --min-body-width: 8.0rem;
     --body-color: black;
-    --min-container-width: 36.0rem;
+    --min-container-width: 18.0rem;
     --bg-primary: rgba(21, 21, 21, 0.45);
     --text-light: black;
     --text-dark: white;
