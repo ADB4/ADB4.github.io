@@ -132,7 +132,7 @@
     --nav-highlight: #FFFFFF;
     --nav-shadow: #a2a2a2fd;
     --nav-item-primary: rgba(238, 238, 238, 0.4);
-    --nav-item-secondary: rgb(102, 169, 220);
+    --nav-item-secondary: rgb(255, 83, 83);
     --nav-item-text: rgb(228, 228, 228);
     --indicator-light: #00ff1a;
     --indicator-dark: black;
@@ -189,7 +189,7 @@
     --nav-highlight: #ebebeb;
     --nav-shadow: #000000;
     --nav-item-primary: #2c2f33ba;
-    --nav-item-secondary: rgb(22, 56, 82);
+    --nav-item-secondary: rgb(82, 22, 22);
     --nav-item-text: #00ff1a;
     --indicator-light: black;
     --indicator-dark: #00ff1a;
@@ -506,8 +506,8 @@ a {
     justify-content: flex-end;
     align-items: flex-end;
     padding: 0.25rem;
-    max-width: 36.0rem;
-    width: 100%;
+    max-width: 30.0rem;
+    width: fit-content;
     height: 2.5rem;
     background-color: rgba(220, 220, 255, 0.43);
     border-radius: 0.25rem 0.25rem 1rem 1rem;
@@ -522,8 +522,8 @@ a {
     width: calc(100% - 1rem);
     height: 100%;
     background-color: rgba(41, 52, 29, 0.43);
-    border-radius: 0.75rem 0.25rem 0.75rem 0.75rem;
-    margin: auto 0 auto auto;
+    border-radius: 0.25rem 0.25rem 0.75rem 0.75rem;
+    margin: auto auto auto auto;
 }
 
 .navigation-item-left,
@@ -1102,7 +1102,7 @@ a {
     width: fit-content;
     height: 1.5rem;
     border-radius: 0 0.125rem 0.5rem 0;
-    padding: 0 0.75rem;
+    padding: 0 0.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
