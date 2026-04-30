@@ -30,34 +30,37 @@ Inputs:
                  for use as fixed views later. Defaults to false.
 
 Sizing:
-  The component fills its parent. The parent must have a determinate
-  width and height; on the consumer side, set position:relative with
-  an explicit size or a clamp()-based height.
+  The component fills its parent. Because the wrapper may sit inside a
+  flex/grid cell that collapses without a determinate height, we
+  measure the parent element via a ResizeObserver and apply pixel
+  width/height directly. Until the first measurement lands, the
+  wrapper falls back to width:100% / height:100%, so the canvas still
+  renders something on the initial mount in cases where the parent is
+  already sized correctly.
 
 Framing:
-  drei's <Bounds> wraps the loaded model. We invoke its fit pass
-  IMPERATIVELY exactly once per geometry change via <BoundsFitter>,
-  rather than declaratively via the <Bounds fit observe> props.
+  drei's <Bounds> wraps the loaded model. The fit pass is invoked
+  IMPERATIVELY by <BoundsFitter>:
 
-  Rationale: <Bounds observe> re-runs fit() on every canvas resize.
-  On mobile, dvh recalculates as the URL bar shows/hides; on desktop,
-  scrollbar appearance, DPR rounding, or font-load reflow can all fire
-  ResizeObserver. Each of those events overwrites the camera and
-  cancels any zoom the user has performed. Worse, sub-pixel resize
-  ticks during a drag fight OrbitControls writes in the same frame
-  and produce visible jitter.
+    - Once on geometry change (fitKey).
+    - On viewport resize, ONLY when the model would otherwise be
+      clipped at the current camera distance.
 
-  By fitting once on geometry-ready and leaving the camera alone
-  thereafter, user zoom/pan/orbit is preserved across resizes. We
-  still pass `clip` to <Bounds> so near/far planes stay sensible.
+  Why clip-aware rather than always: an unconditional refit on every
+  resize cancels user-driven zoom (e.g. mobile URL bar showing/hiding,
+  scrollbar appearance, font reflow all fire ResizeObserver). The
+  clip-aware path leaves the camera alone when the bounding sphere
+  still projects inside the viewport with the configured margin, so
+  zoom is preserved unless the viewport actually shrinks past the
+  model's projected extent.
 
 Stability:
   Every prop that flows into the <Canvas> subtree is referentially
-  stable across renders. This is critical because changes to those
-  references can remount scene-graph nodes mid-frame and cause the
-  Bounds fit to retrigger or shaders to recompile, which manifests
-  as visible jitter. The pattern is to depend on string keys (joined
-  URL lists) rather than the raw arrays from props.
+  stable across renders. Changes to those references can remount
+  scene-graph nodes mid-frame and cause the Bounds fit to retrigger
+  or shaders to recompile, which manifests as visible jitter. The
+  pattern is to depend on string keys (joined URL lists) rather than
+  the raw arrays from props.
 */
 
 interface ModelViewerProps {
@@ -84,6 +87,10 @@ const DEFAULT_CAMERA = {
     target: [0, 0, 0] as [number, number, number],
     fov: 53,
 };
+
+// Margin used by Bounds.fit() and by the clip-aware resize check.
+// Kept as a single constant so both paths stay in sync.
+const FIT_MARGIN = 1.1;
 
 /*
 LoaderOverlay
@@ -381,45 +388,114 @@ const debugButtonStyle: React.CSSProperties = {
 /*
 BoundsFitter
 
-Runs the Bounds fit pass exactly once per geometry change. Lives as a
-child of <Bounds>, so useBounds() resolves to the api created by the
-nearest Bounds parent.
+Drives the Bounds fit pass. Lives as a child of <Bounds>, so
+useBounds() resolves to the api created by the nearest Bounds parent.
 
-Why a child component instead of <Bounds fit observe>:
-  - `observe` re-fits on every canvas resize. dvh changes (mobile URL
-    bar), DPR rounding, scrollbar appearance, and font reflow all
-    trigger ResizeObserver and overwrite user-driven zoom.
-  - During a drag, sub-pixel resize ticks fire mid-frame and fight
-    OrbitControls writes, producing visible jitter.
+Two fit triggers:
 
-Trigger key:
-  - `fitKey` is a stable string identifying the loaded geometry set.
-    When it changes (different model loaded), we re-fit. Resizes do
-    not change the key, so they do not re-fit.
+  1. Geometry change (fitKey). Always re-fits, full reset of camera
+     distance. This is the canonical "load a new model" path.
 
-Timing:
-  - We wait one rAF after the geometry mounts so the GLBs have
-    finished their Suspense resolution and the parent group has its
-    final transform. Calling refresh()/fit() before the scene graph
-    is settled produces an off-center frame.
+  2. Viewport resize. Re-fits ONLY when the model's bounding sphere
+     no longer projects inside the viewport with the configured
+     margin at the current camera distance.
+
+The clip-aware path is what preserves user zoom across resizes.
+<Bounds observe> would call fit() on every resize unconditionally,
+which both wipes user zoom and causes jitter when sub-pixel resize
+ticks fire mid-drag. By only refitting on actual clipping, we keep
+user zoom intact when the resize doesn't push the model out of view.
+
+Geometry-fit timing:
+  We wait one rAF after the geometry mounts so the GLBs have
+  finished their Suspense resolution and the parent group has its
+  final transform. Calling refresh()/fit() before the scene graph
+  is settled produces an off-center frame.
+
+Clip detection math:
+  Given the camera-to-target distance d, the perspective half-height
+  at that distance is d * tan(fov/2), and the half-width is that
+  times aspect. Multiplying by FIT_MARGIN gives the threshold the
+  bounding sphere radius must stay under to be considered framed.
+  We additionally guard against the camera being inside or past the
+  bounding sphere (d <= radius) by treating that as clipped.
 */
 interface BoundsFitterProps {
     fitKey: string;
-    margin?: number;
 }
 
-function BoundsFitter({ fitKey, margin = 1.1 }: BoundsFitterProps) {
+function BoundsFitter({ fitKey }: BoundsFitterProps) {
     const api = useBounds();
+    const { scene, camera, size } = useThree();
 
+    // Re-fit on geometry change. Runs once per fitKey, after one rAF
+    // so the Suspense-resolved geometry has its final transform.
     useEffect(() => {
         const id = requestAnimationFrame(() => {
-            // refresh() recomputes the bounding box from the current scene
-            // graph, then fit() dollies the camera along its current view
-            // axis to frame the box with the requested margin.
             api.refresh().clip().fit();
         });
         return () => cancelAnimationFrame(id);
-    }, [api, fitKey, margin]);
+    }, [api, fitKey]);
+
+    // Re-fit on resize, but only when the model would clip.
+    //
+    // We depend on size.width / size.height from useThree, which
+    // r3f updates whenever the canvas's underlying drawing buffer
+    // resizes. That covers parent resize, DPR changes, and any
+    // other path that changes the canvas dimensions.
+    useEffect(() => {
+        // Skip on the initial mount: the geometry-fit effect above
+        // already runs on the first frame, so there is nothing to
+        // check before that has had a chance to settle.
+        if (size.width === 0 || size.height === 0) return;
+
+        // Defer one frame so any in-flight geometry fit completes
+        // before we measure. Without this, a resize that arrives
+        // simultaneously with a model swap would observe the old
+        // camera distance against the new geometry and double-fit.
+        const id = requestAnimationFrame(() => {
+            const persp = camera as THREE.PerspectiveCamera;
+
+            // Recompute the bounding sphere from the current scene
+            // graph. Cheap relative to the cost of a wrong refit.
+            const box = new THREE.Box3().setFromObject(scene);
+            if (box.isEmpty()) return;
+            const sphere = new THREE.Sphere();
+            box.getBoundingSphere(sphere);
+            if (sphere.radius <= 0) return;
+
+            // Distance from camera to the bounding sphere center.
+            // Using the sphere center rather than the OrbitControls
+            // target keeps the math correct even if the user has
+            // panned the target away from the model.
+            const d = persp.position.distanceTo(sphere.center);
+
+            // Camera inside or beyond the sphere — treat as clipped.
+            if (d <= sphere.radius) {
+                api.refresh().clip().fit();
+                return;
+            }
+
+            // Half-extents of the viewport at distance d, in world
+            // units. tan() expects radians; r3f's PerspectiveCamera
+            // stores fov in degrees.
+            const halfFovRad = (persp.fov * Math.PI) / 180 / 2;
+            const halfHeight = Math.tan(halfFovRad) * d;
+            const halfWidth = halfHeight * persp.aspect;
+
+            // The bounding sphere stays framed when its radius fits
+            // inside the smaller half-extent, scaled by the margin.
+            // (Sphere is rotation-invariant, so we don't need to
+            //  project corners — radius alone is the worst case.)
+            const minHalfExtent = Math.min(halfHeight, halfWidth);
+            const allowed = minHalfExtent / FIT_MARGIN;
+
+            if (sphere.radius > allowed) {
+                api.refresh().clip().fit();
+            }
+        });
+        return () => cancelAnimationFrame(id);
+    }, [api, scene, camera, size.width, size.height]);
 
     return null;
 }
@@ -494,14 +570,67 @@ export default function ModelViewerComponent({
         []
     );
 
+    /*
+      Parent measurement.
+
+      The wrapper is the Canvas's host element. r3f's <Canvas>
+      measures its container with a ResizeObserver and propagates
+      the result via useThree().size, so the canvas tracks whatever
+      size we apply here.
+
+      In flex/grid layouts where the parent cell can collapse without
+      a determinate height, percentage sizes resolve to zero and the
+      canvas renders at 0x0. To handle that, we observe the parent
+      element directly and apply pixel dimensions sourced from its
+      content box. The observer runs on every parent resize, so the
+      canvas stays in sync without any caller-side changes.
+
+      Until the first measurement lands, we render at 100%/100% so
+      the canvas still appears immediately when the parent has its
+      own determinate size (the common case).
+    */
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
+    const [parentSize, setParentSize] = useState<{ w: number; h: number } | null>(null);
+
+    useEffect(() => {
+        const wrapper = wrapperRef.current;
+        if (!wrapper) return;
+        const parent = wrapper.parentElement;
+        if (!parent) return;
+
+        const measure = () => {
+            const rect = parent.getBoundingClientRect();
+            // Round to the nearest device pixel to avoid sub-pixel
+            // ResizeObserver noise that would otherwise feed back
+            // into the clip-aware refit logic on every wobble.
+            const w = Math.round(rect.width);
+            const h = Math.round(rect.height);
+            setParentSize((prev) => {
+                if (prev && prev.w === w && prev.h === h) return prev;
+                return { w, h };
+            });
+        };
+
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(parent);
+        return () => observer.disconnect();
+    }, []);
+
+    // Apply pixel sizes once measured; fall back to 100%/100% before
+    // the first measurement so we don't flash 0x0.
+    const wrapperSize: React.CSSProperties = parentSize
+        ? { width: `${parentSize.w}px`, height: `${parentSize.h}px` }
+        : { width: "100%", height: "100%" };
+
     return (
         <div
+            ref={wrapperRef}
             className="model-view-module-compact"
             style={{
                 position: "relative",
-                width: "100%",
-                height: "100%",
                 overflow: "hidden",
+                ...wrapperSize,
             }}
         >
             <div style={{ position: "absolute", inset: 0 }}>
@@ -514,14 +643,12 @@ export default function ModelViewerComponent({
                     <Suspense fallback={null}>
                         {/*
                           Bounds is used IMPERATIVELY here: no `fit`,
-                          no `observe`. <BoundsFitter> calls the fit
-                          pass once per fitKey change. This preserves
-                          user-driven zoom across canvas resizes and
-                          eliminates the resize/OrbitControls fight
-                          that produced jitter during drags.
+                          no `observe`. <BoundsFitter> drives the fit
+                          pass on geometry change and on clip-detected
+                          resize. See its docblock for the rationale.
                         */}
-                        <Bounds margin={1.1}>
-                            <BoundsFitter fitKey={fitKey} margin={1.1} />
+                        <Bounds margin={FIT_MARGIN}>
+                            <BoundsFitter fitKey={fitKey} />
                             <GLTFComponent modelURLs={modelURLs} textures={textures} />
                         </Bounds>
                         <Environment files={HDRI_URL} />

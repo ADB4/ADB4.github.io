@@ -16,8 +16,6 @@ export default function Maintenance() {
                 style={{
                     width: '100%',
                     height: '100%',
-                    maxWidth: '48rem',
-                    maxHeight: '36rem',
                     margin: 'auto',
                     display: 'grid',
                     gridTemplateColumns: 'auto',
@@ -33,6 +31,9 @@ export default function Maintenance() {
                     width: 'calc(100% - 1.0rem)',
                     maxWidth: '24.0rem',
                     height: '8.0rem',
+                    margin: 'auto',
+                    marginLeft: '1.0rem',
+                    marginTop: '0rem',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'flex-start',
@@ -79,9 +80,9 @@ export default function Maintenance() {
                     gridArea: '2 / 1 / -1 / -1',
                     position: 'relative',
                     width: '100%',
-                    maxWidth: '48rem',
-                    height: 'clamp(20rem, 60dvh, 36rem)',
+                    height: '100%',
                     backgroundColor: 'var(--debug-3)',
+
                 }}>
                     <ModelViewerComponent
                         baseURL={baseURL}

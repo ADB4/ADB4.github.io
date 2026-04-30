@@ -584,6 +584,7 @@ a {
     width: 12rem;
     height: 6rem;
     margin: 0.5rem 0.5rem auto auto;
+    z-index: 10;
 }
 
 .puck-paragraph {
