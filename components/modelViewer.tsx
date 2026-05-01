@@ -83,9 +83,7 @@ matters here is the view angle; the magnitude is overwritten by
 that one fit pass. fov is preserved.
 */
 const DEFAULT_CAMERA = {
-    position: [4.640, 2.076, -3.068] as [number, number, number],
-    target: [0, 0, 0] as [number, number, number],
-    fov: 53,
+    position: [3.448, 1.875, -2.262] as [number, number, number], target: [0.217, -0.013, -0.260] as [number, number, number], fov: 53.000
 };
 
 // Margin used by Bounds.fit() and by the clip-aware resize check.

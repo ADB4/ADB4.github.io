@@ -127,6 +127,7 @@
     --markdown-text-primary: rgb(0, 54, 185);
     --markdown-text-secondary: rgb(0, 27, 222);
     --backlight: #5454546e;
+    --nav-bg: rgba(220, 220, 255, 0.43);
     --nav-primary: rgba(59, 62, 65, 0.427);
     --nav-secondary: rgba(52, 57, 60, 0.417);
     --nav-highlight: #FFFFFF;
@@ -184,6 +185,7 @@
     --markdown-text-primary: rgb(255, 253, 222);
     --markdown-text-secondary: rgb(222, 255, 235);
     --backlight: rgba(244, 255, 234, 0.693);
+    --nav-bg: rgba(63, 63, 72, 0.43);
     --nav-primary: #00000065;
     --nav-secondary: #06060660;
     --nav-highlight: #ebebeb;
@@ -509,7 +511,7 @@ a {
     max-width: 30.0rem;
     width: fit-content;
     height: 2.5rem;
-    background-color: rgba(220, 220, 255, 0.43);
+    background-color: var(--nav-bg);
     border-radius: 0.25rem 0.25rem 1rem 1rem;
     margin: 0.075rem 0 auto auto;
 }
