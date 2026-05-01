@@ -649,7 +649,7 @@ export default function ModelViewerComponent({
                             <BoundsFitter fitKey={fitKey} />
                             <GLTFComponent modelURLs={modelURLs} textures={textures} />
                         </Bounds>
-                        <Environment files={HDRI_URL} />
+                        <Environment preset={"studio"} environmentIntensity={0.5} resolution={64}/>
                     </Suspense>
                     {/*
                       Damping disabled. enableDamping makes OrbitControls
