@@ -160,29 +160,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     return (
         <DeviceContext.Provider value={compactView}>
             <main>
-                {!compactView && (
-                    <div className="cursor-canvas">
-                        <div
-                            style={{
-                                ...styles.orb,
-                                transform: `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%)`,
-                            }}
-                        >
-                            <div style={styles.orbHighlight} />
-                            <div style={styles.orbInner} />
-                            <div style={styles.orbPulse} />
-                        </div>
-                    </div>
-                )}
                 <div className="main-container">
                     <div className={"navigation-container liquid-glass"}>
                         <div className={"navigation-container-inner"}>
-                            <Link style={navItemStyle} className={"navigation-item-left liquid-glass"} href={"/about"}>
-                                <div className={"navigation-item-inner"}>
-                                    <h2>ABOUT</h2>
-                                </div>
-                            </Link>
-                            <Link style={navItemStyle}  className={"navigation-item liquid-glass"} href={"/"}>
+                            <Link style={navItemStyle}  className={"navigation-item-left liquid-glass"} href={"/"}>
                                 <div className={"navigation-item-inner"}>
                                     <h2>PROJECTS</h2>
                                 </div>
@@ -198,38 +179,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
                     <div className="base-container liquid-glass-main">
                         <div className={"puck-container"}>
-                            <svg width="0" height="0" style={{ position: 'absolute' }}>
-                                <defs>
-                                    <clipPath id="puck-clip" clipPathUnits="userSpaceOnUse">
-                                        <path
-                                            clipRule="evenodd"
-                                            d="
-                    M 12 0 L 176 0 Q 192 0 192 16 L 192 84 Q 192 96 180 96
-                    L 46.49 96 Q 39.55 96 34.91 91.35 L 4.65 66.49
-                    Q 0 61.45 0 54.51 L 0 12 Q 0 0 12 0 Z
-                    M 168 8 L 176 8 Q 184 8 184 16 L 184 24
-                    Q 184 32 176 32 L 168 32 Q 160 32 160 24
-                    L 160 16 Q 160 8 168 8 Z
-                "
-                                        />
-                                    </clipPath>
-                                </defs>
-                            </svg>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateRows: 'auto',
-                                gridTemplateColumns: 'auto',
-                                width: '100%',
-                                height: '100%',
-                                background: 'var(--text-dark)',
-                                clipPath: "url(#puck-clip)",
-                            }}>
-
-                                <p className={'puck-paragraph'}>AUSTIN, TX</p>
-                                {temperature !== null && (
-                                    <p className={'puck-temperature'}>{temperature}°F</p>
-                                )}
-                            </div>
+                            <p className={'puck-paragraph'}>AUSTIN, TX</p>
+                            {temperature !== null && (
+                                <p className={'puck-temperature'}>{temperature} DEG F</p>
+                            )}
                         </div>
 
                         <div className={`base-header`}>

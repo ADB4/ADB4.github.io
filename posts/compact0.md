@@ -11,7 +11,7 @@ excerpt: "This is a test article"
 &nbsp;  
 &nbsp;&nbsp;&nbsp;&nbsp;Fortune, good night: smile once more; turn thy wheel.
 
-I moved to Austin, Texas in August for a new job. The nineteen-hour drive from Michigan in which I packed my 2009 Nissan Murano to the brim was nothing short of deiform. U.S. Route 69 through Oklahoma
+I moved to Austin, Texas in August for a new job. The nineteen-hour drive from Michigan in which I packed my 2009 Nissan Murano to the brim was nothing short of deiform. U.S. Route 69 through Oklahoma was idyllic, despite the perturbing lore of death and disappearances involving the long-haul trucking community.
 
 I had come straight from work in downtown Austin to test drive the F-TYPE at CarMax in South Austin. What was, on a late Monday morning a 15 minute drive with sparse traffic (Many office workers in Austin work from home on Monday and Friday), turned into an hour-long drive one-way at 5PM.
 

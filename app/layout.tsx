@@ -1,5 +1,4 @@
 import './globals.css';
-import './reset.css';
 import './normalize.css';
 
 import { ThemeProvider } from 'next-themes'

@@ -3,8 +3,10 @@ import { Suspense, useMemo, useRef, useState, useEffect, useCallback } from "rea
 import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
 import {
     Bounds,
+    CameraControls,
     Environment,
     OrbitControls,
+    OrthographicCamera,
     useBounds,
     useGLTF,
     useProgress,
@@ -684,6 +686,36 @@ interface GLTFComponentProps {
     textures: MatchedTextures;
 }
 
+export function RotatingCameraComponent(props) {
+    const {camera} = useThree();
+    const [rotation, setRotation] = useState(0);
+
+    const cameraRef = useRef(null);
+
+    useFrame((_, delta) => {
+        setRotation((prevRotation) => prevRotation + (delta / 2));
+        camera.position.x = Math.sin(rotation) * props.distance;
+        camera.position.z = Math.cos(rotation) * props.distance;
+        camera.position.y = 30;
+        camera.lookAt(0,0,0);
+        camera.updateProjectionMatrix();
+    });
+    return (
+        <>
+            <CameraControls
+                makeDefault
+                enabled={true}
+                ref={props.camControls}
+                camera={camera} />
+            <OrthographicCamera
+                ref={cameraRef}
+                makeDefault
+                position={[200,90,200]}
+                zoom={props.zoom}
+            />
+        </>
+    )
+}
 /*
 GLTFComponent
 

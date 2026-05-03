@@ -13,7 +13,7 @@ interface ActiveQuoteInterface extends QuoteData {
   i: number;
 }
 
-const QuoteViewer: React.FC = () => {
+export const QuoteViewer = () => {
   const [quotes] = useState<QuoteData[]>(quotedata);
   const [index, setIndex] = useState<number>(0);
   const [activeQuote, setActiveQuote] = useState<ActiveQuoteInterface>({
@@ -72,19 +72,16 @@ const QuoteViewer: React.FC = () => {
   };
 
   return (
-    <div className="weblog-quotes">
-      <button className="quote-refresh" onClick={handleInquiry}>
-        REFRESH
-      </button>
       <div className="quote-container">
-        <div className="quote-content">
-          <h3>&quot;{activeQuote.content.toUpperCase()}&quot;</h3>
+          <div className="quote-content">
+            {activeQuote.content !== "" && (
+                <h3>&quot;{activeQuote.content.toUpperCase()}&quot;</h3>
+            )}
         </div>
         <div className="quote-author">
-          <h4>{activeQuote.author}</h4>
+          <h4>{activeQuote.author.toUpperCase()}</h4>
         </div>
       </div>
-    </div>
   );
 };
 
