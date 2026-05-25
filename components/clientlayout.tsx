@@ -168,7 +168,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                                     <h2>PROJECTS</h2>
                                 </div>
                             </Link>
-                            <Link style={navItemStyle}  className={"navigation-item liquid-glass"} href={"/"}>
+                            <Link style={navItemStyle}  className={"navigation-item liquid-glass"} href={"/writing"}>
                                 <div className={"navigation-item-inner"}>
                                     <h2>WRITING</h2>
                                 </div>

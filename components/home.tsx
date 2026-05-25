@@ -8,7 +8,7 @@ import { HomeContent } from "@/app/page";
 
 
 const about2: string = "His vices oscillate between game developmen"
-const copy: string = "_The nineteen-hour drive from Michigan in which I packed my 2009 Nissan Murano to the brim was nothing short of deiform. U.S. Route 69 through Oklahoma was idyllic, despite the perturbing lore of death and disappearances involving the long-haul trucking community._"
+const copy: string = "_The nineteen-hour drive from Michigan in which I packed my 2009 Nissan Murano to the brim was nothing short of deiform. U.S. Route 69 through Oklahoma was idyllic, despite its underbelly of death and disappearances many believe involved the long-haul trucking community._"
 export interface HomeProps {
     content: HomeContent;
 }

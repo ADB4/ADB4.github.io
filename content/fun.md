@@ -1,9 +1,9 @@
-#### Birthplace:
-Grand Rapids, Michigan&nbsp;  
+#### Born in Grand Rapids, Michigan
 &nbsp;
+#### Education: 
 
-#### Education:
-University of Michigan&nbsp;  
+University of Michigan &nbsp;
+
 &nbsp;
 
 #### Currently Reading:
@@ -14,6 +14,5 @@ _Car_, Mary Walton
 &nbsp;
 #### Currently Streaming:&nbsp;
 
-_Hacks_ Season 1&nbsp;  
-_Industry_ Season 4
+_Hacks_ Season 5&nbsp;
 

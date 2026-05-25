@@ -330,25 +330,25 @@ a {
 
 /* Weblog */
 .weblog-container {
-    grid-area: 1 / 1 / -1 / -1;
-    outline: 1px solid green;
+    grid-area: 2 / 1 / -1 / -1;
     max-height: 100%;
     width: calc(100% - 0.5rem);
     height: 100%;
     overflow: hidden;
     margin: auto;
     display: grid;
-    grid-template: auto / auto;
+    grid-template: auto / 24rem auto;
+    background-color: var(--debug-4);
 }
 
 .weblog-content {
-    grid-area: 1 / 1 / -1 / -1;
-    outline: 1px solid blue;
+    grid-area: 1 / 2 / -1 / -1;
     width: 100%;
     height: 100%;
     margin: auto;
     overflow: hidden scroll;
     display: flex;
+    background-color: var(--debug-3);
 }
 
 .weblog-content::-webkit-scrollbar {
@@ -370,12 +370,22 @@ a {
 .weblog-content::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
-
+.weblog-mat {
+    display: flex;
+    margin: auto;
+    background-color: var(--debug-2);
+    max-width: calc(100% - 4.0rem);
+    max-height: calc(100% - 4.0rem);
+    height: 46rem;
+    width: 64rem;
+}
 .weblog-selection {
-    grid-area: 1 / 1 / -1 / -1;
+    grid-area: 1 / 1 / -1 / 2;
     width: 100%;
     height: 100%;
+    display: flex;
     color: var(--text-primary);
+    background-color: var(--debug-3);
 }
 
 .weblog-selection h1 {
@@ -460,31 +470,57 @@ a {
 
 /* Entry cards */
 .entry-card {
-    outline: 1px solid green;
     width: calc(100% - 1.0rem);
-    max-width: 64.0rem;
-    min-height: 4.0rem;
+    max-width: 24.0rem;
+    min-height: 5.0rem;
     max-height: fit-content;
     height: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: flex-start;
+    row-gap: 0.3rem;
     column-gap: 4.0rem;
     font-family: Swiss721;
     z-index: 8;
     margin: 0 auto 0.5rem auto;
+    background-color: var(--debug-4);
 }
 
 .entry-card h3 {
-    font-size: 1.5rem;
-    font-weight: 200;
+    font-size: 1.2rem;
+    font-weight: 300;
+    font-style: italic;
+    text-align: left;
     letter-spacing: -0.0125rem;
 }
 
 .entry-card:hover {
     color: blue;
 }
+.entry-cover {
+    margin: auto;
+    max-height: calc(100% - 2.0rem);
+    max-width: calc(100% - 2.0rem);
+    width: 498px;
+    height: 702px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
 
+.cover-title {
+    margin: auto;
+    margin-top: 1.5rem;
+    width: calc(100% - 2.0rem);
+    background-color: var(--debug-1);
+}
+.cover-title h3 {
+    font-family: GaramondCondensed;
+    font-weight: 200;
+    font-size: 4.0rem;
+    line-height: 4.0rem;
+    letter-spacing: -0.175rem;
+}
 .highlighted {
     font-family: MDIO;
     font-style: italic;
@@ -492,22 +528,20 @@ a {
 }
 
 .entry-header {
-    outline: 1px solid blue;
-    max-width: 26.0rem;
-    height: 100%;
+    max-width: 24.0rem;
+    height: 1.2rem;
 }
 
 .entry-info {
-    outline: 1px solid red;
-    width: 20rem;
-    height: 100%;
+    max-width: 24.0rem;
+    width: 100%;
+    height: 1.2rem;
     display: flex;
     justify-content: space-between;
 }
 
 .entry-id {
-    outline: 1px solid red;
-    width: 6.0rem;
+    width: 4rem;
     height: 100%;
     display: flex;
     justify-content: space-between;
@@ -516,7 +550,7 @@ a {
 .entry-info h4,
 .entry-id h4 {
     font-family: Swiss721;
-    font-size: 1.5rem;
+    font-size: 1.0rem;
     font-weight: 200;
 }
 
@@ -878,7 +912,7 @@ a {
 
 .markdown-sans {
     font-family: Swiss721;
-    font-weight: 400;
+    font-weight: 300;
     font-size: 1.125rem;
     line-height: 1.2rem;
     letter-spacing: -0.02rem;
@@ -886,23 +920,26 @@ a {
 
 .markdown-sans p {
     font-size: 1.125rem;
-    font-weight: 400;
+    font-weight: 300;
     letter-spacing: -0.02rem;
 }
 .markdown-sans h4 {
     font-size: 1.125rem;
-    font-weight: 400;
+    font-weight: 300;
     margin-bottom: 0.125rem;
     letter-spacing: -0.02rem;
 }
 /* Markdown article */
 .markdown-article {
-    max-width: 72rem;
-    width: 100%;
-    height: 100%;
-    outline: 1px solid gray;
     margin: auto;
+    margin-top: 1.0rem;
+    max-width: 498px;
+    max-height: 702px;
+    width: 100%;
+    height: calc(100% - 2.0rem);
+    outline: 1px solid gray;
     padding: 2.0rem;
+    overflow-y: scroll;
     font-family: Swiss721;
 }
 

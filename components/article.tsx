@@ -21,13 +21,9 @@ const ArticleComponent: React.FC<{
     }
     return (
         <>
-            <div className="weblog-container">
-            <div className={"weblog-content"}>
-                    <ReactMarkdown className={"markdown-article"}>
-                        {article.content}
-                    </ReactMarkdown>
-            </div>
-            </div>
+        <ReactMarkdown className={"markdown-article"}>
+            {article.content}
+        </ReactMarkdown>
         </>
     )
 }
