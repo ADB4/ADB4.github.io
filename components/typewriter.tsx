@@ -11,7 +11,7 @@ interface TypewriterProps {
 export const TypewriterComponent = ({
                                                             text,
                                                             speed = 30,
-                                                            delay = 500,
+                                                            delay = 100,
                                                             pauseChance = 0.05,
                                                             onComplete
                                                         }: TypewriterProps) => {
@@ -61,8 +61,7 @@ export const TypewriterComponent = ({
     }, [isComplete, onComplete]);
     return (
         <span className="typewriter">
-      <h2>{displayText.toUpperCase()}<span className={isPaused ? 'caret paused':'caret'} /></h2>
-
-    </span>
+            <h2>{displayText}<span className={isPaused ? 'caret paused':'caret'} /></h2>
+        </span>
     );
 };

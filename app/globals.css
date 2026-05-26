@@ -338,8 +338,9 @@ a {
 .weblog-container {
     grid-area: 2 / 1 / -1 / -1;
     max-height: 100%;
-    width: calc(100% - 0.5rem);
-    height: 100%;
+    width: calc(100% - 1rem);
+    height: calc(100% - 1rem);
+    border-top: 1.5px solid var(--text-primary);
     overflow: hidden;
     margin: auto;
     display: grid;
@@ -350,12 +351,13 @@ a {
 .weblog-content {
     grid-area: 1 / 2 / -1 / -1;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 2.0rem);
     margin: auto;
     overflow: hidden scroll;
     display: flex;
     align-items: center;
     background-color: var(--debug-3);
+    border-left: 1.5px solid var(--text-primary);
 }
 
 .weblog-content::-webkit-scrollbar {
@@ -391,7 +393,8 @@ a {
 .weblog-selection {
     grid-area: 1 / 1 / -1 / 2;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 2.0rem);
+    margin: auto;
     display: flex;
     color: var(--text-primary);
     background-color: var(--debug-3);
@@ -491,8 +494,9 @@ a {
     column-gap: 4.0rem;
     font-family: Swiss721;
     z-index: 8;
-    margin: 0 auto 0.5rem auto;
+    margin: 0 auto 0.5rem 0;
     background-color: var(--debug-4);
+    border-bottom: 1.5px solid var(--text-primary);
 }
 
 .entry-card h3 {
@@ -720,26 +724,6 @@ a {
 }
 
 /* About */
-.container {
-    grid-area: 2 / 1 / -2 / -1;
-    width: 100%;
-    height: calc(100% - 2.0rem);
-    margin: auto;
-    display: flex;
-    justify-content: space-between;
-    column-gap: 1.0rem;
-    border-top: 1.5px solid var(--text-primary);
-}
-.container h5 {
-    font-family: Swiss721;
-    font-weight: 300;
-    font-size: 1.0rem;
-    line-height: 1.2;
-    letter-spacing: -1.25%;
-    margin: 0 0 0 0;
-    background-color: var(--debug-3);
-}
-
 .about-copy {
     font-family: Swiss721;
     font-weight: 300;
@@ -747,22 +731,48 @@ a {
 }
 
 .typewriter {
-    font-family: MDIO;
-    font-size: 2.0rem;
+    max-height: 100%;
+    overflow: hidden;
+
     color: var(--text-primary);
+    background-color: var(--debug-3);
+}
+.typewriter h2 {
+    font-family: Garamond;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 2.0rem;
+    letter-spacing: -1.25%;
 }
 .maintenance-notice {
 
 }
-/* Home */
+
+/* ============================================================================
+   Home — components/home.tsx
+
+   Structure:
+     .home-container
+       ├── .home-row
+       │     ├── .home-section.home-bio
+       │     │     └── .markdown-sans.home-bio-text       (Markdown: bio)
+       │     └── .home-section.home-fun
+       │           └── .home-fun-body
+       │                 └── .markdown-sans.home-fun-text (Markdown: fun)
+       └── .home-row
+             └── .home-section.home-monocoque
+                   └── .monocoque-logo > h3
+   ============================================================================ */
+
+/* Outer wrapper. Mount animation pairs `flip` with `aberration`;
+   `will-change: text-shadow` is set because `aberration` animates text-shadow. */
 .home-container {
     min-width: var(--min-body-width);
-    grid-area: 2 / 1 / -2 / -1;
-    width: calc(100% - 1.0rem);
-    height: calc(100% - 1.0rem);
-    overflow: hidden;
-    scrollbar-width: none;
+    width: calc(100% - 1rem);
+    height: calc(100% - 1rem);
     margin: auto;
+    overflow: hidden scroll;
+    scrollbar-width: none;
     display: flex;
     flex-direction: column;
     background-color: var(--debug-1);
@@ -771,198 +781,123 @@ a {
     will-change: text-shadow;
     animation: flip 1s ease, aberration 0.6s linear;
 }
+
+/* Row container — two siblings inside .home-container. */
+.home-row {
+    width: 100%;
+    height: calc(100% - 2rem);
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    column-gap: 1rem;
+    border-top: 1.5px solid var(--text-primary);
+}
+
+.home-row h5 {
+    margin: 0;
+    font-family: Swiss721;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.2;
+    background-color: var(--debug-3);
+}
+
 .home-promo {
     width: 100%;
     height: 24rem;
     background-color: var(--debug-3);
 }
-.home {
-    container-type: inline-size;
-    min-width: var(--min-body-width);
-    grid-area: 1 / 1 / 1 / -1;
+
+/* Section base. Variants below extend this; they are always paired
+   with `.home-section` in markup, so duplicate declarations are omitted. */
+.home-section {
+    min-width: 16rem;
+    width: 100%;
+    margin: 1rem 0 auto;
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
-    gap: 2.0rem;
-    width: 100%;
-    min-width: 8.0rem;
+    justify-content: space-between;
+    column-gap: 2rem;
+    color: var(--text-primary);
+    background-color: var(--debug-3);
+}
+
+/* Bio section (left column, top row) */
+.home-bio {
     height: calc(100% - 1rem);
-    background-color: var(--debug-2);
-    margin: auto;
-    color: var(--text-primary);
-}
-.home h3 {
-    height: fit-content;
-    font-family: HCW;
-    font-size: 10rem;
-    line-height: 1.0;
-    letter-spacing: -6.25%;
-    background-color: var(--debug-3);
-}
-.monocoque-logo {
-    width: fit-content;
-    margin: auto;
-}
-.home-content p {
-    font-family: Swiss721;
-    font-size: 1.1rem;
-    font-weight: 300;
-    line-height: 1.3rem;
-    letter-spacing: -0.01rem;
-}
-
-
-.about-container {
-    display: flex;
-    border-top: 1.5px solid var(--text-primary);
-}
-.about-content {
-    display: flex;
-    justify-content: space-between;
-    column-gap: 2.0rem;
-    height: calc(100% - 1.0rem);
-    width: 100%;
-    margin: auto 0 0 0;
+    margin: auto 0 0;
     background-color: var(--debug-4);
 }
-.writing-sample {
-    display: flex;
-    justify-content: space-between;
-    column-gap: 2.0rem;
-    height: 10.0rem;
-    width: 100%;
-    margin: auto 0 0 0;
-    background-color: var(--debug-2);
-}
-.sample {
-    max-width: 42rem;
-    height: fit-content;
-    background-color: var(--debug-3);
-}
 
-
-.about {
-    background-color: var(--debug-4);
-    display: flex;
-    flex-direction: row;
-    column-gap: 1.0rem;
-    max-width: 72rem;
-}
-.content {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    column-gap: 2.0rem;
-    min-width: 16rem;
-    width: 100%;
-    margin: 1rem 0 auto 0;
-    color: var(--text-primary);
-    background-color: rgba(128, 255, 0, 0.13);
-}
-.fun-content {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    column-gap: 2.0rem;
-    min-width: 16rem;
+/* Fun section (right column, top row) */
+.home-fun {
     max-width: 26rem;
-    width: 100%;
-    height: calc(100% - 2.0rem);
-    padding-left: 1.0rem;
+    height: calc(100% - 2rem);
+    padding-left: 1rem;
     border-left: 1.5px solid var(--text-primary);
     background-color: var(--debug-3);
 }
-.fun-content-inner {
+
+.home-fun-body {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
-.fun {
-    margin: 0 0 0 auto;
-    display: flex;
-    flex-direction: column;
-    max-width: 19.2rem;
+
+/* MONOCOQUE section (bottom row) */
+.home-monocoque {
+    min-width: var(--min-body-width);
     width: 100%;
-}
-.rogerlib-logo {
-    max-height: 6rem;
-    max-width: 6rem;
-    background-color: var(--debug-3);
-}
-.rogerlib-info {
-    height: calc(100% - 0.75rem);
-    width: 100%;
+    height: calc(100% - 1rem);
+    margin: auto;
     display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    gap: 0;
-    background-color: var(--debug-3);
-}
-.rogerlib-info p {
-    font-family: Swiss721;
-    font-weight: 300;
-    letter-spacing: -0.025rem;
-    font-size: 1.2rem;
-    line-height: 1.4rem;
-    background-color: var(--debug-4);
-}
-.rogerlib-link {
-    background-color: var(--debug-1);
-    width: fit-content;
-    margin-left: auto;
-    margin-top: auto;
-    margin-right: 0;
-    margin-bottom: 0;
-}
-.rogerlib-card {
-    height: calc(100% - 2.0rem);
-    width: calc(100% - 2.0rem);
-    max-height: 6rem;
-    max-width: 42rem;
-    display: flex;
-    align-items: center;
-    background-color: var(--debug-4);
-}
-
-/* Contact */
-.cntct-container {
-    grid-area: 1 / 1 / -2 / -1;
-    width: calc(100% - 1.0rem);
-    height: calc(100% - 1.5rem);
-    outline: 2px solid red;
-    overflow: hidden;
-    margin: 1.5rem auto auto;
-    display: grid;
-    grid-template: 4.4rem auto / 40% 60%;
-}
-
-.cntct-grid1 {
-    position: absolute;
-    width: calc(100% - 1.0rem);
-    border-top: 2px solid red;
-    margin-top: 1.0rem;
-}
-
-.cntct-tag {
-    grid-area: 1 / 2 / -1 / -1;
-}
-
-.cntct-deets {
-    grid-area: 2 / 1 / -1 / 2;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-}
-
-.cntct-tag h3 {
-    font-family: Swiss721;
-    font-weight: 300;
-    font-size: 2.8rem;
-    margin-top: -0.6rem;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 2rem;
+    container-type: inline-size;
     color: var(--text-primary);
+    background-color: var(--debug-4);
+}
+
+.home-monocoque h3 {
+    height: fit-content;
+    font-family: HCW;
+    font-size: 8cqw;
+    padding: 0 1cqw 0.8cqw 2cqw;
+    letter-spacing: -0.025em;
+    line-height: 1;
+    background-color: var(--debug-2);
+}
+.home-monocoque-body {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: var(--debug-4);
+}
+.monocoque-logo {
+    width: fit-content;
+    margin: auto 0 0 auto;
+  /* tune until the ink fits */
+}
+
+/* Bio markdown */
+.home-bio-text {
+    max-width: 72rem;
+    display: flex;
+    flex-direction: row;
+    column-gap: 1rem;
+    background-color: var(--debug-4);
+}
+
+/* Fun markdown */
+.home-fun-text {
+    width: 100%;
+    max-width: 19.2rem;
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .secret-container {
@@ -995,24 +930,29 @@ a {
     line-height: 1.2;
     letter-spacing: -1.25%;
 }
+
+/* Shared markdown body-copy helper. Used in home.tsx by .home-bio-text and
+   .home-fun-text; naming follows the markdown-mono / markdown-cover /
+   markdown-article family for cross-component re-use. */
 .markdown-sans {
     font-family: Swiss721;
-    letter-spacing: -2%;
     background-color: var(--debug-1);
 }
 
 .markdown-sans p {
     flex: 1;
-    font-size: 1.0rem;
-    line-height: 1.15;
+    font-size: 1rem;
     font-weight: 300;
+    line-height: 1.15;
 }
+
 .markdown-sans h4 {
-    font-size: 1.0rem;
-    font-weight: 400;
     margin-bottom: 0.125rem;
+    font-size: 1rem;
+    font-weight: 400;
     letter-spacing: -0.02rem;
 }
+
 .markdown-cover {
     font-family: Swiss721;
     color: var(--text-primary);

@@ -28,7 +28,7 @@ export default function Weblog() {
                 display: 'flex',
                 flexDirection: 'column',
                 rowGap: '1.2rem',
-                backgroundColor: 'var(--debug-1)'
+                backgroundColor: 'var(--debug-1)',
             }}>
                 {entries.map((entry, index) => (
                     <Link
