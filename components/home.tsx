@@ -22,7 +22,37 @@ export default function HomeComponent({content}: HomeProps) {
     return (
         <>
             <div className="home-container">
-                <div className="home-content ">
+                <div className={"container"}>
+                    <div className={"content about-content"}>
+                        <h5>0</h5>
+                        <Markdown className={"markdown-sans about"}>
+                            {content.bio}
+                        </Markdown>
+                    </div>
+                    <div className={"content fun-content"}>
+                        <h5>1</h5>
+                        <div className={"fun-content-inner"}>
+                            <Markdown className={"markdown-sans fun"}>
+                                {content.fun}
+                            </Markdown>
+                        </div>
+                    </div>
+                </div>
+                <div className={"container"}>
+                    <div className={"content home"}>
+                        <h5>2</h5>
+                        <div className={"monocoque-logo"}>
+                            <h3>MONOCOQUE</h3>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </>
+    );
+}
+
+/*
                     <div style={{
                         width: "100%",
                         height: "calc(100% - 8rem)",
@@ -88,28 +118,6 @@ export default function HomeComponent({content}: HomeProps) {
                         <div className={"quote-content"}>
                             <h5>3</h5>
                             <QuoteViewer />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </>
-    );
-}
-
-/*
-                    <div className={"rogerlib-card"}>
-                        <img className={"rogerlib-logo"} src={theme === 'dark' ? "https://s3.us-east-2.amazonaws.com/static.rogerlib.com/static/graphics/logo_rogerlib_white.svg" : "https://s3.us-east-2.amazonaws.com/static.rogerlib.com/static/graphics/logo_rogerlib_black.svg"}/>
-                        <div className={"rogerlib-info"}>
-                            <p>
-                                ROGER MOTORSPORTS LIBRARY
-                            </p>
-                            <p>
-                                STATUS: ONLINE
-                            </p>
-                            <a className="rogerlib-link"
-                               href="https://rogerlibrary.com">
-                                <p>[EXTERNAL] VISIT NOW</p>
-                            </a>
                         </div>
                     </div>
  */
