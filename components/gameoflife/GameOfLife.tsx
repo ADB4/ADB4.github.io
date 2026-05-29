@@ -9,36 +9,86 @@ interface Dimensions {
 
 const index = (r: number, c: number, cols: number): number => r * cols + c;
 
-function liveNeighbours(
-    grid: Grid,
-    { rows, cols }: Dimensions,
+function borderStep(
+    prev: Grid,
+    next: Grid,
+    rows: number,
+    cols: number,
     r: number,
     c: number,
-): number {
-    let count = 0;
+    tracked: boolean,
+): void {
+    let n = 0;
     for (let dr = -1; dr <= 1; dr++) {
         for (let dc = -1; dc <= 1; dc++) {
             if (dr === 0 && dc === 0) continue;
             const nr = r + dr;
             const nc = c + dc;
             if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
-            count += grid[index(nr, nc, cols)];
+            if (prev[nr * cols + nc] !== 0) n++;
         }
     }
-    return count;
+    const i = r * cols + c;
+    const prevV = prev[i];
+    const alive = prevV !== 0;
+    const survives = alive ? n === 2 || n === 3 : n === 3;
+    next[i] = survives
+        ? tracked
+            ? alive
+                ? Math.min(255, prevV + 1)
+                : 1
+            : 1
+        : 0;
+}
+
+function stepInto(prev: Grid, next: Grid, dims: Dimensions, tracked: boolean): void {
+    const { rows, cols } = dims;
+
+    if (rows >= 3 && cols >= 3) {
+        for (let r = 1; r < rows - 1; r++) {
+            const above = (r - 1) * cols;
+            const here = r * cols;
+            const below = (r + 1) * cols;
+            for (let c = 1; c < cols - 1; c++) {
+                const n =
+                    (prev[above + c - 1] !== 0 ? 1 : 0) +
+                    (prev[above + c    ] !== 0 ? 1 : 0) +
+                    (prev[above + c + 1] !== 0 ? 1 : 0) +
+                    (prev[here  + c - 1] !== 0 ? 1 : 0) +
+                    (prev[here  + c + 1] !== 0 ? 1 : 0) +
+                    (prev[below + c - 1] !== 0 ? 1 : 0) +
+                    (prev[below + c    ] !== 0 ? 1 : 0) +
+                    (prev[below + c + 1] !== 0 ? 1 : 0);
+                const i = here + c;
+                const prevV = prev[i];
+                const alive = prevV !== 0;
+                const survives = alive ? n === 2 || n === 3 : n === 3;
+                next[i] = survives
+                    ? tracked
+                        ? alive
+                            ? Math.min(255, prevV + 1)
+                            : 1
+                        : 1
+                    : 0;
+            }
+        }
+    }
+
+    if (rows >= 1) {
+        for (let c = 0; c < cols; c++) borderStep(prev, next, rows, cols, 0, c, tracked);
+    }
+    if (rows >= 2) {
+        for (let c = 0; c < cols; c++) borderStep(prev, next, rows, cols, rows - 1, c, tracked);
+    }
+    for (let r = 1; r < rows - 1; r++) {
+        borderStep(prev, next, rows, cols, r, 0, tracked);
+        if (cols >= 2) borderStep(prev, next, rows, cols, r, cols - 1, tracked);
+    }
 }
 
 function nextGeneration(grid: Grid, dims: Dimensions): Grid {
-    const { rows, cols } = dims;
-    const next = new Uint8Array(rows * cols);
-    for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-            const i = index(r, c, cols);
-            const alive = grid[i] === 1;
-            const n = liveNeighbours(grid, dims, r, c);
-            next[i] = (alive ? n === 2 || n === 3 : n === 3) ? 1 : 0;
-        }
-    }
+    const next = new Uint8Array(dims.rows * dims.cols);
+    stepInto(grid, next, dims, false);
     return next;
 }
 
@@ -308,6 +358,93 @@ function resolveColor(value: string, el: Element): string {
     return resolved || fallback?.trim() || value;
 }
 
+type GradientEasing = "linear" | "ease-in" | "ease-out" | "ease-in-out";
+
+function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
+    const rn = r / 255, gn = g / 255, bn = b / 255;
+    const max = Math.max(rn, gn, bn);
+    const min = Math.min(rn, gn, bn);
+    const l = (max + min) / 2;
+    let h = 0, s = 0;
+    if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        if (max === rn) h = (gn - bn) / d + (gn < bn ? 6 : 0);
+        else if (max === gn) h = (bn - rn) / d + 2;
+        else h = (rn - gn) / d + 4;
+        h *= 60;
+    }
+    return [h, s * 100, l * 100];
+}
+
+function parseToHsl(value: string, el: Element): [number, number, number] {
+    const resolved = resolveColor(value, el).trim();
+    let m = resolved.match(/^#([0-9a-fA-F]{3})$/);
+    if (m) {
+        const r = parseInt(m[1][0] + m[1][0], 16);
+        const g = parseInt(m[1][1] + m[1][1], 16);
+        const b = parseInt(m[1][2] + m[1][2], 16);
+        return rgbToHsl(r, g, b);
+    }
+    m = resolved.match(/^#([0-9a-fA-F]{6})$/);
+    if (m) {
+        const r = parseInt(m[1].slice(0, 2), 16);
+        const g = parseInt(m[1].slice(2, 4), 16);
+        const b = parseInt(m[1].slice(4, 6), 16);
+        return rgbToHsl(r, g, b);
+    }
+    m = resolved.match(/^rgba?\(\s*([\d.]+)\s*[, ]\s*([\d.]+)\s*[, ]\s*([\d.]+)/i);
+    if (m) return rgbToHsl(parseFloat(m[1]), parseFloat(m[2]), parseFloat(m[3]));
+    m = resolved.match(/^hsla?\(\s*([\d.]+)(?:deg)?\s*[, ]\s*([\d.]+)%\s*[, ]\s*([\d.]+)%/i);
+    if (m) return [parseFloat(m[1]), parseFloat(m[2]), parseFloat(m[3])];
+    return [0, 0, 0];
+}
+
+function hslLerp(
+    a: [number, number, number],
+    b: [number, number, number],
+    t: number,
+): [number, number, number] {
+    const delta = ((b[0] - a[0] + 540) % 360) - 180;
+    const h = (a[0] + delta * t + 360) % 360;
+    const s = a[1] + (b[1] - a[1]) * t;
+    const l = a[2] + (b[2] - a[2]) * t;
+    return [h, s, l];
+}
+
+function applyEasing(t: number, kind: GradientEasing): number {
+    switch (kind) {
+        case "ease-in": return t * t;
+        case "ease-out": return 1 - (1 - t) * (1 - t);
+        case "ease-in-out": return t < 0.5 ? 2 * t * t : 1 - ((-2 * t + 2) ** 2) / 2;
+        default: return t;
+    }
+}
+
+function makeSprite(size: number, radius: number, color: string, dpr: number): HTMLCanvasElement {
+    const cv = document.createElement("canvas");
+    cv.width = Math.max(1, Math.round(size * dpr));
+    cv.height = Math.max(1, Math.round(size * dpr));
+    const cctx = cv.getContext("2d");
+    if (!cctx) return cv;
+    cctx.scale(dpr, dpr);
+    cctx.fillStyle = color;
+    if (radius > 0 && typeof cctx.roundRect === "function") {
+        cctx.beginPath();
+        cctx.roundRect(0, 0, size, size, radius);
+        cctx.fill();
+    } else {
+        cctx.fillRect(0, 0, size, size);
+    }
+    return cv;
+}
+
+interface AliveGradient {
+    stops: string[];
+    maxAge?: number;
+    easing?: GradientEasing;
+}
+
 interface LifeOscillatorsProps {
     rows?: number;
     cols?: number;
@@ -316,11 +453,17 @@ interface LifeOscillatorsProps {
     scene?: Scene;
     rle?: string | string[];
     aliveColor?: string;
+    aliveGradient?: AliveGradient;
     backgroundColor?: string;
     cellRadius?: number;
     rowOffset?: number;
     colOffset?: number;
     className?: string;
+}
+
+interface SpriteCache {
+    key: string;
+    sprites: HTMLCanvasElement[];
 }
 
 export default function LifeOscillators({
@@ -331,6 +474,7 @@ export default function LifeOscillators({
                                             scene = "symmetric",
                                             rle,
                                             aliveColor = "var(--text-primary)",
+                                            aliveGradient,
                                             backgroundColor = "transparent",
                                             cellRadius = 0.75,
                                             rowOffset = 0,
@@ -348,6 +492,8 @@ export default function LifeOscillators({
     }, [rle]);
 
     const gridRef = useRef<Grid>(buildScene({ rows, cols }, scene, 2, rlePatterns));
+    const backRef = useRef<Grid>(new Uint8Array(rows * cols));
+    const spriteCacheRef = useRef<SpriteCache | null>(null);
     const reducedMotion = usePrefersReducedMotion();
 
     const draw = useCallback(() => {
@@ -391,37 +537,124 @@ export default function LifeOscillators({
             ctx.fillRect(0, 0, cssW, cssH);
         }
 
-        ctx.fillStyle = resolveColor(aliveColor, canvas);
+        const useGradient = !!aliveGradient && aliveGradient.stops.length > 0;
+        const maxAge = useGradient
+            ? Math.max(1, Math.min(255, aliveGradient!.maxAge ?? 12))
+            : 1;
 
-        const grid = gridRef.current;
+        let lut: string[] | null = null;
+        if (useGradient) {
+            const stops = aliveGradient!.stops;
+            const easing: GradientEasing = aliveGradient!.easing ?? "linear";
+            const hslStops = stops.map((s) => parseToHsl(s, canvas));
+            const segCount = hslStops.length - 1;
+            lut = new Array(maxAge + 1);
+            for (let age = 1; age <= maxAge; age++) {
+                const rawT = maxAge > 1 ? (age - 1) / (maxAge - 1) : 0;
+                const t = applyEasing(rawT, easing);
+                if (segCount <= 0) {
+                    const c0 = hslStops[0];
+                    lut[age] = `hsl(${c0[0]}, ${c0[1]}%, ${c0[2]}%)`;
+                } else {
+                    const segPos = t * segCount;
+                    const segIdx = Math.min(segCount - 1, Math.floor(segPos));
+                    const localT = segPos - segIdx;
+                    const c0 = hslLerp(hslStops[segIdx], hslStops[segIdx + 1], localT);
+                    lut[age] = `hsl(${c0[0]}, ${c0[1]}%, ${c0[2]}%)`;
+                }
+            }
+        }
+
         const inset = cellSize > 4 ? 1 : 0;
         const size = cellSize - inset * 2;
         const pxRadius = (radius01 * size) / 2;
         const rounded = pxRadius > 0;
 
-        for (let r = 0; r < rows; r++) {
-            for (let c = 0; c < cols; c++) {
-                if (grid[r * cols + c] !== 1) continue;
-                const x = originX + c * cellSize + r * effRowOffset + inset;
-                const y = originY + r * cellSize + c * effColOffset + inset;
-                if (!rounded) {
-                    ctx.fillRect(x, y, size, size);
+        const solidColor = useGradient ? null : resolveColor(aliveColor, canvas);
+        const colors = useGradient ? lut!.slice(1) : [solidColor!];
+
+        let sprites: HTMLCanvasElement[] | null = null;
+        if (rounded) {
+            const key = `${size}|${pxRadius}|${dpr}|${colors.join("\u0001")}`;
+            const cache = spriteCacheRef.current;
+            if (cache && cache.key === key) {
+                sprites = cache.sprites;
+            } else {
+                sprites = colors.map((color) => makeSprite(size, pxRadius, color, dpr));
+                spriteCacheRef.current = { key, sprites };
+            }
+        }
+
+        const grid = gridRef.current;
+
+        if (useGradient) {
+            const buckets: number[][] = new Array(maxAge);
+            for (let i = 0; i < maxAge; i++) buckets[i] = [];
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const v = grid[r * cols + c];
+                    if (v === 0) continue;
+                    const ageIdx = Math.min(maxAge, v) - 1;
+                    const x = originX + c * cellSize + r * effRowOffset + inset;
+                    const y = originY + r * cellSize + c * effColOffset + inset;
+                    const b = buckets[ageIdx];
+                    b.push(x, y);
+                }
+            }
+
+            for (let ageIdx = 0; ageIdx < maxAge; ageIdx++) {
+                const coords = buckets[ageIdx];
+                if (coords.length === 0) continue;
+                if (rounded) {
+                    const sprite = sprites![ageIdx];
+                    for (let k = 0; k < coords.length; k += 2) {
+                        ctx.drawImage(sprite, coords[k], coords[k + 1], size, size);
+                    }
                 } else {
-                    ctx.beginPath();
-                    ctx.roundRect(x, y, size, size, pxRadius);
-                    ctx.fill();
+                    ctx.fillStyle = lut![ageIdx + 1];
+                    for (let k = 0; k < coords.length; k += 2) {
+                        ctx.fillRect(coords[k], coords[k + 1], size, size);
+                    }
+                }
+            }
+        } else if (rounded) {
+            const sprite = sprites![0];
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    if (grid[r * cols + c] === 0) continue;
+                    const x = originX + c * cellSize + r * effRowOffset + inset;
+                    const y = originY + r * cellSize + c * effColOffset + inset;
+                    ctx.drawImage(sprite, x, y, size, size);
+                }
+            }
+        } else {
+            ctx.fillStyle = solidColor!;
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    if (grid[r * cols + c] === 0) continue;
+                    const x = originX + c * cellSize + r * effRowOffset + inset;
+                    const y = originY + r * cellSize + c * effColOffset + inset;
+                    ctx.fillRect(x, y, size, size);
                 }
             }
         }
-    }, [rows, cols, cellSize, aliveColor, backgroundColor, cellRadius, rowOffset, colOffset]);
+    }, [rows, cols, cellSize, aliveColor, aliveGradient, backgroundColor, cellRadius, rowOffset, colOffset]);
 
     useEffect(() => {
         gridRef.current = buildScene({ rows, cols }, scene, 2, rlePatterns);
+        if (backRef.current.length !== rows * cols) {
+            backRef.current = new Uint8Array(rows * cols);
+        } else {
+            backRef.current.fill(0);
+        }
+        spriteCacheRef.current = null;
         draw();
     }, [rows, cols, scene, rlePatterns, draw]);
 
     useEffect(() => {
         if (reducedMotion) return;
+        const useGradient = !!aliveGradient && aliveGradient.stops.length > 0;
         let raf = 0;
         let last = performance.now();
         let accumulator = 0;
@@ -433,13 +666,16 @@ export default function LifeOscillators({
             last = now;
             if (accumulator >= interval) {
                 accumulator %= interval;
-                gridRef.current = nextGeneration(gridRef.current, dims);
+                stepInto(gridRef.current, backRef.current, dims, useGradient);
+                const tmp = gridRef.current;
+                gridRef.current = backRef.current;
+                backRef.current = tmp;
                 draw();
             }
         };
         raf = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(raf);
-    }, [reducedMotion, speed, rows, cols, draw]);
+    }, [reducedMotion, speed, rows, cols, draw, aliveGradient]);
 
     return (
         <div className={className} aria-hidden="true">

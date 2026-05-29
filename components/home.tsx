@@ -55,7 +55,11 @@ export default function HomeComponent({content}: HomeProps) {
                         <h5>2</h5>
                         <div className={"home-monocoque-body"}>
                             {/*<TypewriterComponent text={typewritercopy}/>*/}
-                            <LifeOscillators rows={10} cols={10} scene={"figure-eight"}/>
+                            <LifeOscillators rows={10} cols={10} scene={"figure-eight"}    aliveGradient={{
+                                stops: ["var(--text-primary)", "#69ff00"],
+                                maxAge: 4,
+                                easing: "ease-out",
+                            }}/>
                             <div className={"monocoque-logo"}>
                                 <h3>MONOCOQUE</h3>
                             </div>
