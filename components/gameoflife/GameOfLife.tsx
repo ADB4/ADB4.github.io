@@ -1,6 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { Pattern, Scene } from "./patterns";
-import { patternsForScene } from "./patterns";
 
 type Grid = Uint8Array;
 
@@ -23,8 +21,6 @@ function liveNeighbours(
             if (dr === 0 && dc === 0) continue;
             const nr = r + dr;
             const nc = c + dc;
-            // Off-grid counts as dead, which for an oscillator boxed in its
-            // footprint is the same as the infinite plane
             if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
             count += grid[index(nr, nc, cols)];
         }
@@ -32,7 +28,6 @@ function liveNeighbours(
     return count;
 }
 
-/* One Conway step. the input grid is never touched */
 function nextGeneration(grid: Grid, dims: Dimensions): Grid {
     const { rows, cols } = dims;
     const next = new Uint8Array(rows * cols);
@@ -47,6 +42,89 @@ function nextGeneration(grid: Grid, dims: Dimensions): Grid {
     return next;
 }
 
+interface Pattern {
+    readonly name: string;
+    readonly cells: ReadonlyArray<readonly [number, number]>;
+    readonly rows: number;
+    readonly cols: number;
+    readonly offset: readonly [number, number];
+    readonly period: number;
+    readonly symmetric: boolean;
+}
+
+const BLINKER: Pattern = {
+    name: "blinker",
+    cells: [[1, 0], [1, 1], [1, 2]],
+    rows: 3, cols: 3, offset: [0, 0], period: 2, symmetric: false,
+};
+
+const TOAD: Pattern = {
+    name: "toad",
+    cells: [[1, 1], [1, 2], [1, 3], [2, 0], [2, 1], [2, 2]],
+    rows: 4, cols: 4, offset: [0, 0], period: 2, symmetric: false,
+};
+
+const BEACON: Pattern = {
+    name: "beacon",
+    cells: [[0, 0], [0, 1], [1, 0], [1, 1], [2, 2], [2, 3], [3, 2], [3, 3]],
+    rows: 4, cols: 4, offset: [0, 0], period: 2, symmetric: false,
+};
+
+const OCTAGON: Pattern = {
+    name: "octagon",
+    cells: [
+        [0, 3], [0, 4], [1, 2], [1, 5], [2, 1], [2, 6], [3, 0], [3, 7],
+        [4, 0], [4, 7], [5, 1], [5, 6], [6, 2], [6, 5], [7, 3], [7, 4],
+    ],
+    rows: 8, cols: 8, offset: [0, 0], period: 5, symmetric: true,
+};
+
+const FIGURE_EIGHT: Pattern = {
+    name: "figure-eight",
+    cells: [
+        [0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2],
+        [3, 3], [3, 4], [3, 5], [4, 3], [4, 4], [4, 5], [5, 3], [5, 4], [5, 5],
+    ],
+    rows: 10, cols: 10, offset: [2, 2], period: 8, symmetric: true,
+};
+
+const PENTADECATHLON: Pattern = {
+    name: "pentadecathlon",
+    cells: [
+        [0, 2], [0, 7],
+        [1, 0], [1, 1], [1, 3], [1, 4], [1, 5], [1, 6], [1, 8], [1, 9],
+        [2, 2], [2, 7],
+    ],
+    rows: 9, cols: 16, offset: [3, 3], period: 15, symmetric: true,
+};
+
+function buildPulsar(): Pattern {
+    const cells: Array<[number, number]> = [];
+    for (const r of [0, 5, 7, 12]) for (const c of [2, 3, 4, 8, 9, 10]) cells.push([r, c]);
+    for (const r of [2, 3, 4, 8, 9, 10]) for (const c of [0, 5, 7, 12]) cells.push([r, c]);
+    return { name: "pulsar", cells, rows: 15, cols: 15, offset: [1, 1], period: 3, symmetric: true };
+}
+const PULSAR = buildPulsar();
+
+const PATTERNS = {
+    blinker: BLINKER,
+    toad: TOAD,
+    beacon: BEACON,
+    octagon: OCTAGON,
+    "figure-eight": FIGURE_EIGHT,
+    pentadecathlon: PENTADECATHLON,
+    pulsar: PULSAR,
+} as const;
+
+type PatternName = keyof typeof PATTERNS;
+type Scene = PatternName | "symmetric" | "mixed";
+
+function patternsForScene(scene: Scene): Pattern[] {
+    if (scene === "symmetric") return [OCTAGON, PULSAR, FIGURE_EIGHT];
+    if (scene === "mixed")
+        return [PULSAR, OCTAGON, PENTADECATHLON, FIGURE_EIGHT, BEACON, BLINKER];
+    return [PATTERNS[scene]];
+}
 
 interface ParsedRle {
     cells: Array<[number, number]>;
@@ -86,8 +164,6 @@ function parseRle(text: string): ParsedRle {
         } else if (ch === "!") {
             break;
         } else if (ch !== " " && ch !== "\t") {
-            // Anything that isn't b/./$/!/digit/space is a live cell covers
-            // `o` and the multi-state letters (A, B etc) we treat as alive
             const n = count || 1;
             for (let k = 0; k < n; k++) cells.push([row, col++]);
             count = 0;
@@ -103,14 +179,12 @@ function analyzePattern(cells: Array<[number, number]>, name: string): Pattern {
         return { name, cells: [], rows: 1, cols: 1, offset: [0, 0], period: 1, symmetric: false };
     }
 
-    // Seed to origin
     const minSeedR = Math.min(...cells.map(([r]) => r));
     const minSeedC = Math.min(...cells.map(([, c]) => c));
     const seed = cells.map(([r, c]) => [r - minSeedR, c - minSeedC] as [number, number]);
     const seedH = Math.max(...seed.map(([r]) => r)) + 1;
     const seedW = Math.max(...seed.map(([, c]) => c)) + 1;
 
-    // Pad so a growing oscillator never runs into the wall mid-cycle
     const pad = Math.max(seedH, seedW, 12);
     const R = seedH + pad * 2;
     const C = seedW + pad * 2;
@@ -126,7 +200,6 @@ function analyzePattern(cells: Array<[number, number]>, name: string): Pattern {
 
     let cur = seedGrid;
     let period = 0;
-    // Swept box, in padded coords.
     let minR = pad, maxR = pad + seedH - 1, minC = pad, maxC = pad + seedW - 1;
     const expand = (g: Grid): void => {
         for (let r = 0; r < R; r++) {
@@ -162,7 +235,6 @@ function analyzePattern(cells: Array<[number, number]>, name: string): Pattern {
         };
     }
 
-    // Footprint is the swept box; offset shifts the seed's origin within it
     return {
         name,
         cells: seed,
@@ -173,10 +245,6 @@ function analyzePattern(cells: Array<[number, number]>, name: string): Pattern {
         symmetric: false,
     };
 }
-
-/*
-Scene construction
-*/
 
 function stamp(grid: Grid, dims: Dimensions, p: Pattern, top: number, left: number): void {
     const [dr, dc] = p.offset;
@@ -219,10 +287,6 @@ function buildScene(
     return grid;
 }
 
-/*
-reduced-motion preference (live)
- */
-
 function usePrefersReducedMotion(): boolean {
     const [reduced, setReduced] = useState(false);
     useEffect(() => {
@@ -235,18 +299,8 @@ function usePrefersReducedMotion(): boolean {
     return reduced;
 }
 
-/*
- Colour resolution
-
- Canvas 2D won't read `var(--x)`: it ignores the assignment and silently keeps
- the previous fillStyle. So resolve custom properties ourselves with
- getComputedStyle, scoped to the canvas so it picks up the theme in effect
- and do it at draw time so live theme switches keep working
-*/
-
 function resolveColor(value: string, el: Element): string {
     if (!value.includes("var(")) return value;
-    // Handles var(--name) and var(--name, fallback).
     const match = value.match(/var\(\s*(--[\w-]+)\s*(?:,\s*([^)]+))?\)/);
     if (!match) return value;
     const [, name, fallback] = match;
@@ -254,45 +308,37 @@ function resolveColor(value: string, el: Element): string {
     return resolved || fallback?.trim() || value;
 }
 
-/*
-Component
-*/
-
 interface LifeOscillatorsProps {
     rows?: number;
     cols?: number;
     cellSize?: number;
-    /** Generations per second */
     speed?: number;
-    /*
-     "symmetric" (default) or "mixed" for a field, or any single pattern name
-     */
     scene?: Scene;
-    /*
-     RLE pattern string(s), Golly/copy.sh flavour. If given, these tile instead
-     of `scene`; each is parsed and simulated for its period and footprint.
-     Non-oscillators warn and may look messy
-     */
     rle?: string | string[];
     aliveColor?: string;
     backgroundColor?: string;
+    cellRadius?: number;
+    rowOffset?: number;
+    colOffset?: number;
     className?: string;
 }
 
 export default function LifeOscillators({
-                                            rows = 32,
-                                            cols = 32,
-                                            cellSize = 8,
-                                            speed = 7,
+                                            rows = 16,
+                                            cols = 16,
+                                            cellSize = 12,
+                                            speed = 6,
                                             scene = "symmetric",
                                             rle,
                                             aliveColor = "var(--text-primary)",
                                             backgroundColor = "transparent",
+                                            cellRadius = 0.75,
+                                            rowOffset = 0,
+                                            colOffset = 0,
                                             className,
                                         }: LifeOscillatorsProps) {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-    // Parse + analyze any RLE once per input. [] means "no override, use scene"
     const rlePatterns = useMemo<Pattern[]>(() => {
         if (!rle) return [];
         const sources = Array.isArray(rle) ? rle : [rle];
@@ -310,9 +356,27 @@ export default function LifeOscillators({
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
+        const radius01 = Math.min(1, Math.max(0, cellRadius));
+        let effRowOffset = rowOffset;
+        let effColOffset = colOffset;
+        if (effRowOffset !== 0 && effColOffset !== 0) {
+            if (typeof console !== "undefined") {
+                console.warn(
+                    "[LifeOscillators] rowOffset and colOffset are mutually " +
+                    "exclusive; using rowOffset and ignoring colOffset.",
+                );
+            }
+            effColOffset = 0;
+        }
+
+        const shearX = (rows - 1) * effRowOffset;
+        const shearY = (cols - 1) * effColOffset;
+        const originX = shearX < 0 ? -shearX : 0;
+        const originY = shearY < 0 ? -shearY : 0;
+
         const dpr = window.devicePixelRatio || 1;
-        const cssW = cols * cellSize;
-        const cssH = rows * cellSize;
+        const cssW = cols * cellSize + Math.abs(shearX);
+        const cssH = rows * cellSize + Math.abs(shearY);
         if (canvas.width !== cssW * dpr || canvas.height !== cssH * dpr) {
             canvas.width = cssW * dpr;
             canvas.height = cssH * dpr;
@@ -321,7 +385,6 @@ export default function LifeOscillators({
         }
 
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        // Clear so a transparent backdrop shows through. paint one only if asked
         ctx.clearRect(0, 0, cssW, cssH);
         if (backgroundColor !== "transparent") {
             ctx.fillStyle = resolveColor(backgroundColor, canvas);
@@ -331,22 +394,26 @@ export default function LifeOscillators({
         ctx.fillStyle = resolveColor(aliveColor, canvas);
 
         const grid = gridRef.current;
-        // Leave a hairline between live cells so they don't fuse into one blob
-        // at small sizes. Work in device pixels and snap to that grid so the
-        // line stays crisp at any DPR, and never let the fill drop below a pixel
-        // a 1px cell can't be split, so it just stays solid
-        const px = 1 / dpr; // one device pixel, in CSS units
-        let gap = Math.max(px, Math.round(Math.min(1, cellSize * 0.2) * dpr) / dpr);
-        if (cellSize - gap < px) gap = 0;
-        const fill = cellSize - gap;
+        const inset = cellSize > 4 ? 1 : 0;
+        const size = cellSize - inset * 2;
+        const pxRadius = (radius01 * size) / 2;
+        const rounded = pxRadius > 0;
+
         for (let r = 0; r < rows; r++) {
             for (let c = 0; c < cols; c++) {
-                if (grid[r * cols + c] === 1) {
-                    ctx.fillRect(c * cellSize, r * cellSize, fill, fill);
+                if (grid[r * cols + c] !== 1) continue;
+                const x = originX + c * cellSize + r * effRowOffset + inset;
+                const y = originY + r * cellSize + c * effColOffset + inset;
+                if (!rounded) {
+                    ctx.fillRect(x, y, size, size);
+                } else {
+                    ctx.beginPath();
+                    ctx.roundRect(x, y, size, size, pxRadius);
+                    ctx.fill();
                 }
             }
         }
-    }, [rows, cols, cellSize, aliveColor, backgroundColor]);
+    }, [rows, cols, cellSize, aliveColor, backgroundColor, cellRadius, rowOffset, colOffset]);
 
     useEffect(() => {
         gridRef.current = buildScene({ rows, cols }, scene, 2, rlePatterns);
