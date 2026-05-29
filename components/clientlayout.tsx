@@ -1,7 +1,7 @@
 'use client';
 import * as React from "react"
 import { usePathname } from 'next/navigation'
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, Suspense } from 'react';
 import { useTheme } from 'next-themes';
 import Navigation from './navigation';
 import { ThemeToggle } from './themetoggle';
@@ -11,45 +11,37 @@ import Link from "next/link";
 import { MAINTENANCE_MODE } from '../lib/siteconfig';
 import Maintenance from "./maintenance";
 
-const styles = {
-    orb: {
-        position: 'fixed' as const,
-        pointerEvents: 'none' as const,
-        zIndex: 50,
-        transform: 'translate(-50%, -50%)',
-        transition: 'opacity 0.3s ease',
-    },
-    orbInner: {
-        width: '64px',
-        height: '64px',
-        background: 'linear-gradient(135deg,rgb(0, 85, 255) 0%,rgb(7, 0, 133) 100%)',
-        borderRadius: '50%',
-        willChange: 'transform',
-        filter: 'blur(0px)',
-        opacity: 0.8,
-    },
-    orbPulse: {
-        position: 'absolute' as const,
-        inset: 8,
-        width: '44px',
-        height: '44px',
-        background: 'linear-gradient(135deg,rgb(0, 255, 13) 0%,rgb(60, 255, 0) 100%)',
-        borderRadius: '50%',
-        animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        filter: 'blur(6px)',
-    },
-    orbHighlight: {
-        position: 'absolute' as const,
-        inset: 16,
-        width: '16px',
-        height: '16px',
-        background: 'linear-gradient(135deg,rgb(245, 245, 245) 0%,rgb(243, 255, 239) 100%)',
-        borderRadius: '50%',
-        animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        filter: 'blur(4px)',
-        zIndex: '50'
-    },
-};
+function Loader() {
+    return (
+        <p className={'puck-temperature'}>LOADING</p>)
+}
+
+function TemperatureComponent(){
+    const [temperature, setTemperature] = useState<number>(null);
+    useEffect(() => {
+        fetch(
+            'https://api.open-meteo.com/v1/forecast?latitude=30.2672&longitude=-97.7431&current=temperature_2m&temperature_unit=fahrenheit&forecast_days=1'
+        )
+            .then(res => res.json())
+            .then(data => {
+                const temp = data?.current?.temperature_2m;
+                if (typeof temp === 'number') {
+                    setTemperature(Math.round(temp));
+                }
+            })
+            .catch(() => {
+                // fail silently — puck renders without temperature
+            });
+    }, []);
+    return (
+        <>
+            <p className={'puck-temperature'}>
+                {temperature === null ? 'LOADING...' : `${temperature} DEG F`}
+            </p>
+        </>
+
+    )
+}
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -66,21 +58,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         backgroundColor: 'var(--nav-item-primary)',
         color: 'var(--nav-item-text)',
     }
-    useEffect(() => {
-        fetch(
-            'https://api.open-meteo.com/v1/forecast?latitude=30.2672&longitude=-97.7431&current=temperature_2m&temperature_unit=fahrenheit&forecast_days=1'
-        )
-            .then(res => res.json())
-            .then(data => {
-                const temp = data?.current?.temperature_2m;
-                if (typeof temp === 'number') {
-                    setTemperature(Math.round(temp));
-                }
-            })
-            .catch(() => {
-                // fail silently — puck renders without temperature
-            });
-    }, []);
     // Layout debug flag.
     // Reads `?debug=1` from the URL and toggles the `debug-layout` class
     // on <html>. The class activates the --debug-N variables defined in
@@ -180,9 +157,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                     <div className="base-container liquid-glass-main">
                         <div className={"puck-container"}>
                             <p className={'puck-paragraph'}>AUSTIN, TX</p>
-                            {temperature !== null && (
-                                <p className={'puck-temperature'}>{temperature} DEG F</p>
-                            )}
+                                <Suspense fallback={<Loader />}>
+                                    <TemperatureComponent />
+                                </Suspense>
                         </div>
 
                         <div className={`base-header`}>
