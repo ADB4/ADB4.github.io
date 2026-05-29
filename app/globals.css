@@ -877,9 +877,20 @@ a {
     background-color: var(--debug-4);
 }
 .monocoque-logo {
+    display: flex;
+    align-items: flex-end;
+    background-color: var(--debug-3);
     width: fit-content;
     margin: auto 0 0 auto;
   /* tune until the ink fits */
+}
+.oscillator {
+    margin: auto -4rem 1.5rem auto;
+}
+.oscillator-micro {
+    width: 3rem;
+    height: 3rem;
+    background-color: var(--debug-3);
 }
 
 /* Bio markdown */

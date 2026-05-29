@@ -36,13 +36,21 @@ export default function HomeComponent({content}: HomeProps) {
             <div className="home-container">
                 <div className={"home-row"}>
                     <div className={"home-section home-bio"}>
-                        <h5>0</h5>
+                        <LifeOscillators className={"oscillator-micro"} rows={4} cols={4} colOffset={0} speed={1} scene={"toad"}    aliveGradient={{
+                            stops: ["var(--text-primary)"],
+                            maxAge: 4,
+                            easing: "ease-out",
+                        }}/>
                         <Markdown className={"markdown-sans home-bio-text"}>
                             {content.bio}
                         </Markdown>
                     </div>
                     <div className={"home-section home-fun"}>
-                        <h5>1</h5>
+                        <LifeOscillators className={"oscillator-micro"} rows={4} cols={4} colOffset={0} speed={1} scene={"blinker"}    aliveGradient={{
+                            stops: ["var(--text-primary)"],
+                            maxAge: 4,
+                            easing: "ease-out",
+                        }}/>
                         <div className={"home-fun-body"}>
                             <Markdown className={"markdown-sans home-fun-text"}>
                                 {content.fun}
@@ -52,15 +60,21 @@ export default function HomeComponent({content}: HomeProps) {
                 </div>
                 <div className={"home-row"}>
                     <div className={"home-section home-monocoque"}>
-                        <h5>2</h5>
+                        <LifeOscillators className={"oscillator-micro"} rows={4} cols={4} colOffset={0} speed={1} scene={"beacon"}    aliveGradient={{
+                            stops: ["var(--text-primary)"],
+                            maxAge: 4,
+                            easing: "ease-out",
+                        }}/>
+
                         <div className={"home-monocoque-body"}>
                             {/*<TypewriterComponent text={typewritercopy}/>*/}
-                            <LifeOscillators rows={10} cols={10} scene={"figure-eight"}    aliveGradient={{
-                                stops: ["var(--text-primary)", "#69ff00"],
-                                maxAge: 4,
-                                easing: "ease-out",
-                            }}/>
+
                             <div className={"monocoque-logo"}>
+                                <LifeOscillators className={"oscillator"} rows={10} cols={10} colOffset={-8} scene={"figure-eight"}    aliveGradient={{
+                                    stops: ["var(--text-primary)", "#69ff00"],
+                                    maxAge: 4,
+                                    easing: "ease-out",
+                                }}/>
                                 <h3>MONOCOQUE</h3>
                             </div>
                         </div>

@@ -475,7 +475,7 @@ export default function LifeOscillators({
                                             rle,
                                             aliveColor = "var(--text-primary)",
                                             aliveGradient,
-                                            backgroundColor = "transparent",
+                                            backgroundColor = "var(--debug-2)",
                                             cellRadius = 0.75,
                                             rowOffset = 0,
                                             colOffset = 0,
@@ -503,7 +503,7 @@ export default function LifeOscillators({
         if (!ctx) return;
 
         const radius01 = Math.min(1, Math.max(0, cellRadius));
-        let effRowOffset = rowOffset;
+        const effRowOffset = rowOffset;
         let effColOffset = colOffset;
         if (effRowOffset !== 0 && effColOffset !== 0) {
             if (typeof console !== "undefined") {
