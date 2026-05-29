@@ -1,27 +1,6 @@
-/**
- * LifeOscillators — a decorative, non-interactive Game of Life animation.
- * ---------------------------------------------------------------------------
- * Oscillators are periodic: each returns to its exact initial state every
- * `period` generations, so there is nothing to "loop" manually — we seed the
- * board with oscillators and run the standard rules forever. The animation is
- * seamless by construction; a field of mixed periods reads as a long cycle
- * equal to the LCM of those periods.
- *
- * Every pattern's footprint below is the bounding box of its ENTIRE cycle
- * (verified by simulation), not just its seed. This matters: spacing tiles by
- * the seed box alone lets transient/"spark" cells of neighbours touch, which
- * breaks periodicity and makes oscillators decay into still-lifes. The `offset`
- * shifts each seed so its full cycle stays within [0,rows) x [0,cols).
- *
- * The component is purely visual: aria-hidden, pointer-events:none, no handlers.
- * It honours prefers-reduced-motion by rendering one static frame.
- */
-
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-
-/* ===========================================================================
- * Pure simulation core (framework-free, unit-testable)
- * ======================================================================== */
+import type { Pattern, Scene } from "./patterns";
+import { patternsForScene } from "./patterns";
 
 type Grid = Uint8Array;
 
@@ -44,6 +23,8 @@ function liveNeighbours(
             if (dr === 0 && dc === 0) continue;
             const nr = r + dr;
             const nc = c + dc;
+            // Off-grid counts as dead, which for an oscillator boxed in its
+            // footprint is the same as the infinite plane
             if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
             count += grid[index(nr, nc, cols)];
         }
@@ -51,7 +32,7 @@ function liveNeighbours(
     return count;
 }
 
-/** One generation of Conway's rules. Never mutates the input. */
+/* One Conway step. the input grid is never touched */
 function nextGeneration(grid: Grid, dims: Dimensions): Grid {
     const { rows, cols } = dims;
     const next = new Uint8Array(rows * cols);
@@ -66,120 +47,9 @@ function nextGeneration(grid: Grid, dims: Dimensions): Grid {
     return next;
 }
 
-/* ===========================================================================
- * Oscillator library
- *
- * rows/cols  = full-cycle bounding box (verified by simulation).
- * offset     = [dr, dc] added to every seed cell so the whole cycle, including
- *              transient cells, fits inside the footprint starting at (0, 0).
- * ======================================================================== */
-
-interface Pattern {
-    readonly name: string;
-    readonly cells: ReadonlyArray<readonly [number, number]>;
-    readonly rows: number;
-    readonly cols: number;
-    readonly offset: readonly [number, number];
-    readonly period: number;
-    /** True for radially/bilaterally symmetric "breathing" oscillators. */
-    readonly symmetric: boolean;
-}
-
-const BLINKER: Pattern = {
-    name: "blinker",
-    cells: [[1, 0], [1, 1], [1, 2]],
-    rows: 3, cols: 3, offset: [0, 0], period: 2, symmetric: false,
-};
-
-const TOAD: Pattern = {
-    name: "toad",
-    cells: [[1, 1], [1, 2], [1, 3], [2, 0], [2, 1], [2, 2]],
-    rows: 4, cols: 4, offset: [0, 0], period: 2, symmetric: false,
-};
-
-const BEACON: Pattern = {
-    name: "beacon",
-    cells: [[0, 0], [0, 1], [1, 0], [1, 1], [2, 2], [2, 3], [3, 2], [3, 3]],
-    rows: 4, cols: 4, offset: [0, 0], period: 2, symmetric: false,
-};
-
-/** Octagon (period 5) — an 8-fold symmetric octagon that breathes in and out. */
-const OCTAGON: Pattern = {
-    name: "octagon",
-    cells: [
-        [0, 3], [0, 4], [1, 2], [1, 5], [2, 1], [2, 6], [3, 0], [3, 7],
-        [4, 0], [4, 7], [5, 1], [5, 6], [6, 2], [6, 5], [7, 3], [7, 4],
-    ],
-    rows: 8, cols: 8, offset: [0, 0], period: 5, symmetric: true,
-};
-
-/** Figure-eight (period 8) — two diagonal blocks pulsing with 180° symmetry. */
-const FIGURE_EIGHT: Pattern = {
-    name: "figure-eight",
-    cells: [
-        [0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2],
-        [3, 3], [3, 4], [3, 5], [4, 3], [4, 4], [4, 5], [5, 3], [5, 4], [5, 5],
-    ],
-    rows: 10, cols: 10, offset: [2, 2], period: 8, symmetric: true,
-};
-
-/** Pentadecathlon (period 15) — a long, slow, bilaterally symmetric pulse. */
-const PENTADECATHLON: Pattern = {
-    name: "pentadecathlon",
-    cells: [
-        [0, 2], [0, 7],
-        [1, 0], [1, 1], [1, 3], [1, 4], [1, 5], [1, 6], [1, 8], [1, 9],
-        [2, 2], [2, 7],
-    ],
-    rows: 9, cols: 16, offset: [3, 3], period: 15, symmetric: true,
-};
-
-/** Pulsar (period 3) — the classic 4-fold symmetric pulse (true box 15x15). */
-function buildPulsar(): Pattern {
-    const cells: Array<[number, number]> = [];
-    for (const r of [0, 5, 7, 12]) for (const c of [2, 3, 4, 8, 9, 10]) cells.push([r, c]);
-    for (const r of [2, 3, 4, 8, 9, 10]) for (const c of [0, 5, 7, 12]) cells.push([r, c]);
-    return { name: "pulsar", cells, rows: 15, cols: 15, offset: [1, 1], period: 3, symmetric: true };
-}
-const PULSAR = buildPulsar();
-
-const PATTERNS = {
-    blinker: BLINKER,
-    toad: TOAD,
-    beacon: BEACON,
-    octagon: OCTAGON,
-    "figure-eight": FIGURE_EIGHT,
-    pentadecathlon: PENTADECATHLON,
-    pulsar: PULSAR,
-} as const;
-
-type PatternName = keyof typeof PATTERNS;
-type Scene = PatternName | "symmetric" | "mixed";
-
-function patternsForScene(scene: Scene): Pattern[] {
-    if (scene === "symmetric") return [OCTAGON, PULSAR, FIGURE_EIGHT];
-    if (scene === "mixed")
-        return [PULSAR, OCTAGON, PENTADECATHLON, FIGURE_EIGHT, BEACON, BLINKER];
-    return [PATTERNS[scene]];
-}
-
-/* ===========================================================================
- * RLE patterns
- *
- * Parses the standard Life RLE format (as exported by Golly, copy.sh/life,
- * etc.): optional `#` metadata lines, an `x = .., y = .., rule = ..` header,
- * then run-length-encoded cells where `b`=dead, `o`=alive, `$`=end of row,
- * `!`=end of pattern, each optionally prefixed by a repeat count.
- *
- * A parsed pattern has no known period or footprint, so analyzePattern()
- * simulates it in isolation to discover both — exactly what the built-ins
- * store by hand. This means any oscillator you drop in tiles with the same
- * collision-free spacing and loops without fizzling, automatically.
- * ======================================================================== */
 
 interface ParsedRle {
     cells: Array<[number, number]>;
-    /** Declared rule, e.g. "B3/S23". Empty if absent. */
     rule: string;
 }
 
@@ -216,7 +86,8 @@ function parseRle(text: string): ParsedRle {
         } else if (ch === "!") {
             break;
         } else if (ch !== " " && ch !== "\t") {
-            // Any other tag (o, A, or multi-state letters) is a live cell here.
+            // Anything that isn't b/./$/!/digit/space is a live cell covers
+            // `o` and the multi-state letters (A, B etc) we treat as alive
             const n = count || 1;
             for (let k = 0; k < n; k++) cells.push([row, col++]);
             count = 0;
@@ -227,29 +98,19 @@ function parseRle(text: string): ParsedRle {
 
 const MAX_PERIOD = 1000;
 
-/**
- * Simulate a parsed pattern in isolation on a generously padded board to find
- * its period and the bounding box swept across the whole cycle. Returns a
- * Pattern whose `offset` shifts the seed so every transient cell stays within
- * the footprint, identical in shape to the hand-tuned built-ins.
- *
- * If no period is found within MAX_PERIOD (e.g. a spaceship or methuselah,
- * which are unsuitable for a tiled loop), it warns and falls back to the seed
- * bounding box so the pattern still renders.
- */
 function analyzePattern(cells: Array<[number, number]>, name: string): Pattern {
     if (cells.length === 0) {
         return { name, cells: [], rows: 1, cols: 1, offset: [0, 0], period: 1, symmetric: false };
     }
 
-    // Normalise seed to origin.
+    // Seed to origin
     const minSeedR = Math.min(...cells.map(([r]) => r));
     const minSeedC = Math.min(...cells.map(([, c]) => c));
     const seed = cells.map(([r, c]) => [r - minSeedR, c - minSeedC] as [number, number]);
     const seedH = Math.max(...seed.map(([r]) => r)) + 1;
     const seedW = Math.max(...seed.map(([, c]) => c)) + 1;
 
-    // Pad enough that an oscillator's growth never hits the simulation edge.
+    // Pad so a growing oscillator never runs into the wall mid-cycle
     const pad = Math.max(seedH, seedW, 12);
     const R = seedH + pad * 2;
     const C = seedW + pad * 2;
@@ -265,7 +126,7 @@ function analyzePattern(cells: Array<[number, number]>, name: string): Pattern {
 
     let cur = seedGrid;
     let period = 0;
-    // Track the swept bounding box (in padded coords).
+    // Swept box, in padded coords.
     let minR = pad, maxR = pad + seedH - 1, minC = pad, maxC = pad + seedW - 1;
     const expand = (g: Grid): void => {
         for (let r = 0; r < R; r++) {
@@ -301,7 +162,7 @@ function analyzePattern(cells: Array<[number, number]>, name: string): Pattern {
         };
     }
 
-    // Footprint = swept box; offset shifts the seed's origin within it.
+    // Footprint is the swept box; offset shifts the seed's origin within it
     return {
         name,
         cells: seed,
@@ -313,9 +174,9 @@ function analyzePattern(cells: Array<[number, number]>, name: string): Pattern {
     };
 }
 
-/* ===========================================================================
- * Scene construction — tile oscillators with verified, collision-free spacing
- * ======================================================================== */
+/*
+Scene construction
+*/
 
 function stamp(grid: Grid, dims: Dimensions, p: Pattern, top: number, left: number): void {
     const [dr, dc] = p.offset;
@@ -327,11 +188,6 @@ function stamp(grid: Grid, dims: Dimensions, p: Pattern, top: number, left: numb
     }
 }
 
-/**
- * Each tile reserves (maxFootprint + gap); the oscillator's full-cycle box is
- * centred inside it, guaranteeing at least `gap` empty cells between any two
- * neighbours so they can never interact. The whole field is centred on the grid.
- */
 function buildScene(
     dims: Dimensions,
     scene: Scene,
@@ -363,9 +219,9 @@ function buildScene(
     return grid;
 }
 
-/* ===========================================================================
- * Reduced-motion preference (live)
- * ======================================================================== */
+/*
+reduced-motion preference (live)
+ */
 
 function usePrefersReducedMotion(): boolean {
     const [reduced, setReduced] = useState(false);
@@ -379,19 +235,18 @@ function usePrefersReducedMotion(): boolean {
     return reduced;
 }
 
-/* ===========================================================================
- * Colour resolution
- *
- * A canvas 2D context cannot consume `var(--x)` — it silently ignores it and
- * keeps the previous fillStyle. So we resolve any CSS custom property to a
- * concrete value via getComputedStyle, scoped to the canvas element so the
- * variable picks up whatever theme value is in effect at the mount point.
- * Resolving at draw time (not once) keeps it correct across live theme changes.
- * ======================================================================== */
+/*
+ Colour resolution
+
+ Canvas 2D won't read `var(--x)`: it ignores the assignment and silently keeps
+ the previous fillStyle. So resolve custom properties ourselves with
+ getComputedStyle, scoped to the canvas so it picks up the theme in effect
+ and do it at draw time so live theme switches keep working
+*/
 
 function resolveColor(value: string, el: Element): string {
     if (!value.includes("var(")) return value;
-    // Supports `var(--name)` and `var(--name, fallback)`.
+    // Handles var(--name) and var(--name, fallback).
     const match = value.match(/var\(\s*(--[\w-]+)\s*(?:,\s*([^)]+))?\)/);
     if (!match) return value;
     const [, name, fallback] = match;
@@ -399,26 +254,24 @@ function resolveColor(value: string, el: Element): string {
     return resolved || fallback?.trim() || value;
 }
 
-/* ===========================================================================
- * Component
- * ======================================================================== */
+/*
+Component
+*/
 
 interface LifeOscillatorsProps {
     rows?: number;
     cols?: number;
     cellSize?: number;
-    /** Generations per second. */
+    /** Generations per second */
     speed?: number;
-    /**
-     * "symmetric" (default): a field of breathing oscillators (octagon, pulsar,
-     * figure-eight). "mixed": more variety. Or a single pattern by name.
+    /*
+     "symmetric" (default) or "mixed" for a field, or any single pattern name
      */
     scene?: Scene;
-    /**
-     * One or more RLE pattern strings (as exported by Golly, copy.sh/life, etc.).
-     * When provided, these are tiled instead of `scene`. Each is parsed and
-     * simulated to find its period and footprint, so oscillators loop and tile
-     * cleanly. Non-oscillators (spaceships, methuselahs) warn and may look messy.
+    /*
+     RLE pattern string(s), Golly/copy.sh flavour. If given, these tile instead
+     of `scene`; each is parsed and simulated for its period and footprint.
+     Non-oscillators warn and may look messy
      */
     rle?: string | string[];
     aliveColor?: string;
@@ -427,20 +280,19 @@ interface LifeOscillatorsProps {
 }
 
 export default function LifeOscillators({
-                                            rows = 35,
-                                            cols = 53,
-                                            cellSize = 16,
-                                            speed = 6,
+                                            rows = 32,
+                                            cols = 32,
+                                            cellSize = 8,
+                                            speed = 7,
                                             scene = "symmetric",
                                             rle,
-                                            aliveColor = "#34d399",
+                                            aliveColor = "var(--text-primary)",
                                             backgroundColor = "transparent",
                                             className,
                                         }: LifeOscillatorsProps) {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-    // Parse + analyze any supplied RLE once per unique input. Empty array means
-    // "no override" so the built-in scene is used.
+    // Parse + analyze any RLE once per input. [] means "no override, use scene"
     const rlePatterns = useMemo<Pattern[]>(() => {
         if (!rle) return [];
         const sources = Array.isArray(rle) ? rle : [rle];
@@ -469,8 +321,7 @@ export default function LifeOscillators({
         }
 
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        // Clear first so a transparent background shows through; then optionally
-        // paint an opaque backdrop if one was supplied.
+        // Clear so a transparent backdrop shows through. paint one only if asked
         ctx.clearRect(0, 0, cssW, cssH);
         if (backgroundColor !== "transparent") {
             ctx.fillStyle = resolveColor(backgroundColor, canvas);
@@ -480,16 +331,18 @@ export default function LifeOscillators({
         ctx.fillStyle = resolveColor(aliveColor, canvas);
 
         const grid = gridRef.current;
-        const inset = cellSize > 4 ? 1 : 0;
+        // Leave a hairline between live cells so they don't fuse into one blob
+        // at small sizes. Work in device pixels and snap to that grid so the
+        // line stays crisp at any DPR, and never let the fill drop below a pixel
+        // a 1px cell can't be split, so it just stays solid
+        const px = 1 / dpr; // one device pixel, in CSS units
+        let gap = Math.max(px, Math.round(Math.min(1, cellSize * 0.2) * dpr) / dpr);
+        if (cellSize - gap < px) gap = 0;
+        const fill = cellSize - gap;
         for (let r = 0; r < rows; r++) {
             for (let c = 0; c < cols; c++) {
                 if (grid[r * cols + c] === 1) {
-                    ctx.fillRect(
-                        c * cellSize + inset,
-                        r * cellSize + inset,
-                        cellSize - inset * 2,
-                        cellSize - inset * 2,
-                    );
+                    ctx.fillRect(c * cellSize, r * cellSize, fill, fill);
                 }
             }
         }

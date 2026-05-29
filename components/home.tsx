@@ -6,10 +6,12 @@ import Markdown from 'react-markdown';
 import QuoteViewer from "./quoteviewer";
 import { HomeContent } from "@/app/page";
 import { TypewriterComponent } from "./typewriter";
-import LifeOscillators from "./GameOfLife";
+import LifeOscillators from "./gameoflife/GameOfLife";
 const typewritercopy: string = "\"The nineteen-hour drive from Michigan in which I packed my 2009 Nissan Murano to the brim was nothing short of deiform. U.S. Route 69 through Oklahoma was idyllic, despite the perturbing lore of death and disappearances involving the long-haul trucking community.\"";
 const about2: string = "His vices oscillate between game developmen"
 const copy: string = "_The nineteen-hour drive from Michigan in which I packed my 2009 Nissan Murano to the brim was nothing short of deiform. U.S. Route 69 through Oklahoma was idyllic, despite its underbelly of death and disappearances many believe involved the long-haul trucking community._"
+
+
 export interface HomeProps {
     content: HomeContent;
 }
@@ -53,7 +55,7 @@ export default function HomeComponent({content}: HomeProps) {
                         <h5>2</h5>
                         <div className={"home-monocoque-body"}>
                             {/*<TypewriterComponent text={typewritercopy}/>*/}
-                            <LifeOscillators rle={rleList[0]}/>
+                            <LifeOscillators rows={10} cols={10} scene={"figure-eight"}/>
                             <div className={"monocoque-logo"}>
                                 <h3>MONOCOQUE</h3>
                             </div>
