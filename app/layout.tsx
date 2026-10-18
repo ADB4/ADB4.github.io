@@ -1,5 +1,5 @@
 import './globals.css';
-import './normalize.css';
+import './normalize.css';'
 
 import { ThemeProvider } from 'next-themes'
 import ClientLayout from '../components/clientlayout'

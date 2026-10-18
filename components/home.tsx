@@ -36,7 +36,7 @@ export default function HomeComponent({content}: HomeProps) {
             <div className="home-container">
                 <div className={"home-row"}>
                     <div className={"home-section home-bio"}>
-                        <LifeOscillators className={"oscillator-micro"} rows={4} cols={4} colOffset={0} speed={1} scene={"toad"}    aliveGradient={{
+                        <LifeOscillators className={"oscillator-micro"} cellSize={6} rows={4} cols={4} colOffset={0} speed={1} scene={"toad"}    aliveGradient={{
                             stops: ["var(--text-primary)"],
                             maxAge: 4,
                             easing: "ease-out",
@@ -46,7 +46,7 @@ export default function HomeComponent({content}: HomeProps) {
                         </Markdown>
                     </div>
                     <div className={"home-section home-fun"}>
-                        <LifeOscillators className={"oscillator-micro"} rows={4} cols={4} colOffset={0} speed={1} scene={"blinker"}    aliveGradient={{
+                        <LifeOscillators className={"oscillator-micro"} cellSize={4} rowOffset={0} rows={8} cols={8} colOffset={0} speed={1} scene={"figure-eight"}    aliveGradient={{
                             stops: ["var(--text-primary)"],
                             maxAge: 4,
                             easing: "ease-out",
@@ -59,29 +59,22 @@ export default function HomeComponent({content}: HomeProps) {
                     </div>
                 </div>
                 <div className={"home-row"}>
-                    <div className={"home-section home-monocoque"}>
-                        <LifeOscillators className={"oscillator-micro"} rows={4} cols={4} colOffset={0} speed={1} scene={"beacon"}    aliveGradient={{
-                            stops: ["var(--text-primary)"],
-                            maxAge: 4,
-                            easing: "ease-out",
-                        }}/>
-
-                        <div className={"home-monocoque-body"}>
-                            {/*<TypewriterComponent text={typewritercopy}/>*/}
-
-                            <div className={"monocoque-logo"}>
-                                <LifeOscillators className={"oscillator"} rows={10} cols={10} colOffset={-8} scene={"figure-eight"}    aliveGradient={{
-                                    stops: ["var(--text-primary)", "#69ff00"],
-                                    maxAge: 4,
-                                    easing: "ease-out",
-                                }}/>
-                                <h3>MONOCOQUE</h3>
+                    <div className={"home-section-container"}>
+                        <div className={"flex-row"}>
+                            <LifeOscillators className={"oscillator-micro"} cellSize={6} rows={4} cols={4} colOffset={0} speed={1} scene={"beacon"}    aliveGradient={{
+                                stops: ["var(--text-primary)"],
+                                maxAge: 4,
+                                easing: "ease-out",
+                            }}/>
+                            <div className={"home-section-header"}>
+                                <h4>RECENT MODELS</h4>
                             </div>
                         </div>
-
+                        <div className={"home-models-container"}>
+                            hello world!
+                        </div>
                     </div>
                 </div>
-
             </div>
         </>
     );

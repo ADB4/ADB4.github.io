@@ -783,6 +783,15 @@ a {
 }
 
 /* Row container — two siblings inside .home-container. */
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--debug-2);
+}
 .home-row {
     width: 100%;
     height: calc(100% - 2rem);
@@ -820,6 +829,25 @@ a {
     column-gap: 2rem;
     color: var(--text-primary);
     background-color: var(--debug-3);
+}
+.home-section-container {
+    min-width: 16rem;
+    width: 100%;
+    margin: 1rem 0 auto;
+    justify-content: space-between;
+    column-gap: 2rem;
+    color: var(--text-primary);
+    background-color: var(--debug-3);
+}
+.home-section-header {
+    background-color: rgba(100,1,1,0.2);
+    height: 1.5rem;
+    width: auto;
+}
+.home-section-header h4 {
+    font-family: Swiss721;
+    font-size: 1.15rem;
+    font-weight: 200;
 }
 
 /* Bio section (left column, top row) */
