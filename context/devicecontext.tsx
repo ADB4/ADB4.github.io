@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useLayoutEffect, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext } from 'react';
 
 // DeviceContext: for mobile/desktop viewports
 export const DeviceContext = createContext< boolean | undefined>(undefined);

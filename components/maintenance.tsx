@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ModelViewerComponent from "./modelViewer";
 
-export default function Maintenance() {
+const Maintenance = () => {
     const modelURL: string = "gltf/chairProgramme.glb";
     const textureURL: string[] = [
         "tex/2048p/chairProgramme_BaseColor_sRGB.jpg",
@@ -93,4 +93,6 @@ export default function Maintenance() {
             </div>
         </div>
     );
-}
+};
+
+export default Maintenance;

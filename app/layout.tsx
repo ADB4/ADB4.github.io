@@ -1,5 +1,5 @@
 import './globals.css';
-import './normalize.css';'
+import './normalize.css';
 
 import { ThemeProvider } from 'next-themes'
 import ClientLayout from '../components/clientlayout'
@@ -8,11 +8,11 @@ export const metadata = {
   description: 'fun',
 };
 
-export default function RootLayout({
+const RootLayout = ({
   children,
 }: {
   children: React.ReactNode;
-}) {
+}) => {
   return (
     <html suppressHydrationWarning lang="en">
       <body>
@@ -22,7 +22,9 @@ export default function RootLayout({
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;
 /*
         <Navigation />
         <main>

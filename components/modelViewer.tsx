@@ -101,7 +101,7 @@ useGLTF / Environment resolve, because three's LoadingManager fires
 its onLoad callback synchronously while Loader is still mounted.
 Mounting the overlay as a sibling of the Canvas avoids the issue.
 */
-function LoaderOverlay() {
+const LoaderOverlay = () => {
     const { progress, active } = useProgress();
     if (!active) return null;
     return (
@@ -119,7 +119,7 @@ function LoaderOverlay() {
             <p>{progress.toFixed(2)}% LOADED</p>
         </div>
     );
-}
+};
 
 // Join a base URL and a key without doubling or dropping the slash.
 function joinURL(base: string, key: string): string {
@@ -218,7 +218,7 @@ interface CameraReadoutProps {
     bus: CameraReadoutBus;
 }
 
-function CameraReadout({ bus }: CameraReadoutProps) {
+const CameraReadout = ({ bus }: CameraReadoutProps) => {
     const { camera, controls } = useThree();
     const lastEmitRef = useRef<number>(0);
     const tmpTargetRef = useRef<THREE.Vector3>(new THREE.Vector3());
@@ -243,7 +243,7 @@ function CameraReadout({ bus }: CameraReadoutProps) {
     });
 
     return null;
-}
+};
 
 /*
 DebugOverlay
@@ -270,7 +270,7 @@ function snapshotToCode(snap: CameraSnapshot): string {
     return `position: [${p}], target: [${t}], fov: ${fmt(snap.fov)}`;
 }
 
-function DebugOverlay({ bus, onSave, saved, onClear, onRemove }: DebugOverlayProps) {
+const DebugOverlay = ({ bus, onSave, saved, onClear, onRemove }: DebugOverlayProps) => {
     const [live, setLive] = useState<CameraSnapshot>(bus.snapshotRef.current);
 
     useEffect(() => {
@@ -372,7 +372,7 @@ function DebugOverlay({ bus, onSave, saved, onClear, onRemove }: DebugOverlayPro
             )}
         </div>
     );
-}
+};
 
 const debugButtonStyle: React.CSSProperties = {
     background: "rgba(255,255,255,0.1)",
@@ -424,7 +424,7 @@ interface BoundsFitterProps {
     fitKey: string;
 }
 
-function BoundsFitter({ fitKey }: BoundsFitterProps) {
+const BoundsFitter = ({ fitKey }: BoundsFitterProps) => {
     const api = useBounds();
     const { scene, camera, size } = useThree();
 
@@ -498,14 +498,14 @@ function BoundsFitter({ fitKey }: BoundsFitterProps) {
     }, [api, scene, camera, size.width, size.height]);
 
     return null;
-}
+};
 
-export default function ModelViewerComponent({
-                                                 baseURL,
-                                                 modelURL,
-                                                 textureURL,
-                                                 debug = false,
-                                             }: ModelViewerProps) {
+const ModelViewerComponent = ({
+    baseURL,
+    modelURL,
+    textureURL,
+    debug = false,
+}: ModelViewerProps) => {
     /*
       Stable scalar keys.
 
@@ -679,14 +679,16 @@ export default function ModelViewerComponent({
             )}
         </div>
     );
-}
+};
+
+export default ModelViewerComponent;
 
 interface GLTFComponentProps {
     modelURLs: string[];
     textures: MatchedTextures;
 }
 
-export function RotatingCameraComponent(props) {
+export const RotatingCameraComponent = (props) => {
     const {camera} = useThree();
     const [rotation, setRotation] = useState(0);
 
@@ -715,7 +717,7 @@ export function RotatingCameraComponent(props) {
             />
         </>
     )
-}
+};
 /*
 GLTFComponent
 
@@ -724,7 +726,7 @@ rendered with a shared MeshStandardMaterial built from the matched
 texture set, so the same PBR maps cover geometry that may be split
 across multiple GLB files.
 */
-function GLTFComponent({ modelURLs, textures }: GLTFComponentProps) {
+const GLTFComponent = ({ modelURLs, textures }: GLTFComponentProps) => {
     const material = usePBRMaterial(textures);
 
     return (
@@ -734,14 +736,14 @@ function GLTFComponent({ modelURLs, textures }: GLTFComponentProps) {
             ))}
         </>
     );
-}
+};
 
 interface GLBMeshesProps {
     url: string;
     material: THREE.Material;
 }
 
-function GLBMeshes({ url, material }: GLBMeshesProps) {
+const GLBMeshes = ({ url, material }: GLBMeshesProps) => {
     const { scene } = useGLTF(url);
 
     // Collect all meshes from the loaded scene graph. A single GLB may
@@ -771,7 +773,7 @@ function GLBMeshes({ url, material }: GLBMeshesProps) {
             ))}
         </>
     );
-}
+};
 
 /*
 usePBRMaterial

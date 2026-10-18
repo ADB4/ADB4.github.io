@@ -3,9 +3,7 @@
 import { useTheme } from "next-themes";
 import {useEffect, useState } from "react";
 import Markdown from 'react-markdown';
-import QuoteViewer from "./quoteviewer";
 import { HomeContent } from "@/app/page";
-import { TypewriterComponent } from "./typewriter";
 import LifeOscillators from "./gameoflife/GameOfLife";
 const typewritercopy: string = "\"The nineteen-hour drive from Michigan in which I packed my 2009 Nissan Murano to the brim was nothing short of deiform. U.S. Route 69 through Oklahoma was idyllic, despite the perturbing lore of death and disappearances involving the long-haul trucking community.\"";
 const about2: string = "His vices oscillate between game developmen"
@@ -15,7 +13,7 @@ const copy: string = "_The nineteen-hour drive from Michigan in which I packed m
 export interface HomeProps {
     content: HomeContent;
 }
-export default function HomeComponent({content}: HomeProps) {
+const HomeComponent = ({content}: HomeProps) => {
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [rleList, setRleList] = useState<string[]>([]);
     const { theme, setTheme } = useTheme();
@@ -78,4 +76,6 @@ export default function HomeComponent({content}: HomeProps) {
             </div>
         </>
     );
-}
+};
+
+export default HomeComponent;

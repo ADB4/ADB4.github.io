@@ -4,7 +4,7 @@ import { ThemeToggle } from './themetoggle';
 import { useDeviceContext } from '../context/devicecontext';
 import { usePathname } from 'next/navigation'
 import DisplayComponent from "./display";
-const Navigation: React.FC = () => {
+const Navigation = () => {
     const compactView = useDeviceContext();
     const pathname = usePathname();
     // const compactView = useDeviceContext();
@@ -117,6 +117,6 @@ const Navigation: React.FC = () => {
         </div>
         </>
     );
-}
+};
 
 export default Navigation;

@@ -3,7 +3,6 @@ import * as React from "react"
 import { usePathname } from 'next/navigation'
 import { useEffect, useState, useCallback, useRef, Suspense } from 'react';
 import { useTheme } from 'next-themes';
-import Navigation from './navigation';
 import { ThemeToggle } from './themetoggle';
 import { DeviceContext } from '../context/devicecontext';
 import { useDevice } from '../hooks/useDevice';
@@ -11,12 +10,12 @@ import Link from "next/link";
 import { MAINTENANCE_MODE } from '../lib/siteconfig';
 import Maintenance from "./maintenance";
 
-function Loader() {
+const Loader = () => {
     return (
         <p className={'puck-temperature'}>LOADING</p>)
-}
+};
 
-function TemperatureComponent(){
+const TemperatureComponent = () => {
     const [temperature, setTemperature] = useState<number>(null);
     useEffect(() => {
         fetch(
@@ -41,9 +40,9 @@ function TemperatureComponent(){
         </>
 
     )
-}
+};
 
-export default function ClientLayout({ children }: { children: React.ReactNode }) {
+const ClientLayout = ({ children }: { children: React.ReactNode }) => {
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [isVisible, setIsVisible] = useState(false);
     const [temperature, setTemperature] = useState<number | null>(null);
@@ -184,4 +183,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             </main>
         </DeviceContext.Provider>
     );
-}
+};
+
+export default ClientLayout;

@@ -1,6 +1,4 @@
-import Link from 'next/link';
-
-export default function CntctPage() {
+const CntctPage = () => {
   return (
     <div className="cntct-container">
       <div className="cntct-grid1"/>
@@ -13,4 +11,6 @@ export default function CntctPage() {
       </div>
     </div>
   );
-}
+};
+
+export default CntctPage;

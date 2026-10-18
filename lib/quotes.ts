@@ -1,6 +1,5 @@
 
 import path from 'path';
-import matter from 'gray-matter';
 
 const postsDirectory = path.join(process.cwd(), 'quotes');
 import data from '../public/quotes.json';

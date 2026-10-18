@@ -466,21 +466,21 @@ interface SpriteCache {
     sprites: HTMLCanvasElement[];
 }
 
-export default function LifeOscillators({
-                                            rows = 16,
-                                            cols = 16,
-                                            cellSize = 12,
-                                            speed = 6,
-                                            scene = "symmetric",
-                                            rle,
-                                            aliveColor = "var(--text-primary)",
-                                            aliveGradient,
-                                            backgroundColor = "var(--debug-2)",
-                                            cellRadius = 0.75,
-                                            rowOffset = 0,
-                                            colOffset = 0,
-                                            className,
-                                        }: LifeOscillatorsProps) {
+const LifeOscillators = ({
+    rows = 16,
+    cols = 16,
+    cellSize = 12,
+    speed = 6,
+    scene = "symmetric",
+    rle,
+    aliveColor = "var(--text-primary)",
+    aliveGradient,
+    backgroundColor = "var(--debug-2)",
+    cellRadius = 0.75,
+    rowOffset = 0,
+    colOffset = 0,
+    className,
+}: LifeOscillatorsProps) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     const rlePatterns = useMemo<Pattern[]>(() => {
@@ -686,4 +686,6 @@ export default function LifeOscillators({
             />
         </div>
     );
-}
+};
+
+export default LifeOscillators;

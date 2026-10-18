@@ -1,8 +1,7 @@
 
 import Link from 'next/link';
 import { getAllPosts } from '../../lib/posts';
-import QuoteViewer from '../../components/quoteviewer';
-export default function Weblog() {
+const Weblog = () => {
     const entries = getAllPosts();
     const parseTitle = (title: string) => {
         const parts = title.split(/(\*[^*]+\*)/g);
@@ -21,7 +20,7 @@ export default function Weblog() {
     };
     return (
     <>
-    <div className="weblog-container">
+    <div className="weblog-container weblog-index">
         <div className="weblog-selection">
             <div className="entry-list" style={{
                 paddingTop: '0.5rem',
@@ -78,7 +77,9 @@ export default function Weblog() {
     </div>
     </>
     );
-}
+};
+
+export default Weblog;
 
 /*
               <article 

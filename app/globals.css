@@ -400,6 +400,28 @@ a {
     background-color: var(--debug-3);
 }
 
+/* EntryDrawer's toggle, shown only on narrow screens. Elsewhere the
+   drawer box drops out so the list lays out exactly as before. */
+.weblog-toggle {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 2.5rem;
+    padding: 0;
+    font-family: Swiss721;
+    font-size: 1.0rem;
+    font-weight: 200;
+    color: var(--text-primary);
+    background: none;
+    border: none;
+    border-bottom: 1.5px solid var(--text-primary);
+    cursor: pointer;
+}
+.weblog-drawer {
+    display: contents;
+}
+
 .weblog-selection h1 {
     width: 100%;
     height: 2.0rem;
@@ -588,6 +610,89 @@ a {
     font-weight: 200;
 }
 
+/* Weblog, narrow screens
+   Phones in portrait, plus phones in landscape, which are too short for the
+   side-by-side list. The article gets the full width, and the entry list
+   collapses behind EntryDrawer's toggle and opens over it. On the index
+   page the list is the page, so the placeholder article is dropped. */
+@media (max-width: 767px), (max-height: 500px) and (pointer: coarse) {
+    .weblog-container {
+        grid-template: auto minmax(0, 1fr) / minmax(0, 1fr);
+    }
+    .weblog-selection {
+        display: contents;
+    }
+    .weblog-toggle {
+        grid-area: 1 / 1 / 2 / -1;
+        display: flex;
+    }
+    .weblog-drawer {
+        display: none;
+    }
+    .weblog-selection.open > .weblog-drawer {
+        grid-area: 2 / 1 / -1 / -1;
+        z-index: 1;
+        display: block;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        /* --bg-primary is translucent in the dark theme; the body color
+           underneath keeps the article from showing through. */
+        background: linear-gradient(var(--bg-primary), var(--bg-primary)), var(--body-color);
+    }
+    .weblog-content {
+        grid-area: 2 / 1 / -1 / -1;
+        height: 100%;
+        overflow: hidden;
+        border-left: none;
+    }
+    .weblog-mat {
+        flex-direction: column;
+        align-items: stretch;
+        max-width: 100%;
+        max-height: 100%;
+        padding-top: 0.5rem;
+    }
+    /* The vertical cover strip becomes a heading row above the article. */
+    .entry-cover {
+        width: auto;
+        height: auto;
+        max-width: none;
+        max-height: none;
+    }
+    .cover-title {
+        writing-mode: horizontal-tb;
+        transform: none;
+        align-items: baseline;
+        column-gap: 1.0rem;
+        padding-bottom: 0.5rem;
+    }
+    .entry-content {
+        flex: 1;
+        min-height: 0;
+        width: auto;
+        height: auto;
+        margin: 0;
+        aspect-ratio: auto;
+    }
+    .entry-content > .markdown-article {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        aspect-ratio: auto;
+    }
+
+    .weblog-index > .weblog-selection {
+        grid-area: 1 / 1 / -1 / -1;
+        display: block;
+        height: 100%;
+        margin: 0;
+        overflow-y: auto;
+    }
+    .weblog-index > .weblog-content {
+        display: none;
+    }
+}
+
 /* Layout */
 .main-container {
     margin: 0rem auto auto auto;
@@ -721,6 +826,26 @@ a {
     font-size: 1.2rem;
     text-align: right;
     color: var(--text-dark);
+}
+
+/* Phones: the puck's two lines stack so they clear the name. RR's glyphs
+   fill nearly the whole em and sit high in the line box, hence the
+   generous leading and the top padding. */
+@media (max-width: 480px) {
+    .puck-container {
+        width: auto;
+        margin: 0 0.5rem 0 auto;
+        padding-top: 0.25rem;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-end;
+    }
+    .puck-paragraph,
+    .puck-temperature {
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
 }
 
 /* About */
@@ -1073,6 +1198,160 @@ a {
 }
 .markdown-article strong {
     font-weight: 400;
+}
+
+/* Paged article
+   Opt in per post with `layout: "paged"` in the frontmatter. The article
+   flows into fixed-height columns that overflow sideways; each column is
+   one page. --per-view tells PagedArticle how many pages show at once:
+   1 for a single page, 2 for a spread, 0 for the scrolling fallback. */
+.entry-content.paged {
+    flex: 1;
+    min-width: 0;
+    aspect-ratio: auto;
+}
+
+.paged-article {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.page-stage {
+    container: page-stage / size;
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    place-items: center;
+}
+
+.page-frame {
+    --per-view: 1;
+    --page-margin: 2.0rem;
+    container-type: size;
+    position: relative;
+    width: min(100cqw, 100cqh * 499 / 709);
+    aspect-ratio: 499 / 709;
+    overflow: auto hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    background-color: white;
+    outline: 1px solid #cbcbcb;
+}
+.page-frame::-webkit-scrollbar {
+    display: none;
+}
+
+/* Two-page spread, only when it doesn't shrink the pages. */
+@container page-stage (min-aspect-ratio: 998 / 709) and (min-width: 44rem) {
+    .page-frame {
+        --per-view: 2;
+        width: min(100cqw, 100cqh * 998 / 709);
+        aspect-ratio: 998 / 709;
+        /* Fold between facing pages; stays put while the pages scroll. */
+        background-image: linear-gradient(to right,
+            transparent calc(50% - 0.5px),
+            #cbcbcb calc(50% - 0.5px),
+            #cbcbcb calc(50% + 0.5px),
+            transparent calc(50% + 0.5px));
+    }
+}
+
+.page-frame > .markdown-article {
+    box-sizing: border-box;
+    height: 100%;
+    margin: 0;
+    padding: var(--page-margin);
+    aspect-ratio: auto;
+    overflow: visible;
+    outline: none;
+    background: none;
+    column-count: var(--per-view);
+    /* WebKit skips multi-column layout when column-count is 1 and
+       column-width is auto, leaving one tall, clipped column, so a width is
+       set too. It's 1px under the exact page width so rounding can't drop a
+       spread to one column; column-count caps the count either way, and the
+       used column width still divides the frame exactly. */
+    column-width: calc(100cqw / var(--per-view) - 2 * var(--page-margin) - 1px);
+    column-gap: calc(2 * var(--page-margin));
+    column-fill: auto;
+    overflow-wrap: break-word;
+}
+.page-frame > .markdown-article :is(h1, h2, h3, h4, h5, h6) {
+    break-inside: avoid;
+    break-after: avoid;
+}
+.page-frame > .markdown-article :is(blockquote, pre, li, img) {
+    break-inside: avoid;
+}
+.page-frame > .markdown-article pre {
+    white-space: pre-wrap;
+}
+.page-frame > .markdown-article img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Too small to read as pages: fall back to scrolling. */
+@container page-stage (max-width: 20rem) or (max-height: 28rem) {
+    .page-frame {
+        --per-view: 0;
+        width: 100cqw;
+        height: 100cqh;
+        aspect-ratio: auto;
+        overflow: hidden auto;
+        scroll-snap-type: none;
+        background-image: none;
+    }
+    .page-frame > .markdown-article {
+        height: auto;
+        column-count: auto;
+        column-width: auto;
+    }
+}
+
+/* One snap point per view, placed by PagedArticle. */
+.page-snap {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 1px;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    pointer-events: none;
+}
+
+.page-controls {
+    flex: none;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.0rem;
+    font-family: Swiss721;
+    color: var(--text-primary);
+    text-transform: uppercase;
+}
+.page-controls p {
+    min-width: 10rem;
+    margin: 0;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+.page-controls button {
+    font: inherit;
+    text-transform: inherit;
+    color: inherit;
+    background: none;
+    border: 1px solid currentColor;
+    padding: 0.25rem 0.75rem;
+    cursor: pointer;
+}
+.page-controls button:disabled {
+    opacity: 0.3;
+    cursor: default;
 }
 
 /* Navigation (old full nav) */

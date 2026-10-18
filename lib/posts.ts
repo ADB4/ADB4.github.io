@@ -11,6 +11,7 @@ export interface PostData {
     date: string;
     category: string;
     excerpt?: string;
+    layout: 'scroll' | 'paged';
     content: string;
 }
 
@@ -19,7 +20,7 @@ export function getAllPosts(): PostData[] {
 
     const allPostsData = entries
         .filter(entry => entry.isDirectory())
-        .flatMap(entry => {
+        .flatMap((entry): PostData[] => {
             const slug = entry.name;
             const postPath = path.join(writingDirectory, slug, 'post.md');
 
@@ -35,6 +36,7 @@ export function getAllPosts(): PostData[] {
                 date: matterResult.data.date || '',
                 category: matterResult.data.category || '',
                 excerpt: matterResult.data.excerpt || '',
+                layout: matterResult.data.layout === 'paged' ? 'paged' : 'scroll',
                 content: matterResult.content,
             }];
         });
@@ -55,6 +57,7 @@ export function getPostBySlug(slug: string): PostData | null {
             date: matterResult.data.date || '',
             category: matterResult.data.category || '',
             excerpt: matterResult.data.excerpt || '',
+            layout: matterResult.data.layout === 'paged' ? 'paged' : 'scroll',
             content: matterResult.content,
         };
     } catch {

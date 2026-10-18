@@ -1,31 +1,23 @@
 import ReactMarkdown from 'react-markdown';
 import { notFound } from 'next/navigation';
-import * as React from "react"
-import { usePathname } from 'next/navigation'
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { DeviceContext } from '../context/devicecontext';
-import { useDevice } from '../hooks/useDevice';
-import Link from "next/link";
 import {getPostBySlug, PostData } from "@/lib/posts";
+import PagedArticle from './pagedarticle';
 
 export interface ArticleProps {
     data: PostData;
 }
-const ArticleComponent: React.FC<{
-    slug: string;
-}> = ({ slug }) => {
+const ArticleComponent = ({ slug }: { slug: string }) => {
     const article = getPostBySlug(slug);
 
     if (!article) {
         notFound();
     }
-    return (
-        <>
+    const markdown = (
         <ReactMarkdown className={"markdown-article"}>
             {article.content}
         </ReactMarkdown>
-        </>
-    )
-}
+    );
+    return article.layout === 'paged' ? <PagedArticle>{markdown}</PagedArticle> : markdown;
+};
 
 export default ArticleComponent;

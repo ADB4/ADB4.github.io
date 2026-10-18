@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 
 interface DisplayProps {
     widthRem?: number;
@@ -19,13 +19,13 @@ interface Point2D {
     y: number;
 }
 
-const DisplayComponent: React.FC<DisplayProps> = ({
-                                                       widthRem = 32,
-                                                       heightRem = 16,
-                                                       pixelSize = 4,
-                                                       onColor = '#00ff00',
-                                                       offColor = '#001100'
-                                                   }) => {
+const DisplayComponent = ({
+    widthRem = 32,
+    heightRem = 16,
+    pixelSize = 4,
+    onColor = '#00ff00',
+    offColor = '#001100'
+}: DisplayProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const animationRef = useRef<number | undefined>(undefined);    const rotationRef = useRef({ x: 0, y: 0, z: 0 });
     const remToPx = (rem: number): number => {

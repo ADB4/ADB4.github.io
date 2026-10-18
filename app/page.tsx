@@ -8,7 +8,7 @@ export interface HomeContent {
     bio: string;
     fun: string;
 }
-export default function HomePage() {
+const HomePage = () => {
   const posts = getAllPosts();
   const recentPosts = posts.slice(0, 1);
 
@@ -20,4 +20,6 @@ export default function HomePage() {
   return (
     <HomeComponent content={content}/>
   );
-}
+};
+
+export default HomePage;

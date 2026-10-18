@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getAllPosts, getPostBySlug } from '../../../lib/posts';
 import ArticleComponent from '@/components/article';
+import EntryDrawer from '@/components/entrydrawer';
 import Markdown from "react-markdown";
 
 export async function generateStaticParams() {
@@ -9,11 +10,11 @@ export async function generateStaticParams() {
     return posts.map(post => ({ slug: post.slug }));
 }
 
-export default async function WeblogPost({
-                                             params,
-                                         }: {
+const WeblogPost = async ({
+    params,
+}: {
     params: Promise<{ slug: string }>;
-}) {
+}) => {
     const { slug } = await params;
     const post = getPostBySlug(slug);
 
@@ -38,7 +39,7 @@ export default async function WeblogPost({
     return (
         <>
             <div className="weblog-container">
-                <div className="weblog-selection">
+                <EntryDrawer>
                     <div
                         className="entry-list"
                         style={{
@@ -65,7 +66,7 @@ export default async function WeblogPost({
                             </Link>
                         ))}
                     </div>
-                </div>
+                </EntryDrawer>
                 <div className="weblog-content">
                     <div className="weblog-mat">
                         <div className={"entry-cover"}>
@@ -74,7 +75,7 @@ export default async function WeblogPost({
                                 <Markdown className={"markdown-cover"}>{post.title}</Markdown>
                             </div>
                         </div>
-                        <div className="entry-content">
+                        <div className={post.layout === 'paged' ? 'entry-content paged' : 'entry-content'}>
                             <ArticleComponent slug={slug} />
                         </div>
                     </div>
@@ -82,4 +83,6 @@ export default async function WeblogPost({
             </div>
         </>
     );
-}
+};
+
+export default WeblogPost;

@@ -25,7 +25,6 @@
 
 import React, {
     useRef,
-    useState,
     useCallback,
     useMemo,
     useEffect,
@@ -50,17 +49,17 @@ export interface MiniLEDBacklightProps {
     children?: React.ReactNode;
 }
 
-const MiniLEDBacklight: React.FC<MiniLEDBacklightProps> = ({
-                                                               cellSize = 64,
-                                                               falloffRadius = 3,
-                                                               colorTemperature = 6500,
-                                                               maxBrightness = 0.95,
-                                                               minBrightness = 0.0,
-                                                               darkMode = false,
-                                                               className,
-                                                               style,
-                                                               children,
-                                                           }) => {
+const MiniLEDBacklight = ({
+    cellSize = 64,
+    falloffRadius = 3,
+    colorTemperature = 6500,
+    maxBrightness = 0.95,
+    minBrightness = 0.0,
+    darkMode = false,
+    className,
+    style,
+    children,
+}: MiniLEDBacklightProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const gridRef = useRef<HTMLCanvasElement>(null);
     const animFrameRef = useRef<number | null>(null);

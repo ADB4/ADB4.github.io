@@ -1,9 +1,9 @@
-import Link from 'next/link';
-
-export default function ProjPage() {
+const ProjPage = () => {
   return (
     <div className="projects-container">
 
     </div>
   );
-}
+};
+
+export default ProjPage;
