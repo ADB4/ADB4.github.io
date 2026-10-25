@@ -8,9 +8,9 @@ EntryDrawer
 
 The writing page's entry list. On wide screens it sits beside the article
 as before and the toggle stays hidden. On narrow screens (see the
-"Weblog, narrow screens" block in globals.css) the list collapses behind
-the toggle and opens over the article, so the article keeps the full
-width and height.
+"Weblog, narrow screens" block in app/writing.css) the list
+collapses behind the toggle and opens over the article, so the article
+keeps the full width and height.
 */
 
 const EntryDrawer = ({ children }: { children: ReactNode }) => {

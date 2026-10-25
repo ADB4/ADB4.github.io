@@ -1,0 +1,626 @@
+/* Writing pages: entry list and drawer, markdown articles, paged articles. */
+
+/* Weblog */
+.weblog-container {
+    grid-area: 2 / 1 / -1 / -1;
+    max-height: 100%;
+    width: calc(100% - 1rem);
+    height: calc(100% - 1rem);
+    border-top: 1.5px solid var(--text-primary);
+    overflow: hidden;
+    margin: auto;
+    display: grid;
+    grid-template: auto / 24rem auto;
+    background-color: var(--debug-4);
+}
+
+.weblog-content {
+    grid-area: 1 / 2 / -1 / -1;
+    width: 100%;
+    height: calc(100% - 2.0rem);
+    margin: auto;
+    overflow: hidden scroll;
+    display: flex;
+    align-items: center;
+    background-color: var(--debug-3);
+    border-left: 1.5px solid var(--text-primary);
+}
+
+.weblog-content::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+.weblog-content::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+    border-radius: 8px;
+}
+
+.weblog-content::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 10px;
+    border: 2px solid var(--scrollbar-track);
+}
+
+.weblog-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+.weblog-mat {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    background-color: var(--debug-2);
+    max-width: calc(100% - 4.0rem);
+    max-height: calc(100% - 4.0rem);
+    height: 100%;
+    width: 100%;
+}
+.weblog-selection {
+    grid-area: 1 / 1 / -1 / 2;
+    width: 100%;
+    height: calc(100% - 2.0rem);
+    margin: auto;
+    display: flex;
+    color: var(--text-primary);
+    background-color: var(--debug-3);
+}
+
+/* EntryDrawer's toggle, shown only on narrow screens. Elsewhere the
+   drawer box drops out so the list lays out exactly as before. */
+.weblog-toggle {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 2.5rem;
+    padding: 0;
+    font-family: Swiss721;
+    font-size: 1.0rem;
+    font-weight: 200;
+    color: var(--text-primary);
+    background: none;
+    border: none;
+    border-bottom: 1.5px solid var(--text-primary);
+    cursor: pointer;
+}
+.weblog-drawer {
+    display: contents;
+}
+
+.weblog-selection h1 {
+    width: 100%;
+    height: 2.0rem;
+    font-family: Swiss721;
+    font-weight: 400;
+    font-size: 1.5rem;
+    padding: 0.5rem 0 0 0.5rem;
+}
+
+.weblog-quotes {
+    grid-area: 1 / 2 / -1 / -1;
+    height: 8rem;
+    display: grid;
+    grid-template: auto / auto;
+    color: var(--text-primary);
+    background-color: var(--debug-2);
+}
+
+.quote-refresh {
+    grid-area: 1 / 1 / -1 / -1;
+    cursor: pointer;
+    width: 8.0rem;
+    height: 2.0rem;
+    margin: 0 0 auto auto;
+    background-color: rgba(255, 255, 255, 0.514);
+    border-radius: 1.0rem;
+    color: var(--text-primary);
+    border: none;
+    font-family: Swiss721;
+    font-size: 1.2rem;
+    font-weight: 200;
+}
+
+.quote-container {
+    grid-area: 1 / 1 / -1 / -1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-width: 42.0rem;
+    max-height: 10.0rem;
+    height: 10.0rem;
+    width: 100%;
+    color: var(--text-primary);
+    background-color: var(--debug-2);
+    margin: auto auto 0;
+}
+.quote-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    column-gap: 2.0rem;
+    min-width: 16rem;
+    max-width: 26rem;
+    width: 100%;
+    margin: 0 0 0 0;
+    background-color: var(--debug-3);
+    background-color: var(--debug-1);
+    display: flex;
+    justify-content: flex-start;
+}
+
+.quote-content h3 {
+    font-family: Swiss721;
+    font-size: 1.125rem;
+    font-weight: 300;
+    text-align: left;
+}
+
+
+.quote-container h4 {
+    margin-top: 1.0rem;
+    font-family: Swiss721;
+    font-weight: 300;
+    font-size: 1.125rem;
+    text-align: right;
+}
+.quote-author {
+    background-color: var(--debug-3);
+}
+
+/* Entry cards */
+.entry-card {
+    width: calc(100% - 1.0rem);
+    max-width: 24.0rem;
+    min-height: 5.0rem;
+    max-height: fit-content;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    row-gap: 0.3rem;
+    column-gap: 4.0rem;
+    font-family: Swiss721;
+    z-index: 8;
+    margin: 0 auto 0.5rem 0;
+    background-color: var(--debug-4);
+    border-bottom: 1.5px solid var(--text-primary);
+}
+
+.entry-card h3 {
+    font-size: 1.2rem;
+    font-weight: 300;
+    font-style: italic;
+    text-align: left;
+    letter-spacing: -0.0125rem;
+}
+
+.entry-card:hover {
+    color: blue;
+}
+.entry-cover {
+    margin-top: 0;
+    margin-bottom: auto;
+    max-width: calc(100% - 2.0rem);
+    max-height: calc(100% - 2.0rem);
+    width: 3.0rem;
+    height: 100%;
+    display: flex;
+    background-color: var(--debug-1);
+    flex-direction: column;
+}
+.entry-content {
+    margin: 0;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: auto;
+    height: 100%;
+    aspect-ratio: 499 / 709;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--debug-4);
+}
+
+.cover-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    direction: ltr;
+    margin: auto;
+    height: 100%;
+    width: 100%;
+    background-color: var(--debug-3);
+}
+.cover-title h3 {
+    font-family: GaramondCondensed;
+    font-weight: 200;
+    font-size: 4.0rem;
+    line-height: 4.0rem;
+    letter-spacing: -0.175rem;
+}
+.cover-title h2 {
+    color: var(--text-primary);
+}
+.highlighted {
+    font-family: MDIO;
+    font-style: italic;
+    background-color: var(--text-secondary);
+}
+
+.entry-header {
+    max-width: 24.0rem;
+    height: 1.2rem;
+}
+
+.entry-info {
+    max-width: 24.0rem;
+    width: 100%;
+    height: 1.2rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.entry-id {
+    width: 4rem;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.entry-info h4,
+.entry-id h4 {
+    font-family: Swiss721;
+    font-size: 1.0rem;
+    font-weight: 200;
+}
+
+/* Weblog, narrow screens
+   Phones in portrait, plus phones in landscape, which are too short for the
+   side-by-side list. The article gets the full width, and the entry list
+   collapses behind EntryDrawer's toggle and opens over it. On the index
+   page the list is the page, so the placeholder article is dropped. */
+@media (max-width: 767px), (max-height: 500px) and (pointer: coarse) {
+    .weblog-container {
+        grid-template: auto minmax(0, 1fr) / minmax(0, 1fr);
+    }
+    .weblog-selection {
+        display: contents;
+    }
+    .weblog-toggle {
+        grid-area: 1 / 1 / 2 / -1;
+        display: flex;
+    }
+    .weblog-drawer {
+        display: none;
+    }
+    .weblog-selection.open > .weblog-drawer {
+        grid-area: 2 / 1 / -1 / -1;
+        z-index: 1;
+        display: block;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        /* --bg-primary is translucent in the dark theme; the body color
+           underneath keeps the article from showing through. */
+        background: linear-gradient(var(--bg-primary), var(--bg-primary)), var(--body-color);
+    }
+    .weblog-content {
+        grid-area: 2 / 1 / -1 / -1;
+        height: 100%;
+        overflow: hidden;
+        border-left: none;
+    }
+    .weblog-mat {
+        flex-direction: column;
+        align-items: stretch;
+        max-width: 100%;
+        max-height: 100%;
+        padding-top: 0.5rem;
+    }
+    /* The vertical cover strip becomes a heading row above the article. */
+    .entry-cover {
+        width: auto;
+        height: auto;
+        max-width: none;
+        max-height: none;
+    }
+    .cover-title {
+        writing-mode: horizontal-tb;
+        transform: none;
+        align-items: baseline;
+        column-gap: 1.0rem;
+        padding-bottom: 0.5rem;
+    }
+    .entry-content {
+        flex: 1;
+        min-height: 0;
+        width: auto;
+        height: auto;
+        margin: 0;
+        aspect-ratio: auto;
+    }
+    .entry-content > .markdown-article {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        aspect-ratio: auto;
+    }
+
+    .weblog-index > .weblog-selection {
+        grid-area: 1 / 1 / -1 / -1;
+        display: block;
+        height: 100%;
+        margin: 0;
+        overflow-y: auto;
+    }
+    .weblog-index > .weblog-content {
+        display: none;
+    }
+}
+
+.markdown-mono {
+    font-family: MDIO;
+    font-size: 1.0rem;
+    line-height: 1.2;
+    letter-spacing: -1.25%;
+}
+
+/* Shared markdown body-copy helper. Used in home.tsx by .home-bio-text and
+   .home-fun-text; naming follows the markdown-mono / markdown-cover /
+   markdown-article family for cross-component re-use. */
+.markdown-sans {
+    font-family: Swiss721;
+    background-color: var(--debug-1);
+}
+
+.markdown-sans p {
+    flex: 1;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.15;
+}
+
+.markdown-sans h4 {
+    margin-bottom: 0.125rem;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: -0.02rem;
+}
+
+.markdown-cover {
+    font-family: Swiss721;
+    color: var(--text-primary);
+}
+/* Markdown article */
+.markdown-article {
+    margin: auto;
+    aspect-ratio: 499 / 709;
+    color: var(--markdown-article-primary);
+    background-color: white;
+    outline: 1px solid #cbcbcb;
+    padding: 2.0rem;
+    overflow-y: scroll;
+    font-family: Swiss721;
+    letter-spacing: -1.25%;
+}
+
+.markdown-article h1,
+.markdown-article h2 {
+    font-size: 1.7rem;
+    line-height: 1.1;
+}
+.markdown-article h1 {
+    font-weight: 400;
+    background-color: var(--debug-2);
+}
+.markdown-article h2 {
+    font-weight: 200;
+    background-color: var(--debug-1);
+}
+
+.markdown-article h3,
+.markdown-article h4 {
+    line-height: 1.2;
+    font-size: 1.4rem;
+}
+.markdown-article h3 {
+    font-weight: 300;
+    font-style: italic;
+    background-color: var(--debug-4);
+}
+.markdown-article h4 {
+    font-weight: 200;
+    font-style: italic;
+    background-color: var(--debug-3);
+}
+.markdown-article h5,
+.markdown-article h6 {
+    font-size: 1.4rem;
+    line-height: 1.2;
+    text-align: right;
+}
+.markdown-article h5 {
+    font-weight: 400;
+    background-color: var(--debug-1);
+}
+.markdown-article h6 {
+    font-weight: 200;
+    background-color: var(--debug-2);
+}
+
+.markdown-article code {
+    font-family: MDIO;
+    background-color: #fff000;
+}
+
+.markdown-article p {
+    margin: 0.5rem 0 0 0;
+    height: fit-content;
+    outline: 1px solid var(--outline);
+    font-family: Swiss721;
+    font-weight: 300;
+    font-size: 1.0rem;
+    line-height: 1.2rem;
+    background-color: var(--debug-3);
+}
+.markdown-article em {
+    font-weight: 200;
+}
+.markdown-article strong {
+    font-weight: 400;
+}
+
+/* Paged article
+   Opt in per post with `layout: "paged"` in the frontmatter. The article
+   flows into fixed-height columns that overflow sideways; each column is
+   one page. --per-view tells PagedArticle how many pages show at once:
+   1 for a single page, 2 for a spread, 0 for the scrolling fallback. */
+.entry-content.paged {
+    flex: 1;
+    min-width: 0;
+    aspect-ratio: auto;
+}
+
+.paged-article {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.page-stage {
+    container: page-stage / size;
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    place-items: center;
+}
+
+.page-frame {
+    --per-view: 1;
+    --page-margin: 2.0rem;
+    container-type: size;
+    position: relative;
+    width: min(100cqw, 100cqh * 499 / 709);
+    aspect-ratio: 499 / 709;
+    overflow: auto hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    background-color: white;
+    outline: 1px solid #cbcbcb;
+}
+.page-frame::-webkit-scrollbar {
+    display: none;
+}
+
+/* Two-page spread, only when it doesn't shrink the pages. */
+@container page-stage (min-aspect-ratio: 998 / 709) and (min-width: 44rem) {
+    .page-frame {
+        --per-view: 2;
+        width: min(100cqw, 100cqh * 998 / 709);
+        aspect-ratio: 998 / 709;
+        /* Fold between facing pages; stays put while the pages scroll. */
+        background-image: linear-gradient(to right,
+            transparent calc(50% - 0.5px),
+            #cbcbcb calc(50% - 0.5px),
+            #cbcbcb calc(50% + 0.5px),
+            transparent calc(50% + 0.5px));
+    }
+}
+
+.page-frame > .markdown-article {
+    box-sizing: border-box;
+    height: 100%;
+    margin: 0;
+    padding: var(--page-margin);
+    aspect-ratio: auto;
+    overflow: visible;
+    outline: none;
+    background: none;
+    column-count: var(--per-view);
+    /* WebKit skips multi-column layout when column-count is 1 and
+       column-width is auto, leaving one tall, clipped column, so a width is
+       set too. It's 1px under the exact page width so rounding can't drop a
+       spread to one column; column-count caps the count either way, and the
+       used column width still divides the frame exactly. */
+    column-width: calc(100cqw / var(--per-view) - 2 * var(--page-margin) - 1px);
+    column-gap: calc(2 * var(--page-margin));
+    column-fill: auto;
+    overflow-wrap: break-word;
+}
+.page-frame > .markdown-article :is(h1, h2, h3, h4, h5, h6) {
+    break-inside: avoid;
+    break-after: avoid;
+}
+.page-frame > .markdown-article :is(blockquote, pre, li, img) {
+    break-inside: avoid;
+}
+.page-frame > .markdown-article pre {
+    white-space: pre-wrap;
+}
+.page-frame > .markdown-article img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Too small to read as pages: fall back to scrolling. */
+@container page-stage (max-width: 20rem) or (max-height: 28rem) {
+    .page-frame {
+        --per-view: 0;
+        width: 100cqw;
+        height: 100cqh;
+        aspect-ratio: auto;
+        overflow: hidden auto;
+        scroll-snap-type: none;
+        background-image: none;
+    }
+    .page-frame > .markdown-article {
+        height: auto;
+        column-count: auto;
+        column-width: auto;
+    }
+}
+
+/* One snap point per view, placed by PagedArticle. */
+.page-snap {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 1px;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    pointer-events: none;
+}
+
+.page-controls {
+    flex: none;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.0rem;
+    font-family: Swiss721;
+    color: var(--text-primary);
+    text-transform: uppercase;
+}
+.page-controls p {
+    min-width: 10rem;
+    margin: 0;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+.page-controls button {
+    font: inherit;
+    text-transform: inherit;
+    color: inherit;
+    background: none;
+    border: 1px solid currentColor;
+    padding: 0.25rem 0.75rem;
+    cursor: pointer;
+}
+.page-controls button:disabled {
+    opacity: 0.3;
+    cursor: default;
+}

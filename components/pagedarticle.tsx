@@ -9,7 +9,8 @@ PagedArticle
 Lays an article out as book pages instead of a vertical scroll. The
 markdown flows into fixed-height CSS columns that overflow sideways;
 each column is one page, and the frame scrolls one page (or one
-two-page spread) at a time. Page geometry lives in globals.css, which
+two-page spread) at a time. Page geometry lives in
+app/writing.css, which
 reports how many pages are visible at once through --per-view
 (0 means the space is too small and the article falls back to scrolling).
 

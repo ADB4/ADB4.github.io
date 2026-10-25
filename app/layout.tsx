@@ -1,4 +1,6 @@
 import './globals.css';
+import './site.css';
+import './writing.css';
 import './normalize.css';
 
 import { ThemeProvider } from 'next-themes'

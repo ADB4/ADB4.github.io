@@ -60,8 +60,8 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
     // Layout debug flag.
     // Reads `?debug=1` from the URL and toggles the `debug-layout` class
     // on <html>. The class activates the --debug-N variables defined in
-    // globals.css. Re-checks on pathname changes so client-side navigation
-    // that drops the param turns the tints off.
+    // app/globals.css. Re-checks on pathname changes so client-side
+    // navigation that drops the param turns the tints off.
     useEffect(() => {
         if (typeof window === 'undefined') return;
         const params = new URLSearchParams(window.location.search);
