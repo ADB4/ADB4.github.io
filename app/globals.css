@@ -261,10 +261,10 @@ em {
 }
 
 .debug-layout {
-    --debug-1: rgba(255, 0, 0, 0.15);
-    --debug-2: rgba(68, 255, 0, 0.23);
-    --debug-3: rgba(255, 165, 0, 0.20);
-    --debug-4: rgba(0, 81, 255, 0.15);
+    --debug-1: rgba(255, 0, 0, 0.1);
+    --debug-2: rgba(68, 255, 0, 0.1);
+    --debug-3: rgba(255, 165, 0, 0.1);
+    --debug-4: rgba(0, 81, 255, 0.1);
 }
 
 [data-theme='dark'] {

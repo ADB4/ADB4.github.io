@@ -40,24 +40,14 @@ const WeblogPost = async ({
         <>
             <div className="weblog-container">
                 <EntryDrawer>
-                    <div
-                        className="entry-list"
-                        style={{
-                            paddingTop: '0.5rem',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            rowGap: '1.2rem',
-                            backgroundColor: 'var(--debug-1)',
-                        }}
-                    >
-                        {entries.map((entry, index) => (
+                    <div className="entry-list">
+                        {entries.map((entry) => (
                             <Link href={`/writing/${entry.slug}`} key={entry.title}>
                                 <div className="entry-card">
                                     <div className="entry-info">
                                         <div className="entry-id">
-                                            <h4>NO. {index}</h4>
+                                            <h4>{entry.date.replaceAll('-', '.')}</h4>
                                         </div>
-                                        <h4>{entry.category.toUpperCase()}</h4>
                                     </div>
                                     <div className="entry-title">
                                         <h3>"{parseTitle(entry.title.toUpperCase())}"</h3>

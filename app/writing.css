@@ -1,6 +1,12 @@
-/* Writing pages: entry list and drawer, markdown articles, paged articles. */
+/* Writing pages: layout, entry list and drawer, article column, markdown
+   and paged articles. Rules are grouped by component, in the order their
+   elements nest. */
 
-/* Weblog */
+/* Layout — app/writing/page.tsx and app/writing/[slug]/page.tsx
+   .weblog-container puts the entry list (.weblog-selection, wrapped in
+   components/entrydrawer.tsx on article pages) beside the article column
+   (.weblog-content). */
+
 .weblog-container {
     grid-area: 2 / 1 / -1 / -1;
     max-height: 100%;
@@ -10,9 +16,134 @@
     overflow: hidden;
     margin: auto;
     display: grid;
-    grid-template: auto / 24rem auto;
+    grid-template: auto / 19rem auto;
     background-color: var(--debug-4);
 }
+
+.weblog-selection {
+    grid-area: 1 / 1 / -1 / 2;
+    width: 100%;
+    height: calc(100% - 2.0rem);
+    margin: auto;
+    display: flex;
+    color: var(--text-primary);
+    background-color: var(--debug-3);
+}
+
+.weblog-selection h1 {
+    width: 100%;
+    height: 2.0rem;
+    font-family: Swiss721;
+    font-weight: 400;
+    font-size: 1.5rem;
+    padding: 0.5rem 0 0 0.5rem;
+}
+
+/* EntryDrawer's toggle, shown only on narrow screens. Elsewhere the
+   drawer box drops out so the list lays out exactly as before. */
+.weblog-toggle {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 2.5rem;
+    padding: 0;
+    font-family: Swiss721;
+    font-size: 1.0rem;
+    font-weight: 200;
+    color: var(--text-primary);
+    background: none;
+    border: none;
+    border-bottom: 1.5px solid var(--text-primary);
+    cursor: pointer;
+}
+
+.weblog-drawer {
+    display: contents;
+}
+
+/* Entry list */
+
+.entry-list {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5rem;
+    background-color: var(--debug-1);
+}
+
+.entry-card {
+    width: calc(100% - 1.0rem);
+    max-width: 19.0rem;
+    min-height: 4.0rem;
+    max-height: fit-content;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: space-between;
+    column-gap: 4.0rem;
+    font-family: Swiss721;
+    z-index: 8;
+    margin: 0 0 0 0;
+    padding: 0.25rem 0 0.25rem 0;
+    background-color: var(--debug-4);
+    border-bottom: 1.5px solid var(--text-primary);
+}
+
+.entry-card:hover {
+    color: blue;
+}
+
+.entry-header {
+    max-width: 24.0rem;
+    height: 1.2rem;
+}
+
+.entry-info {
+    max-width: 24.0rem;
+    width: 100%;
+    height: 1.2rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.entry-id {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.entry-info h4,
+.entry-id h4 {
+    font-family: Swiss721;
+    font-size: 0.9rem;
+    line-height: 1.15rem;
+    font-weight: 200;
+}
+
+.entry-title {
+    width: 100%;
+    background-color: var(--debug-2);
+}
+
+.entry-card h3 {
+    font-size: 0.9rem;
+    line-height: 1.2rem;
+    font-weight: 300;
+    font-style: italic;
+    text-align: right;
+    letter-spacing: -0.0125rem;
+}
+
+.highlighted {
+    font-family: MDIO;
+    font-style: italic;
+    background-color: var(--text-secondary);
+}
+
+/* Article column: the cover strip and the article */
 
 .weblog-content {
     grid-area: 1 / 2 / -1 / -1;
@@ -45,6 +176,7 @@
 .weblog-content::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
 .weblog-mat {
     display: flex;
     justify-content: center;
@@ -56,148 +188,7 @@
     height: 100%;
     width: 100%;
 }
-.weblog-selection {
-    grid-area: 1 / 1 / -1 / 2;
-    width: 100%;
-    height: calc(100% - 2.0rem);
-    margin: auto;
-    display: flex;
-    color: var(--text-primary);
-    background-color: var(--debug-3);
-}
 
-/* EntryDrawer's toggle, shown only on narrow screens. Elsewhere the
-   drawer box drops out so the list lays out exactly as before. */
-.weblog-toggle {
-    display: none;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    height: 2.5rem;
-    padding: 0;
-    font-family: Swiss721;
-    font-size: 1.0rem;
-    font-weight: 200;
-    color: var(--text-primary);
-    background: none;
-    border: none;
-    border-bottom: 1.5px solid var(--text-primary);
-    cursor: pointer;
-}
-.weblog-drawer {
-    display: contents;
-}
-
-.weblog-selection h1 {
-    width: 100%;
-    height: 2.0rem;
-    font-family: Swiss721;
-    font-weight: 400;
-    font-size: 1.5rem;
-    padding: 0.5rem 0 0 0.5rem;
-}
-
-.weblog-quotes {
-    grid-area: 1 / 2 / -1 / -1;
-    height: 8rem;
-    display: grid;
-    grid-template: auto / auto;
-    color: var(--text-primary);
-    background-color: var(--debug-2);
-}
-
-.quote-refresh {
-    grid-area: 1 / 1 / -1 / -1;
-    cursor: pointer;
-    width: 8.0rem;
-    height: 2.0rem;
-    margin: 0 0 auto auto;
-    background-color: rgba(255, 255, 255, 0.514);
-    border-radius: 1.0rem;
-    color: var(--text-primary);
-    border: none;
-    font-family: Swiss721;
-    font-size: 1.2rem;
-    font-weight: 200;
-}
-
-.quote-container {
-    grid-area: 1 / 1 / -1 / -1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    max-width: 42.0rem;
-    max-height: 10.0rem;
-    height: 10.0rem;
-    width: 100%;
-    color: var(--text-primary);
-    background-color: var(--debug-2);
-    margin: auto auto 0;
-}
-.quote-content {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    column-gap: 2.0rem;
-    min-width: 16rem;
-    max-width: 26rem;
-    width: 100%;
-    margin: 0 0 0 0;
-    background-color: var(--debug-3);
-    background-color: var(--debug-1);
-    display: flex;
-    justify-content: flex-start;
-}
-
-.quote-content h3 {
-    font-family: Swiss721;
-    font-size: 1.125rem;
-    font-weight: 300;
-    text-align: left;
-}
-
-
-.quote-container h4 {
-    margin-top: 1.0rem;
-    font-family: Swiss721;
-    font-weight: 300;
-    font-size: 1.125rem;
-    text-align: right;
-}
-.quote-author {
-    background-color: var(--debug-3);
-}
-
-/* Entry cards */
-.entry-card {
-    width: calc(100% - 1.0rem);
-    max-width: 24.0rem;
-    min-height: 5.0rem;
-    max-height: fit-content;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    row-gap: 0.3rem;
-    column-gap: 4.0rem;
-    font-family: Swiss721;
-    z-index: 8;
-    margin: 0 auto 0.5rem 0;
-    background-color: var(--debug-4);
-    border-bottom: 1.5px solid var(--text-primary);
-}
-
-.entry-card h3 {
-    font-size: 1.2rem;
-    font-weight: 300;
-    font-style: italic;
-    text-align: left;
-    letter-spacing: -0.0125rem;
-}
-
-.entry-card:hover {
-    color: blue;
-}
 .entry-cover {
     margin-top: 0;
     margin-bottom: auto;
@@ -208,17 +199,6 @@
     display: flex;
     background-color: var(--debug-1);
     flex-direction: column;
-}
-.entry-content {
-    margin: 0;
-    margin-top: auto;
-    margin-bottom: auto;
-    width: auto;
-    height: 100%;
-    aspect-ratio: 499 / 709;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--debug-4);
 }
 
 .cover-title {
@@ -233,6 +213,11 @@
     width: 100%;
     background-color: var(--debug-3);
 }
+
+.cover-title h2 {
+    color: var(--text-primary);
+}
+
 .cover-title h3 {
     font-family: GaramondCondensed;
     font-weight: 200;
@@ -240,40 +225,22 @@
     line-height: 4.0rem;
     letter-spacing: -0.175rem;
 }
-.cover-title h2 {
+
+.markdown-cover {
+    font-family: Swiss721;
     color: var(--text-primary);
 }
-.highlighted {
-    font-family: MDIO;
-    font-style: italic;
-    background-color: var(--text-secondary);
-}
 
-.entry-header {
-    max-width: 24.0rem;
-    height: 1.2rem;
-}
-
-.entry-info {
-    max-width: 24.0rem;
-    width: 100%;
-    height: 1.2rem;
-    display: flex;
-    justify-content: space-between;
-}
-
-.entry-id {
-    width: 4rem;
+.entry-content {
+    margin: 0;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: auto;
     height: 100%;
+    aspect-ratio: 499 / 709;
     display: flex;
-    justify-content: space-between;
-}
-
-.entry-info h4,
-.entry-id h4 {
-    font-family: Swiss721;
-    font-size: 1.0rem;
-    font-weight: 200;
+    flex-direction: column;
+    background-color: var(--debug-4);
 }
 
 /* Weblog, narrow screens
@@ -287,6 +254,7 @@
     }
     .weblog-selection {
         display: contents;
+        background-color: var(--debug-1);
     }
     .weblog-toggle {
         grid-area: 1 / 1 / 2 / -1;
@@ -359,40 +327,8 @@
     }
 }
 
-.markdown-mono {
-    font-family: MDIO;
-    font-size: 1.0rem;
-    line-height: 1.2;
-    letter-spacing: -1.25%;
-}
+/* Markdown article — components/article.tsx */
 
-/* Shared markdown body-copy helper. Used in home.tsx by .home-bio-text and
-   .home-fun-text; naming follows the markdown-mono / markdown-cover /
-   markdown-article family for cross-component re-use. */
-.markdown-sans {
-    font-family: Swiss721;
-    background-color: var(--debug-1);
-}
-
-.markdown-sans p {
-    flex: 1;
-    font-size: 1rem;
-    font-weight: 300;
-    line-height: 1.15;
-}
-
-.markdown-sans h4 {
-    margin-bottom: 0.125rem;
-    font-size: 1rem;
-    font-weight: 400;
-    letter-spacing: -0.02rem;
-}
-
-.markdown-cover {
-    font-family: Swiss721;
-    color: var(--text-primary);
-}
-/* Markdown article */
 .markdown-article {
     margin: auto;
     aspect-ratio: 499 / 709;
@@ -410,10 +346,12 @@
     font-size: 1.7rem;
     line-height: 1.1;
 }
+
 .markdown-article h1 {
     font-weight: 400;
     background-color: var(--debug-2);
 }
+
 .markdown-article h2 {
     font-weight: 200;
     background-color: var(--debug-1);
@@ -424,26 +362,31 @@
     line-height: 1.2;
     font-size: 1.4rem;
 }
+
 .markdown-article h3 {
     font-weight: 300;
     font-style: italic;
     background-color: var(--debug-4);
 }
+
 .markdown-article h4 {
     font-weight: 200;
     font-style: italic;
     background-color: var(--debug-3);
 }
+
 .markdown-article h5,
 .markdown-article h6 {
     font-size: 1.4rem;
     line-height: 1.2;
     text-align: right;
 }
+
 .markdown-article h5 {
     font-weight: 400;
     background-color: var(--debug-1);
 }
+
 .markdown-article h6 {
     font-weight: 200;
     background-color: var(--debug-2);
@@ -464,11 +407,22 @@
     line-height: 1.2rem;
     background-color: var(--debug-3);
 }
+
 .markdown-article em {
     font-weight: 200;
 }
+
 .markdown-article strong {
     font-weight: 400;
+}
+
+/* Not used anywhere at the moment. */
+
+.markdown-mono {
+    font-family: MDIO;
+    font-size: 1.0rem;
+    line-height: 1.2;
+    letter-spacing: -1.25%;
 }
 
 /* Paged article
@@ -511,6 +465,7 @@
     background-color: white;
     outline: 1px solid #cbcbcb;
 }
+
 .page-frame::-webkit-scrollbar {
     display: none;
 }
@@ -519,14 +474,20 @@
 @container page-stage (min-aspect-ratio: 998 / 709) and (min-width: 44rem) {
     .page-frame {
         --per-view: 2;
-        width: min(100cqw, 100cqh * 998 / 709);
+        --spread-width: min(100cqw, 100cqh * 998 / 709);
+        width: var(--spread-width);
         aspect-ratio: 998 / 709;
-        /* Fold between facing pages; stays put while the pages scroll. */
+        /* Fold between facing pages. The background scrolls with the pages
+           (local) and repeats once per spread, so each fold travels with its
+           spread instead of staying put mid-frame during a page turn. */
         background-image: linear-gradient(to right,
             transparent calc(50% - 0.5px),
             #cbcbcb calc(50% - 0.5px),
             #cbcbcb calc(50% + 0.5px),
             transparent calc(50% + 0.5px));
+        background-size: var(--spread-width) 100%;
+        background-repeat: repeat-x;
+        background-attachment: local;
     }
 }
 
@@ -550,16 +511,20 @@
     column-fill: auto;
     overflow-wrap: break-word;
 }
+
 .page-frame > .markdown-article :is(h1, h2, h3, h4, h5, h6) {
     break-inside: avoid;
     break-after: avoid;
 }
+
 .page-frame > .markdown-article :is(blockquote, pre, li, img) {
     break-inside: avoid;
 }
+
 .page-frame > .markdown-article pre {
     white-space: pre-wrap;
 }
+
 .page-frame > .markdown-article img {
     max-width: 100%;
     height: auto;
@@ -605,12 +570,14 @@
     color: var(--text-primary);
     text-transform: uppercase;
 }
+
 .page-controls p {
     min-width: 10rem;
     margin: 0;
     text-align: center;
     font-variant-numeric: tabular-nums;
 }
+
 .page-controls button {
     font: inherit;
     text-transform: inherit;
@@ -620,7 +587,82 @@
     padding: 0.25rem 0.75rem;
     cursor: pointer;
 }
+
 .page-controls button:disabled {
     opacity: 0.3;
     cursor: default;
+}
+
+/* QuoteViewer — components/quoteviewer.tsx (not rendered anywhere at the moment) */
+
+.weblog-quotes {
+    grid-area: 1 / 2 / -1 / -1;
+    height: 8rem;
+    display: grid;
+    grid-template: auto / auto;
+    color: var(--text-primary);
+    background-color: var(--debug-2);
+}
+
+.quote-refresh {
+    grid-area: 1 / 1 / -1 / -1;
+    cursor: pointer;
+    width: 8.0rem;
+    height: 2.0rem;
+    margin: 0 0 auto auto;
+    background-color: rgba(255, 255, 255, 0.514);
+    border-radius: 1.0rem;
+    color: var(--text-primary);
+    border: none;
+    font-family: Swiss721;
+    font-size: 1.2rem;
+    font-weight: 200;
+}
+
+.quote-container {
+    grid-area: 1 / 1 / -1 / -1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-width: 42.0rem;
+    max-height: 10.0rem;
+    height: 10.0rem;
+    width: 100%;
+    color: var(--text-primary);
+    background-color: var(--debug-2);
+    margin: auto auto 0;
+}
+
+.quote-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    column-gap: 2.0rem;
+    min-width: 16rem;
+    max-width: 26rem;
+    width: 100%;
+    margin: 0 0 0 0;
+    background-color: var(--debug-3);
+    background-color: var(--debug-1);
+    display: flex;
+    justify-content: flex-start;
+}
+
+.quote-content h3 {
+    font-family: Swiss721;
+    font-size: 1.125rem;
+    font-weight: 300;
+    text-align: left;
+}
+
+.quote-container h4 {
+    margin-top: 1.0rem;
+    font-family: Swiss721;
+    font-weight: 300;
+    font-size: 1.125rem;
+    text-align: right;
+}
+
+.quote-author {
+    background-color: var(--debug-3);
 }

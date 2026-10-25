@@ -1,6 +1,10 @@
-/* Site shell (page frame, nav bar, header) and the home and about pages. */
+/* Site shell, nav bar and page frame, plus the home, about and contact pages.
+   Rules are grouped by component, in the order their elements nest. */
 
-/* Layout */
+/* Site shell — components/clientlayout.tsx
+   .main-container holds the nav bar and the page frame (.base-container),
+   which holds the puck, the header and the page itself. */
+
 .main-container {
     margin: 0rem auto auto auto;
     width: calc(100dvw - 1.0rem);
@@ -10,20 +14,7 @@
     z-index: 2;
 }
 
-.base-container {
-    grid-area: 1 / 1 / 2 / -1;
-    background-color: var(--bg-primary);
-    min-width: var(--min-body-width);
-    max-height: 100dvh;
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template: 3.0rem auto / auto;
-    overflow: hidden;
-    border-radius: 0.25rem 0.25rem 0.25rem 0.75rem;
-    margin: auto;
-    z-index: 1;
-}
+/* Nav bar */
 
 .navigation-container {
     grid-area: 2 / 1 / -1 / -1;
@@ -38,6 +29,7 @@
     border-radius: 0.25rem 0.25rem 1rem 1rem;
     margin: 0.075rem 0 auto auto;
 }
+
 .navigation-container-inner {
     display: flex;
     justify-content: flex-end;
@@ -60,6 +52,11 @@
     width: auto;
     padding: 0 0.5rem 0 0.5rem;
 }
+
+.navigation-item-left {
+    border-radius: 0.25rem 0 0 0.5rem;
+}
+
 .navigation-item-inner {
     display: flex;
     align-items: center;
@@ -72,65 +69,76 @@
     background-color: rgba(135, 135, 135, 0.25);
     box-shadow: rgba(0, 0, 0, 0.48) 0px -20px 16px -18px inset;
 }
+
 .navigation-item-inner h2 {
     font-family: Swiss721;
     font-size: 0.8rem;
     font-weight: 200;
 }
 
-.navigation-item-left {
-    border-radius: 0.25rem 0 0 0.5rem;
+/* Theme toggle button in the nav bar (components/themetoggle.tsx). */
+.nav-theme-toggle {
+    cursor: pointer;
+    width: fit-content;
+    height: 1.5rem;
+    border-radius: 0 0.125rem 0.5rem 0;
+    padding: 0 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-box-shadow: inset -1px -20px 24px -7px #08110928;
+    box-shadow: inset -1px -20px 24px -7px #0811096c;
 }
 
-.base-header {
-    grid-area: 1 / 1 / 2 / 2;
+.nav-theme-toggle p {
+    font-family: Swiss721;
+    font-size: 0.8rem;
+    font-weight: 200;
+}
+
+/* Page frame, puck and header */
+
+.base-container {
+    grid-area: 1 / 1 / 2 / -1;
+    background-color: var(--bg-primary);
+    min-width: var(--min-body-width);
+    max-height: 100dvh;
     width: 100%;
     height: 100%;
-    margin-left: 0rem;
-    margin-top: 0rem;
-    display: flex;
-    align-items: center;
-}
-
-.base-header h2 {
-    margin-left: 0.5rem;
-    font-family: Swiss721;
-    font-weight: 300;
-    font-size: 2.0rem;
-    line-height: 2.0rem;
-    color: var(--text-primary);
-    transform-origin: top left;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform;
-}
-
-.base-header-large h2 {
-    transform: scale(2);
+    display: grid;
+    grid-template: 2.5rem auto / auto;
+    overflow: hidden;
+    border-radius: 0.25rem 0.25rem 0.25rem 0.75rem;
+    margin: auto;
+    z-index: 1;
 }
 
 .puck-container {
     grid-area: 1 / 1 / 2 / 2;
     display: flex;
     justify-content: space-between;
-    width: 20rem;
-    height: 3rem;
+    width: 18rem;
+    height: 2.0rem;
     margin: 0.5rem 0.5rem auto auto;
     z-index: 10;
+    background-color: var(--debug-2);
 }
 
 .puck-paragraph {
-    margin: 0.5rem 0 0 1.0rem;
+    margin: 0.2rem 0 0 1.0rem;
     font-family: RR;
-    font-size: 1.2rem;
+    font-size: 1.0rem;
     color: var(--text-dark);
+
 }
+
 .puck-temperature {
     grid-area: 1 / 1 / -1 / -1;
-    margin: 0.5rem;
+    margin: 0.2rem;
     margin-right: 1.0rem;
     font-family: RR;
     font-weight: 300;
-    font-size: 1.2rem;
+    font-size: 1.0rem;
     text-align: right;
     color: var(--text-dark);
 }
@@ -155,49 +163,30 @@
     }
 }
 
-/* Theme toggle button in the nav bar (components/themetoggle.tsx). */
-.nav-theme-toggle {
-    cursor: pointer;
-    width: fit-content;
-    height: 1.5rem;
-    border-radius: 0 0.125rem 0.5rem 0;
-    padding: 0 0.5rem;
+.base-header {
+    grid-area: 1 / 1 / 2 / 2;
+    width: 100%;
+    height: 100%;
+    margin-left: 0rem;
+    margin-top: 0rem;
     display: flex;
-    justify-content: center;
     align-items: center;
-    -webkit-box-shadow: inset -1px -20px 24px -7px #08110928;
-    box-shadow: inset -1px -20px 24px -7px #0811096c;
 }
 
-.nav-theme-toggle p {
-    font-family: Swiss721;
-    font-size: 0.8rem;
-    font-weight: 200;
-}
-
-/* About */
-.about-copy {
+.base-header h2 {
+    margin-left: 0.5rem;
     font-family: Swiss721;
     font-weight: 300;
-    font-size: 2.0rem;
-}
-
-.typewriter {
-    max-height: 100%;
-    overflow: hidden;
-
+    font-size: 1.6rem;
+    line-height: 2.0rem;
     color: var(--text-primary);
-    background-color: var(--debug-3);
+    transform-origin: top left;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
 }
-.typewriter h2 {
-    font-family: Garamond;
-    font-style: italic;
-    font-weight: 300;
-    font-size: 2.0rem;
-    letter-spacing: -1.25%;
-}
-.maintenance-notice {
 
+.base-header-large h2 {
+    transform: scale(2);
 }
 
 /* ============================================================================
@@ -207,13 +196,18 @@
      .home-container
        ├── .home-row
        │     ├── .home-section.home-bio
+       │     │     ├── .oscillator-micro
        │     │     └── .markdown-sans.home-bio-text       (Markdown: bio)
        │     └── .home-section.home-fun
+       │           ├── .oscillator-micro
        │           └── .home-fun-body
        │                 └── .markdown-sans.home-fun-text (Markdown: fun)
        └── .home-row
-             └── .home-section.home-monocoque
-                   └── .monocoque-logo > h3
+             └── .home-section-container
+                   ├── .flex-row
+                   │     ├── .oscillator-micro
+                   │     └── .home-section-header
+                   └── .home-models-container
    ============================================================================ */
 
 /* Outer wrapper. Mount animation pairs `flip` with `aberration`;
@@ -234,16 +228,26 @@
     animation: flip 1s ease, aberration 0.6s linear;
 }
 
-/* Row container — two siblings inside .home-container. */
-.flex-column {
-    display: flex;
-    flex-direction: column;
+@keyframes flip {
+    from { transform: rotateX(1deg); }
+    to { transform: rotateX(0deg); }
 }
-.flex-row {
-    display: flex;
-    flex-direction: row;
-    background-color: var(--debug-2);
+
+@keyframes aberration {
+    0% {
+        text-shadow:
+                -2px 2px 0 var(--text-aberration-primary),
+                1px 4px 0 var(--text-aberration-secondary);
+    }
+    100% {
+        text-shadow:
+                0 0 0 var(--text-aberration-primary),
+                0 0 0 var(--text-aberration-secondary);
+    }
 }
+
+/* Rows: two siblings inside .home-container. */
+
 .home-row {
     width: 100%;
     height: calc(100% - 2rem);
@@ -263,12 +267,6 @@
     background-color: var(--debug-3);
 }
 
-.home-promo {
-    width: 100%;
-    height: 24rem;
-    background-color: var(--debug-3);
-}
-
 /* Section base. Variants below extend this; they are always paired
    with `.home-section` in markup, so duplicate declarations are omitted. */
 .home-section {
@@ -282,31 +280,43 @@
     color: var(--text-primary);
     background-color: var(--debug-3);
 }
-.home-section-container {
-    min-width: 16rem;
-    width: 100%;
-    margin: 1rem 0 auto;
-    justify-content: space-between;
-    column-gap: 2rem;
-    color: var(--text-primary);
-    background-color: var(--debug-3);
-}
-.home-section-header {
-    background-color: rgba(100,1,1,0.2);
-    height: 1.5rem;
-    width: auto;
-}
-.home-section-header h4 {
-    font-family: Swiss721;
-    font-size: 1.15rem;
-    font-weight: 200;
-}
 
 /* Bio section (left column, top row) */
 .home-bio {
     height: calc(100% - 1rem);
     margin: auto 0 0;
     background-color: var(--debug-4);
+}
+
+/* Bio markdown */
+.home-bio-text {
+    max-width: 72rem;
+    display: flex;
+    flex-direction: row;
+    column-gap: 1rem;
+    background-color: var(--debug-4);
+}
+
+/* Shared markdown body-copy helper. Used in home.tsx by .home-bio-text and
+   .home-fun-text; naming follows the markdown-mono / markdown-cover /
+   markdown-article family for cross-component re-use. */
+.markdown-sans {
+    font-family: Swiss721;
+    background-color: var(--debug-1);
+}
+
+.markdown-sans p {
+    flex: 1;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.15;
+}
+
+.markdown-sans h4 {
+    margin-bottom: 0.125rem;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: -0.02rem;
 }
 
 /* Fun section (right column, top row) */
@@ -326,7 +336,62 @@
     justify-content: space-between;
 }
 
-/* MONOCOQUE section (bottom row) */
+/* Fun markdown */
+.home-fun-text {
+    width: 100%;
+    max-width: 19.2rem;
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.home-section-container {
+    min-width: 16rem;
+    width: 100%;
+    margin: 1rem 0 auto;
+    justify-content: space-between;
+    column-gap: 2rem;
+    color: var(--text-primary);
+    background-color: var(--debug-3);
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--debug-2);
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.home-section-header {
+    background-color: rgba(100,1,1,0.2);
+    height: 1.5rem;
+    width: auto;
+}
+
+.home-section-header h4 {
+    font-family: Swiss721;
+    font-size: 1.15rem;
+    font-weight: 200;
+}
+
+.oscillator-micro {
+    width: 3rem;
+    height: 3rem;
+    background-color: var(--debug-3);
+}
+
+/* Not used by home.tsx at the moment: the MONOCOQUE row and promo. */
+
+.home-promo {
+    width: 100%;
+    height: 24rem;
+    background-color: var(--debug-3);
+}
+
 .home-monocoque {
     min-width: var(--min-body-width);
     width: 100%;
@@ -350,12 +415,14 @@
     line-height: 1;
     background-color: var(--debug-2);
 }
+
 .home-monocoque-body {
     display: flex;
     flex-direction: column;
     width: 100%;
     background-color: var(--debug-4);
 }
+
 .monocoque-logo {
     display: flex;
     align-items: flex-end;
@@ -364,32 +431,44 @@
     margin: auto 0 0 auto;
   /* tune until the ink fits */
 }
+
 .oscillator {
     margin: auto -4rem 1.5rem auto;
 }
-.oscillator-micro {
-    width: 3rem;
-    height: 3rem;
+
+/* Maintenance notice — components/maintenance.tsx, inside .home-container */
+
+.maintenance-notice {
+
+}
+
+/* About — not used by app/about/page.tsx at the moment */
+
+.about-copy {
+    font-family: Swiss721;
+    font-weight: 300;
+    font-size: 2.0rem;
+}
+
+/* Typewriter — components/typewriter.tsx (not rendered anywhere at the moment) */
+
+.typewriter {
+    max-height: 100%;
+    overflow: hidden;
+
+    color: var(--text-primary);
     background-color: var(--debug-3);
 }
 
-/* Bio markdown */
-.home-bio-text {
-    max-width: 72rem;
-    display: flex;
-    flex-direction: row;
-    column-gap: 1rem;
-    background-color: var(--debug-4);
+.typewriter h2 {
+    font-family: Garamond;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 2.0rem;
+    letter-spacing: -1.25%;
 }
 
-/* Fun markdown */
-.home-fun-text {
-    width: 100%;
-    max-width: 19.2rem;
-    margin-left: auto;
-    display: flex;
-    flex-direction: column;
-}
+/* Contact — app/cntct/page.tsx */
 
 .secret-container {
     height: 3.0rem;
@@ -413,23 +492,4 @@
     border-radius: 1.5rem;
     left: 0;
     z-index: 8;
-}
-
-/* Keyframes */
-@keyframes flip {
-    from { transform: rotateX(1deg); }
-    to { transform: rotateX(0deg); }
-}
-
-@keyframes aberration {
-    0% {
-        text-shadow:
-                -2px 2px 0 var(--text-aberration-primary),
-                1px 4px 0 var(--text-aberration-secondary);
-    }
-    100% {
-        text-shadow:
-                0 0 0 var(--text-aberration-primary),
-                0 0 0 var(--text-aberration-secondary);
-    }
 }

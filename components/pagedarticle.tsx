@@ -32,6 +32,11 @@ const WHEEL_THRESHOLD = 40;
 const WHEEL_QUIET_MS = 180;
 // Delay after the last scroll event before the reading position is saved.
 const SETTLE_MS = 150;
+// Length of a page turn from the buttons, keys or wheel. Swipes keep the
+// browser's own scrolling and snapping.
+const TURN_MS = 1500;
+
+const easeInOut = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (2 - 2 * t) ** 3 / 2);
 
 // Exact width of one view. clientWidth rounds to whole pixels, which drifts
 // from the snap points by a fraction of a pixel per page.
@@ -55,6 +60,7 @@ const PagedArticle = ({ children }: { children: ReactNode }) => {
     const pendingViewRef = useRef<number | null>(null);
     const targetViewRef = useRef<number | null>(null);
     const viewsRef = useRef(0);
+    const turnRafRef = useRef(0); // nonzero while a page turn is animating
     const [layout, setLayout] = useState<PageLayout>({ perView: 1, pages: 0 });
     const [view, setView] = useState(0);
 
@@ -93,29 +99,78 @@ const PagedArticle = ({ children }: { children: ReactNode }) => {
         setLayout({ perView, pages });
     }, []);
 
+    // Once scrolling comes to rest: no turn is pending any more, and the
+    // reading position is saved for re-pagination.
+    const settleScroll = useCallback(() => {
+        const frame = frameRef.current;
+        targetViewRef.current = null;
+        const flow = frame?.firstElementChild;
+        if (frame && flow) anchorRef.current = findAnchor(frame, flow) ?? anchorRef.current;
+    }, []);
+
+    const stopTurn = useCallback(() => {
+        cancelAnimationFrame(turnRafRef.current);
+        turnRafRef.current = 0;
+        if (frameRef.current) frameRef.current.style.scrollSnapType = '';
+    }, []);
+
     // Jump to the restored view once the snap markers for the new layout exist.
     useLayoutEffect(() => {
         const frame = frameRef.current;
         const pending = pendingViewRef.current;
         if (!frame || pending === null) return;
         pendingViewRef.current = null;
+        stopTurn();
         frame.scrollTo({ left: pending * viewWidth(frame), behavior: 'instant' });
         setView(pending);
-    }, [layout]);
+    }, [layout, stopTurn]);
 
     const goTo = useCallback((target: number) => {
         const frame = frameRef.current;
         if (!frame || viewsRef.current === 0) return;
         const next = Math.min(Math.max(target, 0), viewsRef.current - 1);
         targetViewRef.current = next;
-        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        frame.scrollTo({ left: next * viewWidth(frame), behavior: reduceMotion ? 'instant' : 'smooth' });
-    }, []);
+        stopTurn();
+        const to = next * viewWidth(frame);
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            frame.scrollTo({ left: to, behavior: 'instant' });
+            return;
+        }
+        // Animated by hand because scrollTo's smooth behavior has a fixed,
+        // browser-chosen duration. Snapping is paused meanwhile; mandatory
+        // snapping would pull every in-between position back to a page.
+        const from = frame.scrollLeft;
+        const start = performance.now();
+        frame.style.scrollSnapType = 'none';
+        const step = (now: number) => {
+            const t = Math.min((now - start) / TURN_MS, 1);
+            frame.scrollLeft = from + (to - from) * easeInOut(t);
+            if (t < 1) {
+                turnRafRef.current = requestAnimationFrame(step);
+            } else {
+                stopTurn();
+                settleScroll();
+            }
+        };
+        turnRafRef.current = requestAnimationFrame(step);
+    }, [stopTurn, settleScroll]);
+
+    // A touch or click on the pages hands scrolling back to the user, and
+    // an unmount mid-turn shouldn't leave a frame callback behind.
+    useEffect(() => {
+        const frame = frameRef.current;
+        if (!frame) return;
+        frame.addEventListener('pointerdown', stopTurn);
+        return () => {
+            frame.removeEventListener('pointerdown', stopTurn);
+            stopTurn();
+        };
+    }, [stopTurn]);
 
     const turn = useCallback((delta: number) => {
         const frame = frameRef.current;
         if (!frame) return;
-        // While a smooth scroll is in flight, step from where it's headed.
+        // While a turn is animating, step from where it's headed.
         const from = targetViewRef.current ?? Math.round(frame.scrollLeft / viewWidth(frame));
         goTo(from + delta);
     }, [goTo]);
@@ -155,9 +210,9 @@ const PagedArticle = ({ children }: { children: ReactNode }) => {
             raf = requestAnimationFrame(() => setView(Math.round(frame.scrollLeft / viewWidth(frame))));
             clearTimeout(settle);
             settle = setTimeout(() => {
-                targetViewRef.current = null;
-                const flow = frame.firstElementChild;
-                if (flow) anchorRef.current = findAnchor(frame, flow) ?? anchorRef.current;
+                // The slow start of an animated turn can go quiet for longer
+                // than SETTLE_MS; that turn settles on its own last frame.
+                if (!turnRafRef.current) settleScroll();
             }, SETTLE_MS);
         };
         frame.addEventListener('scroll', onScroll, { passive: true });
@@ -166,7 +221,7 @@ const PagedArticle = ({ children }: { children: ReactNode }) => {
             clearTimeout(settle);
             frame.removeEventListener('scroll', onScroll);
         };
-    }, []);
+    }, [settleScroll]);
 
     // Keyboard and mouse wheel page turns. Horizontal trackpad and touch
     // swipes are left to native scrolling, where scroll snapping lands them on a page.
